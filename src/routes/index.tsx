@@ -3,6 +3,7 @@ import tajweedBasics from "@/assets/tajweed-basics.jpg";
 import tajweedAdvanced from "@/assets/tajweed-advanced.jpg";
 import { RecitersSection } from "@/components/ReciterSection";
 import { FamousClipsSection } from "@/components/FamousClipsSection";
+import { LanguagesSection } from "@/components/LanguagesSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -225,6 +226,7 @@ function Home() {
 
       <RecitersSection />
       <FamousClipsSection />
+      <LanguagesSection />
 
 
 
