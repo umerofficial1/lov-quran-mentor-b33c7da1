@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { SURAHS, padSurah } from "@/lib/surahs";
 
 type Reciter = {
   id: string;
   name: string;
   nameUr: string;
   origin: string;
-  hadr: string;
-  mashq: string;
+  /** Base server URL ending in "/" — append {001..114}.mp3 */
+  hadrServer: string;
+  /** Optional teaching (mu'allim) server — falls back to hadr if absent */
+  mashqServer?: string;
+  /** Decorative gradient classes for avatar */
+  gradient: string;
 };
 
 const misriQurra: Reciter[] = [
@@ -14,65 +19,68 @@ const misriQurra: Reciter[] = [
     id: "husary",
     name: "Mahmoud Khalil Al-Husary",
     nameUr: "محمود خلیل الحصری",
-    origin: "Egypt",
-    hadr: "https://server13.mp3quran.net/husr/001.mp3",
-    mashq: "https://server13.mp3quran.net/husr_muallim/001.mp3",
+    origin: "Egypt • شیخ القراء",
+    hadrServer: "https://server13.mp3quran.net/husr/",
+    mashqServer: "https://server13.mp3quran.net/husr_muallim/",
+    gradient: "from-emerald-deep to-emerald-700",
   },
   {
     id: "minshawi",
     name: "Mohamed Siddiq El-Minshawi",
     nameUr: "محمد صدیق المنشاوی",
-    origin: "Egypt",
-    hadr: "https://server10.mp3quran.net/minsh/001.mp3",
-    mashq: "https://server10.mp3quran.net/menshawi_teacher/001.mp3",
+    origin: "Egypt • مجوّد",
+    hadrServer: "https://server10.mp3quran.net/minsh/",
+    mashqServer: "https://server10.mp3quran.net/menshawi_teacher/",
+    gradient: "from-amber-700 to-gold-leaf",
   },
   {
     id: "abdulbasit",
     name: "Abdul Basit Abdul Samad",
     nameUr: "عبد الباسط عبد الصمد",
-    origin: "Egypt",
-    hadr: "https://server7.mp3quran.net/basit/001.mp3",
-    mashq: "https://server7.mp3quran.net/basit_mjwd/001.mp3",
+    origin: "Egypt • صوت الذہب",
+    hadrServer: "https://server7.mp3quran.net/basit/",
+    mashqServer: "https://server7.mp3quran.net/basit_mjwd/",
+    gradient: "from-emerald-800 to-teal-700",
   },
   {
     id: "mustafa",
     name: "Mustafa Ismail",
     nameUr: "مصطفیٰ اسماعیل",
-    origin: "Egypt",
-    hadr: "https://server14.mp3quran.net/mustafa_ismail/001.mp3",
-    mashq: "https://server14.mp3quran.net/mustafa_ismail/001.mp3",
+    origin: "Egypt • مجوّد",
+    hadrServer: "https://server14.mp3quran.net/mustafa_ismail/",
+    gradient: "from-stone-700 to-stone-900",
   },
   {
     id: "albanna",
     name: "Mahmoud Ali Al-Banna",
     nameUr: "محمود علی البنا",
     origin: "Egypt",
-    hadr: "https://server8.mp3quran.net/banna/001.mp3",
-    mashq: "https://server8.mp3quran.net/banna/001.mp3",
+    hadrServer: "https://server8.mp3quran.net/banna/",
+    gradient: "from-amber-800 to-orange-900",
   },
   {
     id: "tablawi",
     name: "Mohamed Mahmoud Al-Tablawi",
     nameUr: "محمد محمود الطبلاوی",
     origin: "Egypt",
-    hadr: "https://server16.mp3quran.net/tblawi/001.mp3",
-    mashq: "https://server16.mp3quran.net/tblawi/001.mp3",
+    hadrServer: "https://server16.mp3quran.net/tblawi/",
+    gradient: "from-teal-800 to-emerald-deep",
   },
   {
     id: "jibreel",
     name: "Mohamed Jibreel",
     nameUr: "محمد جبریل",
     origin: "Egypt",
-    hadr: "https://server8.mp3quran.net/jibreel/001.mp3",
-    mashq: "https://server8.mp3quran.net/jibreel/001.mp3",
+    hadrServer: "https://server8.mp3quran.net/jibreel/",
+    gradient: "from-emerald-700 to-emerald-900",
   },
   {
     id: "rifai",
     name: "Hani Ar-Rifai",
     nameUr: "ہانی الرفاعی",
-    origin: "Egypt",
-    hadr: "https://server8.mp3quran.net/rifai/001.mp3",
-    mashq: "https://server8.mp3quran.net/rifai/001.mp3",
+    origin: "Saudi Arabia",
+    hadrServer: "https://server8.mp3quran.net/rifai/",
+    gradient: "from-amber-700 to-amber-900",
   },
 ];
 
@@ -82,129 +90,134 @@ const imameKaaba: Reciter[] = [
     name: "Abdul Rahman Al-Sudais",
     nameUr: "عبد الرحمٰن السدیس",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server11.mp3quran.net/sds/001.mp3",
-    mashq: "https://server11.mp3quran.net/sds/001.mp3",
+    hadrServer: "https://server11.mp3quran.net/sds/",
+    gradient: "from-emerald-deep to-emerald-800",
   },
   {
     id: "shuraim",
     name: "Saud Al-Shuraim",
     nameUr: "سعود الشریم",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server7.mp3quran.net/shur/001.mp3",
-    mashq: "https://server7.mp3quran.net/shur/001.mp3",
+    hadrServer: "https://server7.mp3quran.net/shur/",
+    gradient: "from-stone-800 to-emerald-900",
   },
   {
     id: "muaiqly",
     name: "Maher Al-Muaiqly",
     nameUr: "ماہر المعیقلی",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server12.mp3quran.net/maher/001.mp3",
-    mashq: "https://server12.mp3quran.net/maher/001.mp3",
+    hadrServer: "https://server12.mp3quran.net/maher/",
+    gradient: "from-emerald-700 to-teal-800",
   },
   {
     id: "balilah",
     name: "Bandar Balilah",
     nameUr: "بندر بلیلہ",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server6.mp3quran.net/balilah/001.mp3",
-    mashq: "https://server6.mp3quran.net/balilah/001.mp3",
+    hadrServer: "https://server6.mp3quran.net/balilah/",
+    gradient: "from-amber-700 to-amber-900",
   },
   {
     id: "dossari",
     name: "Yasser Al-Dosari",
     nameUr: "یاسر الدوسری",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server11.mp3quran.net/yasser/001.mp3",
-    mashq: "https://server11.mp3quran.net/yasser/001.mp3",
+    hadrServer: "https://server11.mp3quran.net/yasser/",
+    gradient: "from-emerald-800 to-emerald-deep",
   },
   {
     id: "ghamdi",
     name: "Saad Al-Ghamdi",
     nameUr: "سعد الغامدی",
     origin: "Imam, Madinah",
-    hadr: "https://server7.mp3quran.net/s_gmd/001.mp3",
-    mashq: "https://server7.mp3quran.net/s_gmd/001.mp3",
+    hadrServer: "https://server7.mp3quran.net/s_gmd/",
+    gradient: "from-teal-700 to-emerald-800",
   },
   {
     id: "ghazzawi",
     name: "Faisal Al-Ghazzawi",
     nameUr: "فیصل الغزاوی",
     origin: "Imam, Masjid Al-Haram",
-    hadr: "https://server7.mp3quran.net/ghazawi/001.mp3",
-    mashq: "https://server7.mp3quran.net/ghazawi/001.mp3",
+    hadrServer: "https://server7.mp3quran.net/ghazawi/",
+    gradient: "from-stone-700 to-amber-900",
   },
   {
     id: "budair",
     name: "Salah Al-Budair",
     nameUr: "صلاح البدیر",
     origin: "Imam, Masjid An-Nabawi",
-    hadr: "https://server14.mp3quran.net/bsfr/001.mp3",
-    mashq: "https://server14.mp3quran.net/bsfr/001.mp3",
+    hadrServer: "https://server14.mp3quran.net/bsfr/",
+    gradient: "from-emerald-900 to-stone-900",
   },
 ];
 
 type Mode = "hadr" | "mashq";
 
-function ReciterGrid({
-  reciters,
+function ReciterCard({
+  r,
   mode,
-  playingId,
+  surahNum,
+  isPlaying,
   onPlay,
 }: {
-  reciters: Reciter[];
+  r: Reciter;
   mode: Mode;
-  playingId: string | null;
+  surahNum: number;
+  isPlaying: boolean;
   onPlay: (r: Reciter) => void;
 }) {
+  const surah = SURAHS.find((s) => s.n === surahNum)!;
+  const hasMashq = mode === "mashq" ? Boolean(r.mashqServer) : true;
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {reciters.map((r) => {
-        const isPlaying = playingId === `${r.id}-${mode}`;
-        return (
-          <article
-            key={r.id}
-            className="group bg-white border border-emerald-deep/10 rounded-2xl p-5 hover:border-gold-leaf/40 transition-all"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="size-12 rounded-xl bg-emerald-deep/5 grid place-items-center text-emerald-deep font-arabic text-xl">
-                {r.nameUr.charAt(0)}
-              </div>
-              <span
-                className={
-                  mode === "hadr"
-                    ? "text-[10px] font-bold uppercase tracking-widest text-gold-leaf bg-gold-leaf/10 px-2 py-1 rounded"
-                    : "text-[10px] font-bold uppercase tracking-widest text-emerald-deep bg-emerald-deep/5 px-2 py-1 rounded"
-                }
-              >
-                {mode === "hadr" ? "حدر" : "مشق"}
-              </span>
-            </div>
-            <p className="font-urdu text-lg text-emerald-deep mb-1 leading-tight" dir="rtl">
-              {r.nameUr}
-            </p>
-            <p className="text-sm font-semibold text-emerald-deep/80">{r.name}</p>
-            <p className="text-xs text-emerald-deep/50 mb-4">{r.origin}</p>
-            <button
-              onClick={() => onPlay(r)}
-              className={
-                isPlaying
-                  ? "w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
-                  : "w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
-              }
-            >
+    <article className="group bg-white border border-emerald-deep/10 rounded-2xl overflow-hidden hover:border-gold-leaf/40 hover:shadow-lg transition-all flex flex-col">
+      {/* Calligraphic portrait tile */}
+      <div className={`relative h-40 bg-gradient-to-br ${r.gradient} flex items-center justify-center overflow-hidden`}>
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%)" }} />
+        <p className="font-arabic text-white text-5xl drop-shadow-lg relative z-10" dir="rtl">
+          {r.nameUr.split(" ")[0]}
+        </p>
+        <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest text-white bg-black/20 backdrop-blur px-2 py-1 rounded">
+          {mode === "hadr" ? "حدر" : "مشق"}
+        </span>
+      </div>
+
+      <div className="p-5 flex-1 flex flex-col">
+        <p className="font-urdu text-lg text-emerald-deep mb-1 leading-tight" dir="rtl">
+          {r.nameUr}
+        </p>
+        <p className="text-sm font-semibold text-emerald-deep/80">{r.name}</p>
+        <p className="text-xs text-emerald-deep/50 mb-4">{r.origin}</p>
+
+        <button
+          onClick={() => onPlay(r)}
+          disabled={!hasMashq}
+          className={
+            !hasMashq
+              ? "mt-auto w-full bg-stone-100 text-stone-400 py-2.5 rounded-lg text-sm font-bold cursor-not-allowed"
+              : isPlaying
+              ? "mt-auto w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
+              : "mt-auto w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
+          }
+        >
+          {!hasMashq ? (
+            <span>مشق دستیاب نہیں</span>
+          ) : (
+            <>
               <span>{isPlaying ? "⏸" : "▶"}</span>
-              <span>{isPlaying ? "روک دیں" : "سنیں — الفاتحہ"}</span>
-            </button>
-          </article>
-        );
-      })}
-    </div>
+              <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
+            </>
+          )}
+        </button>
+      </div>
+    </article>
   );
 }
 
 export function RecitersSection() {
   const [group, setGroup] = useState<"misri" | "kaaba">("misri");
   const [mode, setMode] = useState<Mode>("hadr");
+  const [surahNum, setSurahNum] = useState<number>(1);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [nowPlaying, setNowPlaying] = useState<{ name: string; nameUr: string } | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -216,8 +229,10 @@ export function RecitersSection() {
   }, []);
 
   const handlePlay = (r: Reciter) => {
-    const key = `${r.id}-${mode}`;
-    const src = mode === "hadr" ? r.hadr : r.mashq;
+    const key = `${r.id}-${mode}-${surahNum}`;
+    const base = mode === "hadr" ? r.hadrServer : r.mashqServer;
+    if (!base) return;
+    const src = `${base}${padSurah(surahNum)}.mp3`;
 
     if (playingId === key) {
       audioRef.current?.pause();
@@ -225,9 +240,7 @@ export function RecitersSection() {
       return;
     }
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+    audioRef.current?.pause();
     const audio = new Audio(src);
     audio.onended = () => setPlayingId(null);
     audio.onerror = () => setPlayingId(null);
@@ -238,21 +251,21 @@ export function RecitersSection() {
   };
 
   const reciters = group === "misri" ? misriQurra : imameKaaba;
+  const currentSurah = SURAHS.find((s) => s.n === surahNum)!;
 
   return (
     <section id="reciters" className="max-w-7xl mx-auto px-6 py-16">
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
         <div>
           <span className="inline-block px-3 py-1 rounded-full bg-gold-leaf/10 text-gold-leaf text-[10px] font-bold uppercase tracking-widest mb-3">
-            مشہور قراء کرام
+            مشہور قراء کرام • مکمل قرآن
           </span>
           <h2 className="text-3xl md:text-4xl font-bold">قراء کی تلاوت</h2>
           <p className="text-emerald-deep/60 mt-2">
-            مصری قراء اور حرمین شریفین کے ائمہ — حدر اور مشق دونوں اندازوں میں
+            مصری قراء اور حرمین شریفین کے ائمہ — تمام 114 سورتیں، حدر اور مشق دونوں اندازوں میں
           </p>
         </div>
 
-        {/* Mode toggle: Hadr / Mashq */}
         <div className="inline-flex bg-emerald-deep/5 p-1 rounded-full self-start lg:self-end">
           <button
             onClick={() => setMode("hadr")}
@@ -277,7 +290,42 @@ export function RecitersSection() {
         </div>
       </div>
 
-      {/* Group tabs: Misri / Kaaba */}
+      {/* Surah picker */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl bg-white border border-emerald-deep/10">
+        <label className="text-sm font-bold text-emerald-deep whitespace-nowrap">
+          سورۃ منتخب کریں:
+        </label>
+        <select
+          value={surahNum}
+          onChange={(e) => setSurahNum(Number(e.target.value))}
+          className="flex-1 bg-emerald-deep/5 border border-emerald-deep/10 rounded-lg px-3 py-2 text-emerald-deep font-medium focus:outline-none focus:border-gold-leaf"
+          dir="rtl"
+        >
+          {SURAHS.map((s) => (
+            <option key={s.n} value={s.n}>
+              {s.n}. {s.nameAr} — {s.nameUr}
+            </option>
+          ))}
+        </select>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setSurahNum((n) => Math.max(1, n - 1))}
+            className="px-3 py-2 rounded-lg bg-emerald-deep/5 hover:bg-emerald-deep/10 text-emerald-deep font-bold"
+            aria-label="Previous Surah"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => setSurahNum((n) => Math.min(114, n + 1))}
+            className="px-3 py-2 rounded-lg bg-emerald-deep/5 hover:bg-emerald-deep/10 text-emerald-deep font-bold"
+            aria-label="Next Surah"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      {/* Group tabs */}
       <div className="flex flex-wrap gap-3 mb-8 border-b border-emerald-deep/10">
         <button
           onClick={() => setGroup("misri")}
@@ -301,7 +349,6 @@ export function RecitersSection() {
         </button>
       </div>
 
-      {/* Helper note based on mode */}
       <div
         className={
           mode === "hadr"
@@ -315,24 +362,44 @@ export function RecitersSection() {
           </p>
         ) : (
           <p>
-            <strong className="text-emerald-deep">مشق:</strong> آہستہ تعلیمی انداز (مُعَلِّم) — تجوید سیکھنے اور آیت بہ آیت دہرانے کے لیے بہترین۔
+            <strong className="text-emerald-deep">مشق:</strong> آہستہ تعلیمی انداز (مُعَلِّم) — صرف بعض مصری قراء (الحصری، المنشاوی، عبد الباسط) کے لیے دستیاب۔
           </p>
         )}
       </div>
 
-      <ReciterGrid reciters={reciters} mode={mode} playingId={playingId} onPlay={handlePlay} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {reciters.map((r) => (
+          <ReciterCard
+            key={r.id}
+            r={r}
+            mode={mode}
+            surahNum={surahNum}
+            isPlaying={playingId === `${r.id}-${mode}-${surahNum}`}
+            onPlay={handlePlay}
+          />
+        ))}
+      </div>
 
       {nowPlaying && playingId && (
-        <div className="mt-8 p-4 rounded-2xl bg-white border border-emerald-deep/10 flex items-center gap-4">
+        <div className="mt-8 p-4 rounded-2xl bg-white border border-emerald-deep/10 flex items-center gap-4 sticky bottom-4 shadow-lg">
           <div className="size-3 rounded-full bg-gold-leaf animate-pulse" />
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-widest text-gold-leaf font-bold">
               Now Playing — {mode === "hadr" ? "حدر" : "مشق"}
             </p>
             <p className="font-urdu text-base truncate" dir="rtl">
-              سورۃ الفاتحہ • {nowPlaying.nameUr}
+              سورۃ {currentSurah.nameUr} • {nowPlaying.nameUr}
             </p>
           </div>
+          <button
+            onClick={() => {
+              audioRef.current?.pause();
+              setPlayingId(null);
+            }}
+            className="px-3 py-1.5 rounded-lg bg-emerald-deep/5 hover:bg-emerald-deep hover:text-white text-emerald-deep text-sm font-bold transition-colors"
+          >
+            روکیں
+          </button>
         </div>
       )}
     </section>
