@@ -222,6 +222,10 @@ function Home() {
         </div>
       </main>
 
+      <RecitersSection />
+
+
+
       {/* Sticky Player */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-lg bg-white/90 backdrop-blur-xl border border-emerald-deep/10 shadow-2xl rounded-2xl p-4 flex items-center gap-4 z-40">
         <div className="size-12 bg-emerald-deep rounded-lg grid place-items-center text-white font-bold">
