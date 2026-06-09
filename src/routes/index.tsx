@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import tajweedBasics from "@/assets/tajweed-basics.jpg";
 import tajweedAdvanced from "@/assets/tajweed-advanced.jpg";
 import { RecitersSection } from "@/components/ReciterSection";
+import { FamousClipsSection } from "@/components/FamousClipsSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -223,6 +224,7 @@ function Home() {
       </main>
 
       <RecitersSection />
+      <FamousClipsSection />
 
 
 
