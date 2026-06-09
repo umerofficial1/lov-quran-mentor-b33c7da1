@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import tajweedBasics from "@/assets/tajweed-basics.jpg";
 import tajweedAdvanced from "@/assets/tajweed-advanced.jpg";
+import { RecitersSection } from "@/components/ReciterSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
