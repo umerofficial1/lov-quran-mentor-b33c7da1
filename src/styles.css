@@ -4,12 +4,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: 'JameelNooriNastaliq';
+  src: url('https://cdn.jsdelivr.net/npm/jameel-noori@1.1.2/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-emerald-deep: #064e3b;
   --color-gold-leaf: #b45309;
   --color-paper: #fcfbf7;
-  --font-urdu: "Noto Nastaliq Urdu", serif;
-  --font-arabic: "Amiri", serif;
+  --font-urdu: "JameelNooriNastaliq", "Noto Nastaliq Urdu", serif;
+  --font-arabic: "Scheherazade New", "Amiri", serif;
   --font-ui: "Inter", sans-serif;
 }
 
