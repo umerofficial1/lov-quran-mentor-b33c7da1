@@ -8,13 +8,13 @@ import { LanguagesSection } from "@/components/LanguagesSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Muhy Loveable — قرآن سیکھنے کا اسلامی پلیٹ فارم" },
+      { title: "Love Qran — قرآن سیکھنے کا اسلامی پلیٹ فارم" },
       {
         name: "description",
         content:
           "Learn the Holy Quran with tajweed, translations, hifz tracking, AI teacher, and recitations from world-renowned Qaris.",
       },
-      { property: "og:title", content: "Muhy Loveable — قرآن سیکھنے کا پلیٹ فارم" },
+      { property: "og:title", content: "Love Qran — قرآن سیکھنے کا پلیٹ فارم" },
       {
         property: "og:description",
         content: "تجوید، ترجمہ، حفظ ٹریکر اور AI قرآن ٹیچر — ایک ہی جگہ پر۔",
@@ -32,7 +32,7 @@ function Home() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <span className="text-2xl font-bold tracking-tight text-emerald-deep">
-              MUHY <span className="text-gold-leaf">LOVEABLE</span>
+              Love <span className="text-gold-leaf">Qran</span>
             </span>
             <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-70">
               <a href="#quran" className="hover:text-gold-leaf transition-colors">قرآن مجید</a>
@@ -54,7 +54,7 @@ function Home() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 py-12 pb-32">
-        <h1 className="sr-only">Muhy Loveable — Learn the Quran</h1>
+        <h1 className="sr-only">Love Qran — Learn the Quran</h1>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Left */}
           <div className="lg:col-span-8 space-y-12">
