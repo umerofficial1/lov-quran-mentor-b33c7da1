@@ -26,27 +26,29 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="min-h-screen bg-paper text-emerald-deep font-ui selection:bg-gold-leaf/20">
+    <div className="min-h-screen text-slate-200 font-ui selection:bg-amber-500/30">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-emerald-deep/5">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <span className="text-2xl font-bold tracking-tight text-emerald-deep">
-              Love <span className="text-gold-leaf">Qran</span>
-            </span>
-            <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-70">
-              <a href="#quran" className="hover:text-gold-leaf transition-colors">قرآن مجید</a>
-              <a href="#tajweed" className="hover:text-gold-leaf transition-colors">تجوید</a>
-              <a href="#hifz" className="hover:text-gold-leaf transition-colors">حفظ ٹریکر</a>
-              <a href="#community" className="hover:text-gold-leaf transition-colors">کمیونٹی</a>
-            </div>
+      <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
+          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">
+            Love Qran
+          </span>
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+            <a href="#quran" className="hover:text-amber-400 transition-colors">قرآن مجید</a>
+            <a href="#tajweed" className="hover:text-amber-400 transition-colors">تجوید</a>
+            <a href="#hifz" className="hover:text-amber-400 transition-colors">حفظ ٹریکر</a>
+            <a href="#languages" className="hover:text-amber-400 transition-colors">لیکچرز</a>
+            <a href="#reciters" className="hover:text-amber-400 transition-colors">قراء</a>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] uppercase tracking-widest opacity-50">Next Prayer</p>
-              <p className="text-sm font-semibold">Asr • 4:45 PM</p>
+            <div className="text-right hidden sm:block leading-tight">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Next Prayer</p>
+              <p className="text-sm text-amber-400 font-semibold">Asr • 4:45 PM</p>
             </div>
-            <a href="#languages" className="bg-emerald-deep text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-deep/90 transition-all shadow-lg shadow-emerald-deep/10">
+            <a
+              href="#languages"
+              className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-all shadow-[0_0_20px_rgba(5,150,105,0.4)] border border-emerald-400/30"
+            >
               سیکھنا شروع کریں
             </a>
           </div>
@@ -55,83 +57,95 @@ function Home() {
 
       <main className="max-w-7xl mx-auto px-6 py-12 pb-32">
         <h1 className="sr-only">Love Qran — Learn the Quran</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="lg:col-span-8 space-y-8">
             {/* Hero: Daily Ayah */}
-            <section className="relative group">
-              <div className="absolute -inset-4 bg-emerald-deep/5 rounded-[2rem] -rotate-1 group-hover:rotate-0 transition-transform duration-500" />
-              <div className="relative bg-white border border-emerald-deep/10 p-10 rounded-[2rem] shadow-sm">
-                <span className="inline-block px-4 py-1 rounded-full bg-gold-leaf/10 text-gold-leaf text-xs font-bold mb-6 uppercase tracking-widest">
-                  آج کی آیت
-                </span>
-                <div className="space-y-8 text-center">
-                  <p
-                    className="font-arabic text-4xl md:text-5xl leading-[1.8] text-emerald-deep mb-4"
-                    dir="rtl"
-                  >
-                    فَٱذْكُرُونِىٓ أَذْكُرْكُمْ وَٱشْكُرُوا۟ لِى وَلَا تَكْفُرُونِ
-                  </p>
-                  <p
-                    className="font-urdu text-xl md:text-2xl text-emerald-deep/80 leading-relaxed"
-                    dir="rtl"
-                  >
-                    پس تم مجھے یاد کرو، میں تمہیں یاد کروں گا، اور میرا شکر ادا کرو اور ناشکری نہ کرو۔
-                  </p>
-                  <div className="pt-4 border-t border-emerald-deep/5 flex justify-center gap-4">
-                    <button className="px-4 py-3 rounded-full border border-emerald-deep/10 hover:bg-emerald-deep hover:text-white transition-colors">
-                      <span className="text-xs font-bold">LISTEN</span>
-                    </button>
-                    <button className="px-4 py-3 rounded-full border border-emerald-deep/10 hover:bg-emerald-deep hover:text-white transition-colors">
-                      <span className="text-xs font-bold">SHARE</span>
-                    </button>
-                  </div>
-                </div>
+            <section className="relative overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-2xl border border-white/10 shadow-2xl p-8 md:p-12 text-center">
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+              <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+              <span className="relative inline-block px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold mb-8 uppercase tracking-widest">
+                آج کی آیت
+              </span>
+              <p
+                className="relative font-arabic text-4xl md:text-5xl leading-[1.8] text-white mb-6 drop-shadow-sm"
+                dir="rtl"
+              >
+                فَٱذْكُرُونِىٓ أَذْكُرْكُمْ وَٱشْكُرُوا۟ لِى وَلَا تَكْفُرُونِ
+              </p>
+              <p
+                className="relative font-urdu text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto mb-10"
+                dir="rtl"
+              >
+                پس تم مجھے یاد کرو، میں تمہیں یاد کروں گا، اور میرا شکر ادا کرو اور ناشکری نہ کرو۔
+              </p>
+              <div className="relative flex justify-center gap-4">
+                <button className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-bold tracking-widest text-slate-200">
+                  LISTEN
+                </button>
+                <button className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-bold tracking-widest text-slate-200">
+                  SHARE
+                </button>
               </div>
             </section>
 
             {/* Featured Courses */}
             <section id="tajweed">
-              <div className="flex items-end justify-between mb-8">
+              <div className="flex items-end justify-between mb-6 px-2">
                 <div>
-                  <h2 className="text-2xl font-bold">تجوید لرننگ</h2>
-                  <p className="text-emerald-deep/60">قرآن کو خوبصورتی سے پڑھنا سیکھیں</p>
+                  <h2 className="text-2xl font-bold text-white">تجوید لرننگ</h2>
+                  <p className="text-slate-400 text-sm">قرآن کو خوبصورتی سے پڑھنا سیکھیں</p>
                 </div>
-                <button className="text-gold-leaf font-semibold text-sm hover:underline">
+                <a href="#languages" className="text-amber-400 font-bold text-sm hover:text-amber-300">
                   View All Courses
-                </button>
+                </a>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <article className="group bg-white p-6 rounded-2xl border border-emerald-deep/5 hover:border-gold-leaf/30 transition-all">
-                  <img
-                    src={tajweedBasics}
-                    alt="Tajweed basics — Islamic calligraphy"
-                    className="w-full aspect-video object-cover rounded-xl mb-4"
-                    loading="lazy"
-                  />
-                  <h3 className="text-lg font-bold mb-2">مخارج الحروف</h3>
-                  <p className="text-sm text-emerald-deep/60 mb-4">
-                    حروف کے درست تلفظ اور ان کے نکلنے کی جگہوں کی پہچان۔
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gold-leaf">12 اسباق</span>
-                    <span className="text-xs bg-emerald-deep/5 px-2 py-1 rounded">Beginner</span>
+                <article className="group rounded-3xl bg-white/5 border border-white/10 overflow-hidden hover:bg-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="h-44 overflow-hidden relative">
+                    <img
+                      src={tajweedBasics}
+                      alt="Tajweed basics — Islamic calligraphy"
+                      className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-emerald-950/20 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-2">مخارج الحروف</h3>
+                    <p className="text-sm text-slate-400 mb-4 leading-relaxed">
+                      حروف کے درست تلفظ اور ان کے نکلنے کی جگہوں کی پہچان۔
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase border border-emerald-400/20">
+                        Beginner
+                      </span>
+                      <span className="text-amber-400 text-xs font-bold">12 اسباق</span>
+                    </div>
                   </div>
                 </article>
-                <article className="group bg-white p-6 rounded-2xl border border-emerald-deep/5 hover:border-gold-leaf/30 transition-all">
-                  <img
-                    src={tajweedAdvanced}
-                    alt="Advanced tajweed — open Quran pages"
-                    className="w-full aspect-video object-cover rounded-xl mb-4"
-                    loading="lazy"
-                  />
-                  <h3 className="text-lg font-bold mb-2">مد اور غنہ کے قواعد</h3>
-                  <p className="text-sm text-emerald-deep/60 mb-4">
-                    تلاوت میں خوبصورتی پیدا کرنے کے لیے مد اور غنہ کا استعمال۔
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gold-leaf">08 اسباق</span>
-                    <span className="text-xs bg-emerald-deep/5 px-2 py-1 rounded">Advanced</span>
+                <article className="group rounded-3xl bg-white/5 border border-white/10 overflow-hidden hover:bg-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="h-44 overflow-hidden relative">
+                    <img
+                      src={tajweedAdvanced}
+                      alt="Advanced tajweed — open Quran pages"
+                      className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-emerald-950/20 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-2">مد اور غنہ کے قواعد</h3>
+                    <p className="text-sm text-slate-400 mb-4 leading-relaxed">
+                      تلاوت میں خوبصورتی پیدا کرنے کے لیے مد اور غنہ کا استعمال۔
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase border border-amber-400/20">
+                        Advanced
+                      </span>
+                      <span className="text-amber-400 text-xs font-bold">08 اسباق</span>
+                    </div>
                   </div>
                 </article>
               </div>
@@ -139,64 +153,73 @@ function Home() {
           </div>
 
           {/* Right Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
+          <aside className="lg:col-span-4 space-y-6">
             {/* Progress Tracker */}
-            <div id="hifz" className="bg-emerald-deep text-white p-8 rounded-[2rem] shadow-xl shadow-emerald-deep/20">
-              <h3 className="text-xl font-bold mb-6">آپ کی ترقی</h3>
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest mb-2 opacity-70">
+            <div id="hifz" className="rounded-3xl bg-emerald-800/40 backdrop-blur-xl border border-emerald-400/20 p-8 shadow-2xl relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-32 h-32 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="w-12 h-12 rounded-full border-2 border-amber-500/40 flex items-center justify-center text-amber-400 font-bold text-xs bg-amber-500/5">
+                    14%
+                  </div>
+                  <h3 className="text-xl font-bold text-white">آپ کی ترقی</h3>
+                </div>
+                <div className="mb-6">
+                  <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-2 text-emerald-300/80">
                     <span>حفظ القرآن</span>
                     <span>14%</span>
                   </div>
-                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-gold-leaf w-[14%] rounded-full" />
+                  <div className="h-2 w-full bg-emerald-950 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-amber-400 to-amber-600 w-[14%] rounded-full shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="bg-white/5 p-4 rounded-xl">
-                    <p className="text-2xl font-bold">12</p>
-                    <p className="text-[10px] uppercase opacity-60">یاد کی گئی سورتیں</p>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                    <p className="text-2xl font-bold text-white">12</p>
+                    <p className="text-[10px] text-slate-400 mt-1">یاد کی گئی سورتیں</p>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-xl">
-                    <p className="text-2xl font-bold">152</p>
-                    <p className="text-[10px] uppercase opacity-60">ٹوٹل منٹس</p>
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                    <p className="text-2xl font-bold text-white">152</p>
+                    <p className="text-[10px] text-slate-400 mt-1">ٹوٹل منٹس</p>
                   </div>
                 </div>
+                <button className="w-full py-3 rounded-2xl bg-white text-emerald-950 font-bold text-sm hover:bg-amber-50 transition-colors shadow-lg">
+                  پروگریس دیکھیں
+                </button>
               </div>
-              <button className="w-full mt-8 bg-white text-emerald-deep py-3 rounded-xl font-bold text-sm hover:bg-gold-leaf hover:text-white transition-all">
-                پروگریس دیکھیں
-              </button>
             </div>
 
             {/* AI Teacher */}
-            <div className="bg-white border border-emerald-deep/10 p-6 rounded-2xl">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="size-10 bg-gold-leaf/10 rounded-full grid place-items-center">
-                  <div className="size-2 bg-gold-leaf rounded-full animate-pulse" />
+            <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="size-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 grid place-items-center shadow-lg shadow-amber-500/30">
+                  <div className="size-2 bg-emerald-950 rounded-full animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="font-bold">AI قرآن ٹیچر</h4>
-                  <p className="text-xs text-emerald-deep/50">آن لائن مدد کے لیے دستیاب</p>
+                  <h4 className="font-bold text-white">قرآن ٹیچر AI</h4>
+                  <p className="text-[10px] text-emerald-400 font-bold tracking-widest uppercase">Online Assistant</p>
                 </div>
               </div>
-              <div className="bg-emerald-deep/5 p-4 rounded-xl mb-4">
-                <p className="text-sm italic">"کیا آپ سورۃ الفاتحہ کی تجوید چیک کرنا چاہتے ہیں؟"</p>
+              <div className="bg-white/5 border border-white/5 p-4 rounded-2xl mb-4">
+                <p className="text-sm text-slate-300 italic leading-relaxed" dir="rtl">
+                  "کیا آپ سورۃ الفاتحہ کی تجوید چیک کرنا چاہتے ہیں؟"
+                </p>
               </div>
               <input
                 type="text"
                 placeholder="سوال پوچھیں..."
-                className="w-full text-sm bg-paper border border-emerald-deep/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gold-leaf"
+                dir="rtl"
+                className="w-full text-sm bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:bg-black/30 transition-all"
               />
             </div>
 
             {/* Prayer Times */}
-            <div className="bg-white border border-emerald-deep/10 p-6 rounded-2xl">
-              <div className="flex justify-between items-center mb-6">
-                <h4 className="font-bold">اسلامی کیلنڈر</h4>
-                <span className="text-xs font-bold text-gold-leaf uppercase">14 Shaban</span>
+            <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden shadow-xl">
+              <div className="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <span className="text-[10px] font-bold text-amber-400 tracking-widest uppercase">14 Shaban</span>
+                <h4 className="font-bold text-white">اسلامی کیلنڈر</h4>
               </div>
-              <div className="space-y-3">
+              <div className="p-2">
                 {[
                   { name: "Fajr", time: "05:12 AM", active: false },
                   { name: "Dhuhr", time: "12:30 PM", active: true },
@@ -208,14 +231,16 @@ function Home() {
                     key={p.name}
                     className={
                       p.active
-                        ? "flex justify-between items-center p-3 rounded-lg bg-emerald-deep/5 border-l-4 border-gold-leaf"
-                        : "flex justify-between items-center p-3 rounded-lg hover:bg-emerald-deep/5 transition-colors"
+                        ? "flex justify-between items-center p-3 rounded-2xl bg-emerald-500/15 border border-emerald-400/30"
+                        : "flex justify-between items-center p-3 rounded-2xl hover:bg-white/5 transition-colors"
                     }
                   >
-                    <span className={p.active ? "text-sm font-bold" : "text-sm font-medium"}>
+                    <span className={p.active ? "text-sm font-bold text-emerald-300" : "text-sm text-slate-400"}>
                       {p.name}
                     </span>
-                    <span className="text-sm font-bold">{p.time}</span>
+                    <span className={p.active ? "text-sm font-bold text-white" : "text-sm font-medium text-slate-300"}>
+                      {p.time}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -224,31 +249,33 @@ function Home() {
         </div>
       </main>
 
-      <RecitersSection />
+      <div id="reciters">
+        <RecitersSection />
+      </div>
       <FamousClipsSection />
       <LanguagesSection />
 
-
-
       {/* Sticky Player */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-lg bg-white/90 backdrop-blur-xl border border-emerald-deep/10 shadow-2xl rounded-2xl p-4 flex items-center gap-4 z-40">
-        <div className="size-12 bg-emerald-deep rounded-lg grid place-items-center text-white font-bold">
-          01
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold text-gold-leaf uppercase tracking-widest">Now Playing</p>
-          <p className="text-sm font-bold truncate">Surah Al-Fatihah — Mishary Rashid Alafasy</p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <button aria-label="Previous" className="size-8 rounded-full bg-emerald-deep/5 flex items-center justify-center">
-            ⏮
-          </button>
-          <button aria-label="Play" className="size-10 rounded-full bg-emerald-deep text-white flex items-center justify-center">
-            ▶
-          </button>
-          <button aria-label="Next" className="size-8 rounded-full bg-emerald-deep/5 flex items-center justify-center">
-            ⏭
-          </button>
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-lg z-40">
+        <div className="bg-emerald-950/85 backdrop-blur-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] rounded-2xl p-4 flex items-center gap-4">
+          <div className="size-12 rounded-xl bg-emerald-600 border border-emerald-400/30 shadow-lg grid place-items-center text-white font-bold">
+            01
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Now Playing</p>
+            <p className="text-sm font-bold text-white truncate">Surah Al-Fatihah — Mishary Alafasy</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button aria-label="Previous" className="size-8 rounded-full bg-white/5 text-white/70 hover:text-white flex items-center justify-center">
+              ⏮
+            </button>
+            <button aria-label="Play" className="size-10 rounded-full bg-white text-emerald-950 flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
+              ▶
+            </button>
+            <button aria-label="Next" className="size-8 rounded-full bg-white/5 text-white/70 hover:text-white flex items-center justify-center">
+              ⏭
+            </button>
+          </div>
         </div>
       </div>
     </div>
