@@ -46,9 +46,9 @@ function Home() {
               <p className="text-[10px] uppercase tracking-widest opacity-50">Next Prayer</p>
               <p className="text-sm font-semibold">Asr • 4:45 PM</p>
             </div>
-            <button className="bg-emerald-deep text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-deep/90 transition-all shadow-lg shadow-emerald-deep/10">
+            <a href="#languages" className="bg-emerald-deep text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-deep/90 transition-all shadow-lg shadow-emerald-deep/10">
               سیکھنا شروع کریں
-            </button>
+            </a>
           </div>
         </div>
       </nav>
