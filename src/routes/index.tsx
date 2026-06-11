@@ -4,6 +4,7 @@ import tajweedAdvanced from "@/assets/tajweed-advanced.jpg";
 import { RecitersSection } from "@/components/ReciterSection";
 import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
+import { DailyAyah } from "@/components/DailyAyah";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,35 +61,7 @@ function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left */}
           <div className="lg:col-span-8 space-y-8">
-            {/* Hero: Daily Ayah */}
-            <section className="relative overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-2xl border border-white/10 shadow-2xl p-8 md:p-12 text-center">
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
-              <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-              <span className="relative inline-block px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold mb-8 uppercase tracking-widest">
-                آج کی آیت
-              </span>
-              <p
-                className="relative font-arabic text-4xl md:text-5xl leading-[1.8] text-white mb-6 drop-shadow-sm"
-                dir="rtl"
-              >
-                فَٱذْكُرُونِىٓ أَذْكُرْكُمْ وَٱشْكُرُوا۟ لِى وَلَا تَكْفُرُونِ
-              </p>
-              <p
-                className="relative font-urdu text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto mb-10"
-                dir="rtl"
-              >
-                پس تم مجھے یاد کرو، میں تمہیں یاد کروں گا، اور میرا شکر ادا کرو اور ناشکری نہ کرو۔
-              </p>
-              <div className="relative flex justify-center gap-4">
-                <button className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-bold tracking-widest text-slate-200">
-                  LISTEN
-                </button>
-                <button className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-bold tracking-widest text-slate-200">
-                  SHARE
-                </button>
-              </div>
-            </section>
+            <DailyAyah />
 
             {/* Featured Courses */}
             <section id="tajweed">
