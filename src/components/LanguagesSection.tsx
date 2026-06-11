@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+type Lecture = { videoId: string; title: string };
+
 type LanguageEntry = {
   code: string;
   name: string;
@@ -9,9 +11,10 @@ type LanguageEntry = {
   translator: string;
   teacher: {
     name: string;
-    /** YouTube video ID for an embedded free Tajweed lecture */
-    videoId: string;
-    title: string;
+    /** Multiple free Tajweed lectures embedded from YouTube */
+    lectures: Lecture[];
+    /** YouTube search/playlist link for the full course */
+    fullCourseUrl: string;
   };
 };
 
