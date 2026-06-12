@@ -35,7 +35,7 @@ function Home() {
             Love Qran
           </span>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-            <a href="#quran" className="hover:text-amber-400 transition-colors">قرآن مجید</a>
+            <Link to="/quran" className="hover:text-amber-400 transition-colors">قرآن مجید</Link>
             <a href="#tajweed" className="hover:text-amber-400 transition-colors">تجوید</a>
             <a href="#hifz" className="hover:text-amber-400 transition-colors">حفظ ٹریکر</a>
             <a href="#languages" className="hover:text-amber-400 transition-colors">لیکچرز</a>
