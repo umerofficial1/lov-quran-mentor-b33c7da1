@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
+import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const QuranIndexRoute = QuranIndexRouteImport.update({
   path: '/quran/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuranSurahIdRoute = QuranSurahIdRouteImport.update({
+  id: '/quran/$surahId',
+  path: '/quran/$surahId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran': typeof QuranIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/quran/'
+  fullPaths: '/' | '/quran/$surahId' | '/quran/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/quran'
-  id: '__root__' | '/' | '/quran/'
+  to: '/' | '/quran/$surahId' | '/quran'
+  id: '__root__' | '/' | '/quran/$surahId' | '/quran/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  QuranSurahIdRoute: typeof QuranSurahIdRoute
   QuranIndexRoute: typeof QuranIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuranIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quran/$surahId': {
+      id: '/quran/$surahId'
+      path: '/quran/$surahId'
+      fullPath: '/quran/$surahId'
+      preLoaderRoute: typeof QuranSurahIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  QuranSurahIdRoute: QuranSurahIdRoute,
   QuranIndexRoute: QuranIndexRoute,
 }
 export const routeTree = rootRouteImport
