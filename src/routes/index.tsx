@@ -46,12 +46,12 @@ function Home() {
               <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Next Prayer</p>
               <p className="text-sm text-amber-400 font-semibold">Asr • 4:45 PM</p>
             </div>
-            <a
-              href="#languages"
+            <Link
+              to="/quran"
               className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-all shadow-[0_0_20px_rgba(5,150,105,0.4)] border border-emerald-400/30"
             >
               سیکھنا شروع کریں
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
