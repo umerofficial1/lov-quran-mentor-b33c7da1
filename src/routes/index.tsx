@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import tajweedBasics from "@/assets/tajweed-basics.jpg";
 import tajweedAdvanced from "@/assets/tajweed-advanced.jpg";
 import { RecitersSection } from "@/components/ReciterSection";
 import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
 import { DailyAyah } from "@/components/DailyAyah";
+import { SiteNav } from "@/components/SiteNav";
+import { BookOpen, MessageSquare, Mic, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,33 +30,32 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <div className="min-h-screen text-slate-200 font-ui selection:bg-amber-500/30">
-      {/* Navigation */}
-      <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
-          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">
-            Love Qran
-          </span>
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-            <a href="#quran" className="hover:text-amber-400 transition-colors">قرآن مجید</a>
-            <a href="#tajweed" className="hover:text-amber-400 transition-colors">تجوید</a>
-            <a href="#hifz" className="hover:text-amber-400 transition-colors">حفظ ٹریکر</a>
-            <a href="#languages" className="hover:text-amber-400 transition-colors">لیکچرز</a>
-            <a href="#reciters" className="hover:text-amber-400 transition-colors">قراء</a>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block leading-tight">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Next Prayer</p>
-              <p className="text-sm text-amber-400 font-semibold">Asr • 4:45 PM</p>
-            </div>
-            <a
-              href="#languages"
-              className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-all shadow-[0_0_20px_rgba(5,150,105,0.4)] border border-emerald-400/30"
-            >
-              سیکھنا شروع کریں
-            </a>
-          </div>
-        </div>
-      </nav>
+      <SiteNav />
+
+      {/* Feature shortcuts */}
+      <section className="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Link to="/quran" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+          <BookOpen className="size-6 text-amber-400 mb-3" />
+          <p className="font-bold text-white">Full Quran</p>
+          <p className="text-xs text-slate-400 mt-1">114 surahs • audio • bookmarks</p>
+        </Link>
+        <Link to="/chat" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+          <MessageSquare className="size-6 text-amber-400 mb-3" />
+          <p className="font-bold text-white">AI Teacher</p>
+          <p className="text-xs text-slate-400 mt-1">Quran, Tafsir, Tajweed Q&amp;A</p>
+        </Link>
+        <Link to="/chat" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+          <Mic className="size-6 text-amber-400 mb-3" />
+          <p className="font-bold text-white">Tajweed Coach</p>
+          <p className="text-xs text-slate-400 mt-1">Ask for pronunciation help</p>
+        </Link>
+        <Link to="/auth" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+          <Trophy className="size-6 text-amber-400 mb-3" />
+          <p className="font-bold text-white">Track Hifz</p>
+          <p className="text-xs text-slate-400 mt-1">Sign in to save progress</p>
+        </Link>
+      </section>
+
 
       <main className="max-w-7xl mx-auto px-6 py-12 pb-32">
         <h1 className="sr-only">Love Qran — Learn the Quran</h1>
