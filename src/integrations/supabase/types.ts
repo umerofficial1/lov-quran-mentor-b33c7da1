@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookmarks: {
+        Row: {
+          ayah: number
+          created_at: string
+          id: string
+          note: string | null
+          surah: number
+          user_id: string
+        }
+        Insert: {
+          ayah: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          surah: number
+          user_id: string
+        }
+        Update: {
+          ayah?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          surah?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hifz_progress: {
+        Row: {
+          id: string
+          last_revised_at: string | null
+          percent: number
+          status: string
+          streak_days: number
+          surah: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_revised_at?: string | null
+          percent?: number
+          status?: string
+          streak_days?: number
+          surah: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_revised_at?: string | null
+          percent?: number
+          status?: string
+          streak_days?: number
+          surah?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      last_read: {
+        Row: {
+          ayah: number
+          surah: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ayah: number
+          surah: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ayah?: number
+          surah?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
