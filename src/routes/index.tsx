@@ -6,7 +6,8 @@ import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
 import { DailyAyah } from "@/components/DailyAyah";
 import { SiteNav } from "@/components/SiteNav";
-import { BookOpen, MessageSquare, Mic, Trophy } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
+import { BookOpen, MessageSquare, Compass, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,15 +45,15 @@ function Home() {
           <p className="font-bold text-white">AI Teacher</p>
           <p className="text-xs text-slate-400 mt-1">Quran, Tafsir, Tajweed Q&amp;A</p>
         </Link>
-        <Link to="/chat" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
-          <Mic className="size-6 text-amber-400 mb-3" />
-          <p className="font-bold text-white">Tajweed Coach</p>
-          <p className="text-xs text-slate-400 mt-1">Ask for pronunciation help</p>
+        <Link to="/tools" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+          <Compass className="size-6 text-amber-400 mb-3" />
+          <p className="font-bold text-white">Islamic Tools</p>
+          <p className="text-xs text-slate-400 mt-1">Prayer • Qibla • Tasbeeh</p>
         </Link>
-        <Link to="/auth" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
+        <Link to="/hifz" className="group p-5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-400/30 hover:bg-white/10 transition-all">
           <Trophy className="size-6 text-amber-400 mb-3" />
-          <p className="font-bold text-white">Track Hifz</p>
-          <p className="text-xs text-slate-400 mt-1">Sign in to save progress</p>
+          <p className="font-bold text-white">Hifz Tracker</p>
+          <p className="text-xs text-slate-400 mt-1">Track memorization • streaks</p>
         </Link>
       </section>
 
@@ -252,6 +253,7 @@ function Home() {
           </div>
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 }
