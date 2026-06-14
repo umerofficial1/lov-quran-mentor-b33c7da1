@@ -1,0 +1,12 @@
+{
+  "name": "Love Qran — Learn the Quran",
+  "short_name": "Love Qran",
+  "description": "Learn, recite and memorize the Holy Quran with audio, translations, and an AI teacher.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#042f2e",
+  "theme_color": "#042f2e",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}

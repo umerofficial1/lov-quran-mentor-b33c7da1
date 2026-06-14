@@ -9,16 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as QuranRouteImport } from './routes/quran'
+import { Route as HifzRouteImport } from './routes/hifz'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuranRoute = QuranRouteImport.update({
   id: '/quran',
   path: '/quran',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HifzRoute = HifzRouteImport.update({
+  id: '/hifz',
+  path: '/hifz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -51,7 +69,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/dashboard': typeof DashboardRoute
+  '/hifz': typeof HifzRoute
   '/quran': typeof QuranRouteWithChildren
+  '/tools': typeof ToolsRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
 }
@@ -59,7 +80,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/dashboard': typeof DashboardRoute
+  '/hifz': typeof HifzRoute
   '/quran': typeof QuranRouteWithChildren
+  '/tools': typeof ToolsRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
 }
@@ -68,7 +92,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/dashboard': typeof DashboardRoute
+  '/hifz': typeof HifzRoute
   '/quran': typeof QuranRouteWithChildren
+  '/tools': typeof ToolsRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
 }
@@ -78,17 +105,32 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
+    | '/dashboard'
+    | '/hifz'
     | '/quran'
+    | '/tools'
     | '/api/chat'
     | '/quran/$surahId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/quran' | '/api/chat' | '/quran/$surahId'
+  to:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/dashboard'
+    | '/hifz'
+    | '/quran'
+    | '/tools'
+    | '/api/chat'
+    | '/quran/$surahId'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/chat'
+    | '/dashboard'
+    | '/hifz'
     | '/quran'
+    | '/tools'
     | '/api/chat'
     | '/quran/$surahId'
   fileRoutesById: FileRoutesById
@@ -97,17 +139,41 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
+  DashboardRoute: typeof DashboardRoute
+  HifzRoute: typeof HifzRoute
   QuranRoute: typeof QuranRouteWithChildren
+  ToolsRoute: typeof ToolsRoute
   ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quran': {
       id: '/quran'
       path: '/quran'
       fullPath: '/quran'
       preLoaderRoute: typeof QuranRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hifz': {
+      id: '/hifz'
+      path: '/hifz'
+      fullPath: '/hifz'
+      preLoaderRoute: typeof HifzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -162,7 +228,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
+  DashboardRoute: DashboardRoute,
+  HifzRoute: HifzRoute,
   QuranRoute: QuranRouteWithChildren,
+  ToolsRoute: ToolsRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
