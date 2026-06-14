@@ -221,7 +221,7 @@ function SurahReader() {
                 {v.translations?.[0]?.text && (
                   <p
                     className="text-slate-300 mt-4 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: v.translations[0].text }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(v.translations[0].text) }}
                   />
                 )}
               </article>

@@ -69,6 +69,12 @@ function ChatPage() {
           <p className="text-slate-400 text-sm mt-1">Ask about the Quran, Tajweed, Tafsir or any Islamic question</p>
         </div>
 
+        {!loading && !user && (
+          <div className="mb-6 rounded-2xl bg-amber-500/10 border border-amber-400/30 p-4 text-center text-amber-100 text-sm">
+            Please <Link to="/auth" className="font-semibold underline">sign in</Link> to chat with the AI Teacher.
+          </div>
+        )}
+
         <div className="flex-1 space-y-4 mb-4 min-h-[40vh]">
           {messages.length === 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
