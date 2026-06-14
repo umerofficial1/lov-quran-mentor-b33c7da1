@@ -5,6 +5,7 @@ import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Pause, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import DOMPurify from "dompurify";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => ({
