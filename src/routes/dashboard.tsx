@@ -89,7 +89,7 @@ function Dashboard() {
                 <div>
                   <p className="text-amber-300 text-xs font-bold uppercase">Last read</p>
                   <p className="text-white font-bold mt-1">
-                    {SURAHS.find((s) => s.id === lastRead.surah)?.name_en ?? `Surah ${lastRead.surah}`}
+                    {SURAHS.find((s) => s.n === lastRead.surah)?.nameAr ?? `Surah ${lastRead.surah}`}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">Ayah {lastRead.ayah}</p>
                 </div>
@@ -121,7 +121,7 @@ function Dashboard() {
                       className="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-white/5"
                     >
                       <span className="text-sm text-slate-200">
-                        {SURAHS.find((s) => s.id === b.surah)?.name_en ?? `Surah ${b.surah}`}
+                        {SURAHS.find((s) => s.n === b.surah)?.nameAr ?? `Surah ${b.surah}`}
                         <span className="text-slate-500"> · Ayah {b.ayah}</span>
                       </span>
                       <span className="text-amber-300 text-xs font-bold">Open</span>
@@ -148,7 +148,7 @@ function Dashboard() {
                 <li key={h.surah}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-slate-300 font-semibold">
-                      {SURAHS.find((s) => s.id === h.surah)?.name_en ?? `Surah ${h.surah}`}
+                      {SURAHS.find((s) => s.n === h.surah)?.nameAr ?? `Surah ${h.surah}`}
                     </span>
                     <span className="text-amber-300 font-bold">{h.percent}%</span>
                   </div>
