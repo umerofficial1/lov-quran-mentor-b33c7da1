@@ -5,6 +5,7 @@ import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Pause, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import DOMPurify from "dompurify";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => ({
@@ -221,7 +222,7 @@ function SurahReader() {
                 {v.translations?.[0]?.text && (
                   <p
                     className="text-slate-300 mt-4 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: v.translations[0].text }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(v.translations[0].text) }}
                   />
                 )}
               </article>
