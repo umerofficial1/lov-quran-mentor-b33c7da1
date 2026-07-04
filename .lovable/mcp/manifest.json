@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://rgtvkiljelmjjlgpjudw.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "love-qran-mcp",
+      "version": "0.1.0",
+      "title": "Love Qran"
+    },
+    "tools": [
+      {
+        "name": "search_surahs",
+        "title": "Search Quran surahs",
+        "description": "Search the 114 surahs of the Quran by number or by name (Arabic, Urdu, or transliteration substring).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Substring or surah number to filter by. Omit to return all 114.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max results (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 114
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_ayah",
+        "title": "Get a Quran ayah",
+        "description": "Fetch a single ayah from the Quran.com API with Arabic text and an English translation (Saheeh International).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "surah": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 114,
+              "description": "Surah number (1-114)."
+            },
+            "ayah": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "description": "Ayah number within the surah."
+            }
+          },
+          "required": [
+            "surah",
+            "ayah"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_bookmarks",
+        "title": "List my Quran bookmarks",
+        "description": "List the signed-in user's saved ayah bookmarks in Love Qran.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Max results (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_bookmark",
+        "title": "Add a Quran bookmark",
+        "description": "Save an ayah bookmark for the signed-in user with an optional note.",
+        "annotations": {
+          "readOnlyHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "surah": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 114
+            },
+            "ayah": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "surah",
+            "ayah"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_hifz_progress",
+        "title": "Get my Hifz (memorization) progress",
+        "description": "Returns the signed-in user's per-surah Hifz progress from Love Qran.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
