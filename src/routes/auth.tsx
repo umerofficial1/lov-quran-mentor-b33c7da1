@@ -6,11 +6,19 @@ import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Love Qran" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : undefined,
+  }),
   component: AuthPage,
 });
 
+function isSafeRelative(p: string | undefined): p is string {
+  return !!p && p.startsWith("/") && !p.startsWith("//");
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,11 +26,24 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
+  const goNext = () => {
+    if (isSafeRelative(next)) {
+      window.location.assign(next);
+    } else {
+      navigate({ to: "/" });
+    }
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) goNext();
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const returnUrl = isSafeRelative(next)
+    ? `${window.location.origin}${next}`
+    : window.location.origin;
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +55,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: returnUrl,
             data: { full_name: name },
           },
         });
@@ -43,7 +64,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/" });
+      goNext();
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -55,7 +76,7 @@ function AuthPage() {
     setBusy(true);
     setErr(null);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: returnUrl,
     });
     if (result.error) {
       setErr(result.error instanceof Error ? result.error.message : "Google sign-in failed");
@@ -63,7 +84,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    goNext();
   };
 
   return (
