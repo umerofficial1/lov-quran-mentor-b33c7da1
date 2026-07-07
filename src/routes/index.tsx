@@ -4,7 +4,9 @@ import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
-import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play } from "lucide-react";
+import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useReadingStats, formatDuration } from "@/hooks/use-reading-stats";
 
 export const Route = createFileRoute("/")({
   head: () => ({
