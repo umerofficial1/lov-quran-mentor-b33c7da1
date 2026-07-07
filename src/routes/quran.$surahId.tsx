@@ -80,10 +80,24 @@ function SurahReader() {
     setBookmarks(next);
   };
 
-  const togglePlay = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (a.paused) a.play(); else a.pause();
+  const versesData = verses.data ?? [];
+
+  const buildQueue = () =>
+    versesData.map((v) => ({
+      surah: id,
+      ayah: v.verse_number,
+      page: v.page_number ?? null,
+    }));
+
+  const playSurah = () => {
+    if (!versesData.length) return;
+    void audio.loadQueue(buildQueue(), 0, true);
+  };
+  const playFromKey = (verseKey: string) => {
+    if (!versesData.length) return;
+    const q = buildQueue();
+    const idx = q.findIndex((it) => `${it.surah}:${it.ayah}` === verseKey);
+    void audio.loadQueue(q, Math.max(0, idx), true);
   };
 
   const prev = useMemo(() => (id > 1 ? id - 1 : null), [id]);
@@ -127,16 +141,16 @@ function SurahReader() {
         </div>
 
         <div className="flex flex-wrap gap-3 items-center mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
-          <label className="text-xs text-slate-400 font-bold uppercase tracking-widest">Reciter</label>
-          <select
-            value={reciter}
-            onChange={(e) => setReciter(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50"
+          <button
+            onClick={playSurah}
+            disabled={!versesData.length}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-400 text-black text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
           >
-            {RECITERS.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
-            ))}
-          </select>
+            <Play className="size-4" /> Play surah
+          </button>
+          <span className="text-xs text-slate-400">
+            Reciter: <span className="text-amber-300 font-bold">{audio.reciter.name}</span>
+          </span>
           <label className="text-xs text-slate-400 font-bold uppercase tracking-widest ml-2">Translation</label>
           <select
             value={translation}
@@ -148,14 +162,9 @@ function SurahReader() {
             <option value={97}>Urdu — Fateh Muhammad Jalandhari</option>
             <option value={158}>Urdu — Maududi</option>
           </select>
-          <button
-            onClick={() => setLoop((l) => !l)}
-            className={`ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-all ${
-              loop ? "bg-amber-500/20 border-amber-400/40 text-amber-300" : "bg-white/5 border-white/10 text-slate-300"
-            }`}
-          >
-            <Repeat className="size-4" /> Loop
-          </button>
+          <span className="ml-auto text-[11px] text-slate-500">
+            Choose reciter, speed, repeat & offline cache in the audio bar below.
+          </span>
         </div>
 
         {verses.isLoading && (
@@ -171,7 +180,7 @@ function SurahReader() {
         )}
 
         <div className="space-y-4">
-          {verses.data?.map((v) => (
+          {versesData.map((v) => (
             <VerseCard
               key={v.id}
               v={v}
