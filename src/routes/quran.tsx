@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, BookOpen } from "lucide-react";
+import { QuranJumpBar } from "@/components/QuranJumpBar";
 
 export const Route = createFileRoute("/quran")({
   head: () => ({
@@ -61,6 +62,10 @@ function QuranIndex() {
               <BookOpen className="size-4" /> Continue reading — Surah {last.surah}:{last.ayah}
             </Link>
           )}
+        </div>
+
+        <div className="mb-6">
+          <QuranJumpBar />
         </div>
 
         <div className="relative mb-8">

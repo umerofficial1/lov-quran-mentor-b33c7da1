@@ -89,6 +89,8 @@
   .font-arabic { font-family: var(--font-arabic); }
   .font-urdu { font-family: var(--font-urdu); }
   .font-ui { font-family: var(--font-ui); }
+  .font-uthmani { font-family: "Amiri Quran", "Amiri", "Scheherazade New", serif; font-feature-settings: "calt", "liga"; }
+  .font-indopak { font-family: "Noto Naskh Arabic", "Scheherazade New", "Amiri", serif; }
 
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
 }

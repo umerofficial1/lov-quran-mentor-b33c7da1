@@ -23,6 +23,9 @@ import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as QuranPagePageIdRouteImport } from './routes/quran.page.$pageId'
+import { Route as QuranJuzJuzIdRouteImport } from './routes/quran.juz.$juzId'
+import { Route as QuranHizbHizbIdRouteImport } from './routes/quran.hizb.$hizbId'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -97,6 +100,21 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const QuranPagePageIdRoute = QuranPagePageIdRouteImport.update({
+  id: '/page/$pageId',
+  path: '/page/$pageId',
+  getParentRoute: () => QuranRoute,
+} as any)
+const QuranJuzJuzIdRoute = QuranJuzJuzIdRouteImport.update({
+  id: '/juz/$juzId',
+  path: '/juz/$juzId',
+  getParentRoute: () => QuranRoute,
+} as any)
+const QuranHizbHizbIdRoute = QuranHizbHizbIdRouteImport.update({
+  id: '/hizb/$hizbId',
+  path: '/hizb/$hizbId',
+  getParentRoute: () => QuranRoute,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -125,6 +143,9 @@ export interface FileRoutesByFullPath {
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/quran/hizb/$hizbId': typeof QuranHizbHizbIdRoute
+  '/quran/juz/$juzId': typeof QuranJuzJuzIdRoute
+  '/quran/page/$pageId': typeof QuranPagePageIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +163,9 @@ export interface FileRoutesByTo {
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/quran/hizb/$hizbId': typeof QuranHizbHizbIdRoute
+  '/quran/juz/$juzId': typeof QuranJuzJuzIdRoute
+  '/quran/page/$pageId': typeof QuranPagePageIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +185,9 @@ export interface FileRoutesById {
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/quran/hizb/$hizbId': typeof QuranHizbHizbIdRoute
+  '/quran/juz/$juzId': typeof QuranJuzJuzIdRoute
+  '/quran/page/$pageId': typeof QuranPagePageIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +207,9 @@ export interface FileRouteTypes {
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/quran/hizb/$hizbId'
+    | '/quran/juz/$juzId'
+    | '/quran/page/$pageId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +227,9 @@ export interface FileRouteTypes {
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/quran/hizb/$hizbId'
+    | '/quran/juz/$juzId'
+    | '/quran/page/$pageId'
   id:
     | '__root__'
     | '/'
@@ -215,6 +248,9 @@ export interface FileRouteTypes {
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/quran/hizb/$hizbId'
+    | '/quran/juz/$juzId'
+    | '/quran/page/$pageId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -333,6 +369,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quran/page/$pageId': {
+      id: '/quran/page/$pageId'
+      path: '/page/$pageId'
+      fullPath: '/quran/page/$pageId'
+      preLoaderRoute: typeof QuranPagePageIdRouteImport
+      parentRoute: typeof QuranRoute
+    }
+    '/quran/juz/$juzId': {
+      id: '/quran/juz/$juzId'
+      path: '/juz/$juzId'
+      fullPath: '/quran/juz/$juzId'
+      preLoaderRoute: typeof QuranJuzJuzIdRouteImport
+      parentRoute: typeof QuranRoute
+    }
+    '/quran/hizb/$hizbId': {
+      id: '/quran/hizb/$hizbId'
+      path: '/hizb/$hizbId'
+      fullPath: '/quran/hizb/$hizbId'
+      preLoaderRoute: typeof QuranHizbHizbIdRouteImport
+      parentRoute: typeof QuranRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -365,10 +422,16 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface QuranRouteChildren {
   QuranSurahIdRoute: typeof QuranSurahIdRoute
+  QuranHizbHizbIdRoute: typeof QuranHizbHizbIdRoute
+  QuranJuzJuzIdRoute: typeof QuranJuzJuzIdRoute
+  QuranPagePageIdRoute: typeof QuranPagePageIdRoute
 }
 
 const QuranRouteChildren: QuranRouteChildren = {
   QuranSurahIdRoute: QuranSurahIdRoute,
+  QuranHizbHizbIdRoute: QuranHizbHizbIdRoute,
+  QuranJuzJuzIdRoute: QuranJuzJuzIdRoute,
+  QuranPagePageIdRoute: QuranPagePageIdRoute,
 }
 
 const QuranRouteWithChildren = QuranRoute._addFileChildren(QuranRouteChildren)
