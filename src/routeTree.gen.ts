@@ -14,6 +14,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -53,6 +54,11 @@ const QuranRoute = QuranRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
+    | '/learn'
     | '/mcp'
     | '/quran'
     | '/reset-password'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
+    | '/learn'
     | '/mcp'
     | '/quran'
     | '/reset-password'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/chat'
+    | '/learn'
     | '/mcp'
     | '/quran'
     | '/reset-password'
@@ -270,6 +282,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
+  LearnRoute: typeof LearnRoute
   McpRoute: typeof McpRoute
   QuranRoute: typeof QuranRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -461,6 +481,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
+  LearnRoute: LearnRoute,
   McpRoute: McpRoute,
   QuranRoute: QuranRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
