@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -32,6 +33,11 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/quran'
     | '/reset-password'
+    | '/search'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/quran'
     | '/reset-password'
+    | '/search'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/quran'
     | '/reset-password'
+    | '/search'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   QuranRoute: typeof QuranRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SearchRoute: typeof SearchRoute
   ToolsRoute: typeof ToolsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -276,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -444,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   QuranRoute: QuranRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
+  SearchRoute: SearchRoute,
   ToolsRoute: ToolsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
