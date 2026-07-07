@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SURAHS } from "@/lib/surahs";
 import { Plus, Trash2, Search } from "lucide-react";
 
-export const Route = createFileRoute("/hifz")({
+export const Route = createFileRoute("/_authenticated/hifz")({
   head: () => ({
     meta: [
       { title: "Hifz Tracker — Verse Wise Mentor" },

@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { SURAHS } from "@/lib/surahs";
 import { BookOpen, Bookmark, Flame, Sparkles, Trophy } from "lucide-react";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Your Dashboard — Verse Wise Mentor" },

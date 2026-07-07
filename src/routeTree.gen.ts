@@ -13,13 +13,13 @@ import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as McpRouteImport } from './routes/mcp'
-import { Route as HifzRouteImport } from './routes/hifz'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -45,16 +45,6 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HifzRoute = HifzRouteImport.update({
-  id: '/hifz',
-  path: '/hifz',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -78,6 +68,16 @@ const QuranSurahIdRoute = QuranSurahIdRouteImport.update({
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedHifzRoute = AuthenticatedHifzRouteImport.update({
+  id: '/_authenticated/hifz',
+  path: '/hifz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/_authenticated/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
@@ -108,14 +108,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
-  '/dashboard': typeof DashboardRoute
-  '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -125,14 +125,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
-  '/dashboard': typeof DashboardRoute
-  '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -143,14 +143,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
-  '/dashboard': typeof DashboardRoute
-  '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -162,14 +162,14 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
-    | '/dashboard'
-    | '/hifz'
     | '/mcp'
     | '/quran'
     | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/dashboard'
+    | '/hifz'
     | '/api/chat'
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
@@ -179,14 +179,14 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
-    | '/dashboard'
-    | '/hifz'
     | '/mcp'
     | '/quran'
     | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/dashboard'
+    | '/hifz'
     | '/api/chat'
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
@@ -196,14 +196,14 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
-    | '/dashboard'
-    | '/hifz'
     | '/mcp'
     | '/quran'
     | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/hifz'
     | '/api/chat'
     | '/quran/$surahId'
     | '/.lovable/oauth/consent'
@@ -214,14 +214,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
-  DashboardRoute: typeof DashboardRoute
-  HifzRoute: typeof HifzRoute
   McpRoute: typeof McpRoute
   QuranRoute: typeof QuranRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   ToolsRoute: typeof ToolsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHifzRoute: typeof AuthenticatedHifzRoute
   ApiChatRoute: typeof ApiChatRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -257,20 +257,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hifz': {
-      id: '/hifz'
-      path: '/hifz'
-      fullPath: '/hifz'
-      preLoaderRoute: typeof HifzRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -304,6 +290,20 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/hifz': {
+      id: '/_authenticated/hifz'
+      path: '/hifz'
+      fullPath: '/hifz'
+      preLoaderRoute: typeof AuthenticatedHifzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
@@ -351,8 +351,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
-  DashboardRoute: DashboardRoute,
-  HifzRoute: HifzRoute,
   McpRoute: McpRoute,
   QuranRoute: QuranRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -360,6 +358,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHifzRoute: AuthenticatedHifzRoute,
   ApiChatRoute: ApiChatRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
