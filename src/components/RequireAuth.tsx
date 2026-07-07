@@ -15,7 +15,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      const next = encodeURIComponent(location.pathname + location.searchStr);
+      const next = location.pathname + (location.searchStr ?? "");
       navigate({ to: "/auth", search: { next } as never, replace: true });
     }
   }, [loading, user, location.pathname, location.searchStr, navigate]);
