@@ -1,17 +1,18 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { Play, Pause, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { fetchSurahVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => {
@@ -29,48 +30,19 @@ export const Route = createFileRoute("/quran/$surahId")({
   component: SurahReader,
 });
 
-const RECITERS = [
-  { id: 7, name: "Mishary Alafasy" },
-  { id: 1, name: "AbdulBaset (Mujawwad)" },
-  { id: 2, name: "AbdulBaset (Murattal)" },
-  { id: 3, name: "Abdur-Rahman as-Sudais" },
-  { id: 4, name: "Abu Bakr al-Shatri" },
-  { id: 5, name: "Hani ar-Rifai" },
-  { id: 6, name: "Mahmoud Khalil Al-Husary" },
-  { id: 9, name: "Mohamed Siddiq al-Minshawi" },
-  { id: 10, name: "Maher al-Muaiqly" },
-];
-
-async function fetchAudio(reciterId: number, surahId: number) {
-  const res = await fetch(
-    `https://api.quran.com/api/v4/chapter_recitations/${reciterId}/${surahId}`,
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.audio_file?.audio_url as string | undefined;
-}
-
 function SurahReader() {
   const { surahId } = useParams({ from: "/quran/$surahId" });
   const id = Math.max(1, Math.min(114, Number(surahId) || 1));
   const surah = SURAHS.find((s) => s.n === id)!;
-  const [reciter, setReciter] = useState(7);
   const [translation, setTranslation] = useState(131);
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [userId, setUserId] = useState<string | null>(null);
-  const [loop, setLoop] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playing, setPlaying] = useState(false);
   const { prefs, update } = useQuranPrefs();
+  const audio = useAudioPlayer();
 
   const verses = useQuery({
     queryKey: ["surah-v2", id, translation],
     queryFn: () => fetchSurahVerses(id, translation),
-  });
-
-  const audioUrl = useQuery({
-    queryKey: ["audio", reciter, id],
-    queryFn: () => fetchAudio(reciter, id),
   });
 
   useEffect(() => {
@@ -109,10 +81,24 @@ function SurahReader() {
     setBookmarks(next);
   };
 
-  const togglePlay = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (a.paused) a.play(); else a.pause();
+  const versesData = verses.data ?? [];
+
+  const buildQueue = () =>
+    versesData.map((v) => ({
+      surah: id,
+      ayah: v.verse_number,
+      page: v.page_number ?? null,
+    }));
+
+  const playSurah = () => {
+    if (!versesData.length) return;
+    void audio.loadQueue(buildQueue(), 0, true);
+  };
+  const playFromKey = (verseKey: string) => {
+    if (!versesData.length) return;
+    const q = buildQueue();
+    const idx = q.findIndex((it) => `${it.surah}:${it.ayah}` === verseKey);
+    void audio.loadQueue(q, Math.max(0, idx), true);
   };
 
   const prev = useMemo(() => (id > 1 ? id - 1 : null), [id]);
@@ -156,16 +142,16 @@ function SurahReader() {
         </div>
 
         <div className="flex flex-wrap gap-3 items-center mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
-          <label className="text-xs text-slate-400 font-bold uppercase tracking-widest">Reciter</label>
-          <select
-            value={reciter}
-            onChange={(e) => setReciter(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-500/50"
+          <button
+            onClick={playSurah}
+            disabled={!versesData.length}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-400 text-black text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
           >
-            {RECITERS.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
-            ))}
-          </select>
+            <Play className="size-4" /> Play surah
+          </button>
+          <span className="text-xs text-slate-400">
+            Reciter: <span className="text-amber-300 font-bold">{audio.reciter.name}</span>
+          </span>
           <label className="text-xs text-slate-400 font-bold uppercase tracking-widest ml-2">Translation</label>
           <select
             value={translation}
@@ -177,14 +163,9 @@ function SurahReader() {
             <option value={97}>Urdu — Fateh Muhammad Jalandhari</option>
             <option value={158}>Urdu — Maududi</option>
           </select>
-          <button
-            onClick={() => setLoop((l) => !l)}
-            className={`ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-all ${
-              loop ? "bg-amber-500/20 border-amber-400/40 text-amber-300" : "bg-white/5 border-white/10 text-slate-300"
-            }`}
-          >
-            <Repeat className="size-4" /> Loop
-          </button>
+          <span className="ml-auto text-[11px] text-slate-500">
+            Choose reciter, speed, repeat & offline cache in the audio bar below.
+          </span>
         </div>
 
         {verses.isLoading && (
@@ -200,7 +181,7 @@ function SurahReader() {
         )}
 
         <div className="space-y-4">
-          {verses.data?.map((v) => (
+          {versesData.map((v) => (
             <VerseCard
               key={v.id}
               v={v}
@@ -208,40 +189,13 @@ function SurahReader() {
               isBookmarked={bookmarks.has(`${id}:${v.verse_number}`)}
               onToggleBookmark={() => toggleBookmark(v.verse_number)}
               onVisible={markRead}
+              onPlayFrom={playFromKey}
             />
           ))}
         </div>
       </main>
         )}
       </ReadingChrome>
-
-      {audioUrl.data && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-2xl z-40">
-          <div className="bg-emerald-950/90 backdrop-blur-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] rounded-2xl p-4 flex items-center gap-4">
-            <button
-              onClick={togglePlay}
-              className="size-12 rounded-full bg-white text-emerald-950 grid place-items-center shadow-lg hover:scale-105 transition-transform"
-              aria-label={playing ? "Pause" : "Play"}
-            >
-              {playing ? <Pause className="size-5" /> : <Play className="size-5 ml-0.5" />}
-            </button>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Now Playing</p>
-              <p className="text-sm font-bold text-white truncate" dir="rtl">{surah.nameAr}</p>
-            </div>
-            <audio
-              ref={audioRef}
-              src={audioUrl.data}
-              loop={loop}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onEnded={() => setPlaying(false)}
-              controls
-              className="hidden sm:block h-10"
-            />
-          </div>
-        </div>
-      )}
 
       <QuranSettings prefs={prefs} update={update} />
       <MobileNav />
