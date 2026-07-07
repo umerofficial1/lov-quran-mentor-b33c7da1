@@ -29,48 +29,19 @@ export const Route = createFileRoute("/quran/$surahId")({
   component: SurahReader,
 });
 
-const RECITERS = [
-  { id: 7, name: "Mishary Alafasy" },
-  { id: 1, name: "AbdulBaset (Mujawwad)" },
-  { id: 2, name: "AbdulBaset (Murattal)" },
-  { id: 3, name: "Abdur-Rahman as-Sudais" },
-  { id: 4, name: "Abu Bakr al-Shatri" },
-  { id: 5, name: "Hani ar-Rifai" },
-  { id: 6, name: "Mahmoud Khalil Al-Husary" },
-  { id: 9, name: "Mohamed Siddiq al-Minshawi" },
-  { id: 10, name: "Maher al-Muaiqly" },
-];
-
-async function fetchAudio(reciterId: number, surahId: number) {
-  const res = await fetch(
-    `https://api.quran.com/api/v4/chapter_recitations/${reciterId}/${surahId}`,
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.audio_file?.audio_url as string | undefined;
-}
-
 function SurahReader() {
   const { surahId } = useParams({ from: "/quran/$surahId" });
   const id = Math.max(1, Math.min(114, Number(surahId) || 1));
   const surah = SURAHS.find((s) => s.n === id)!;
-  const [reciter, setReciter] = useState(7);
   const [translation, setTranslation] = useState(131);
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [userId, setUserId] = useState<string | null>(null);
-  const [loop, setLoop] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playing, setPlaying] = useState(false);
   const { prefs, update } = useQuranPrefs();
+  const audio = useAudioPlayer();
 
   const verses = useQuery({
     queryKey: ["surah-v2", id, translation],
     queryFn: () => fetchSurahVerses(id, translation),
-  });
-
-  const audioUrl = useQuery({
-    queryKey: ["audio", reciter, id],
-    queryFn: () => fetchAudio(reciter, id),
   });
 
   useEffect(() => {
