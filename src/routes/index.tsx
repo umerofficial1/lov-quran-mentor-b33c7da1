@@ -4,7 +4,9 @@ import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
-import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play } from "lucide-react";
+import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useReadingStats, formatDuration } from "@/hooks/use-reading-stats";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -132,15 +134,8 @@ function Home() {
             </Link>
           </div>
 
-          <div className="space-y-5">
-            <h4 className="text-[#C9A24C] font-display text-lg border-b border-[#C9A24C]/20 pb-2">Your Journey</h4>
-            <ProgressBar label="Surah Al-Baqarah · Tajweed" value={68} />
-            <ProgressBar label="Hifz · Juz 30" value={42} />
-            <ProgressBar label="Tafsir Roots" value={21} />
-            <Link to="/dashboard" className="inline-flex items-center gap-2 text-white/60 hover:text-[#1FB6B0] text-xs uppercase tracking-widest transition-colors">
-              View Full Progress <ArrowRight className="size-3" />
-            </Link>
-          </div>
+          <JourneyPanel />
+
 
           <div className="bg-[#0F1E3D]/50 border border-white/10 p-6">
             <div className="flex items-center justify-between mb-4">
@@ -293,14 +288,78 @@ function Home() {
 
 function ProgressBar({ label, value }: { label: string; value: number }) {
   return (
-    <div className="group cursor-pointer">
+    <div className="group cursor-default">
       <div className="flex justify-between text-xs mb-1.5">
         <span className="text-white/60">{label}</span>
         <span className="text-[#1FB6B0] tabular-nums">{value}%</span>
       </div>
       <div className="h-1 w-full bg-white/10 overflow-hidden">
-        <div className="h-full bg-[#1FB6B0] transition-all group-hover:bg-[#C9A24C]" style={{ width: `${value}%` }} />
+        <div className="h-full bg-[#1FB6B0] transition-all group-hover:bg-[#C9A24C]" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
       </div>
+    </div>
+  );
+}
+
+function JourneyPanel() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="space-y-5">
+        <h4 className="text-[#C9A24C] font-display text-lg border-b border-[#C9A24C]/20 pb-2">Your Journey</h4>
+        <div className="space-y-4 animate-pulse">
+          <div className="h-3 bg-white/5 rounded" />
+          <div className="h-3 bg-white/5 rounded" />
+          <div className="h-3 bg-white/5 rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-5 relative">
+        <h4 className="text-[#C9A24C] font-display text-lg border-b border-[#C9A24C]/20 pb-2 flex items-center gap-2">
+          Your Journey <Lock className="size-3.5 text-white/40" />
+        </h4>
+        <div className="space-y-4 opacity-40 select-none pointer-events-none">
+          <ProgressBar label="Quran read" value={0} />
+          <ProgressBar label="Hifz · Juz 30" value={0} />
+          <ProgressBar label="Reading time" value={0} />
+        </div>
+        <div className="p-5 bg-[#0F1E3D]/60 border border-[#C9A24C]/20">
+          <p className="text-sm text-white/70 leading-relaxed mb-4">
+            Sign in to track your recitation, hifz and reading time across devices.
+          </p>
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] text-[11px] font-semibold uppercase tracking-widest transition-colors"
+          >
+            Sign in to unlock <ArrowRight className="size-3" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return <SignedInJourney />;
+}
+
+function SignedInJourney() {
+  const { percent, uniqueRead, totalAyahs, stats } = useReadingStats();
+  const timeMin = Math.round(stats.totalMs / 60000);
+  const timePct = Math.min(100, (timeMin / 600) * 100); // 10h baseline
+  const sessionsPct = Math.min(100, (stats.sessions / 30) * 100);
+
+  return (
+    <div className="space-y-5">
+      <h4 className="text-[#C9A24C] font-display text-lg border-b border-[#C9A24C]/20 pb-2">Your Journey</h4>
+      <ProgressBar label={`Quran read · ${uniqueRead}/${totalAyahs} ayat`} value={percent} />
+      <ProgressBar label={`Reading time · ${formatDuration(stats.totalMs)}`} value={timePct} />
+      <ProgressBar label={`Sessions · ${stats.sessions}`} value={sessionsPct} />
+      <Link to="/dashboard" className="inline-flex items-center gap-2 text-white/60 hover:text-[#1FB6B0] text-xs uppercase tracking-widest transition-colors">
+        View Full Progress <ArrowRight className="size-3" />
+      </Link>
     </div>
   );
 }
