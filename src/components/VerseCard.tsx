@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Bookmark, BookmarkCheck, Play, Pause } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 
 export type QuranVerse = {
   id: number;
