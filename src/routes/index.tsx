@@ -333,8 +333,13 @@ function CourseCard({
   meta: string;
   levelTone: "teal" | "gold";
 }) {
+  const slug = level.toLowerCase() as "beginner" | "intermediate" | "research";
   return (
-    <article className="group bg-[#0F1E3D] border border-white/5 hover:border-[#C9A24C]/40 transition-all">
+    <Link
+      to="/courses/$level"
+      params={{ level: slug }}
+      className="group block bg-[#0F1E3D] border border-white/5 hover:border-[#C9A24C]/40 transition-all"
+    >
       <div className="aspect-video bg-[#070C1F] relative overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F1E3D] via-transparent to-transparent" />
         <span className="font-arabic text-[10rem] text-white/10 leading-none select-none group-hover:text-[#1FB6B0]/25 transition-colors">
@@ -349,9 +354,14 @@ function CourseCard({
       <div className="p-7 space-y-4">
         <h3 className="text-xl font-display group-hover:text-[#C9A24C] transition-colors">{title}</h3>
         <p className="text-sm text-white/60 leading-relaxed">{desc}</p>
-        <div className="text-[10px] text-white/40 uppercase tracking-widest pt-2 border-t border-white/5">{meta}</div>
+        <div className="flex items-center justify-between text-[10px] uppercase tracking-widest pt-2 border-t border-white/5">
+          <span className="text-white/40">{meta}</span>
+          <span className="text-[#1FB6B0] group-hover:text-[#C9A24C] inline-flex items-center gap-1 transition-colors">
+            Start <ArrowRight className="size-3" />
+          </span>
+        </div>
       </div>
-    </article>
+    </Link>
   );
 }
 
