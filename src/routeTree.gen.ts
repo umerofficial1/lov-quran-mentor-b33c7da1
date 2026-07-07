@@ -13,6 +13,7 @@ import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RecitersRouteImport } from './routes/reciters'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -51,6 +52,11 @@ const SearchRoute = SearchRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecitersRoute = RecitersRouteImport.update({
+  id: '/reciters',
+  path: '/reciters',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
+  '/reciters': typeof RecitersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
+  '/reciters': typeof RecitersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
+  '/reciters': typeof RecitersRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/learn'
     | '/mcp'
+    | '/reciters'
     | '/reset-password'
     | '/search'
     | '/sitemap.xml'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/learn'
     | '/mcp'
+    | '/reciters'
     | '/reset-password'
     | '/search'
     | '/sitemap.xml'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/learn'
     | '/mcp'
+    | '/reciters'
     | '/reset-password'
     | '/search'
     | '/sitemap.xml'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   LearnRoute: typeof LearnRoute
   McpRoute: typeof McpRoute
+  RecitersRoute: typeof RecitersRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reciters': {
+      id: '/reciters'
+      path: '/reciters'
+      fullPath: '/reciters'
+      preLoaderRoute: typeof RecitersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -511,6 +531,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   LearnRoute: LearnRoute,
   McpRoute: McpRoute,
+  RecitersRoute: RecitersRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

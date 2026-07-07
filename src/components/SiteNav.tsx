@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles } from "lucide-react";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2 } from "lucide-react";
 
 export function SiteNav() {
   const { user } = useAuth();
@@ -58,6 +58,7 @@ export function SiteNav() {
           <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
           <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
           <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
+          <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
           <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
           {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
         </div>
