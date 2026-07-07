@@ -3,6 +3,8 @@ import DOMPurify from "dompurify";
 import { Bookmark, BookmarkCheck, Play, Pause } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { TafsirButton } from "@/components/TafsirPanel";
+import { WordByWord } from "@/components/WordByWord";
 
 export type QuranVerse = {
   id: number;
@@ -147,12 +149,18 @@ export function VerseCard({
         </p>
       )}
 
+      {prefs.wordByWord && <WordByWord verseKey={v.verse_key} />}
+
       {prefs.showTranslation && v.translations?.[0]?.text && (
         <p
           className="text-slate-300 mt-4 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(v.translations[0].text) }}
         />
       )}
+
+      <div className="mt-4 flex items-center gap-2">
+        <TafsirButton verseKey={v.verse_key} />
+      </div>
     </article>
   );
 }
