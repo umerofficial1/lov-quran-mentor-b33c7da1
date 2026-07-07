@@ -237,7 +237,7 @@ function ReciterCard({
   onPlay: (r: Reciter) => void;
 }) {
   const surah = SURAHS.find((s) => s.n === surahNum)!;
-  const hasMashq = mode === "mashq" ? Boolean(r.mashqServer) : true;
+  const usingFallback = mode === "mashq" && !r.mashqServer;
 
   return (
     <article className="group bg-white border border-emerald-deep/10 rounded-2xl overflow-hidden hover:border-gold-leaf/40 hover:shadow-lg transition-all flex flex-col">
@@ -248,7 +248,7 @@ function ReciterCard({
           {r.nameUr.split(" ")[0]}
         </p>
         <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest text-white bg-black/20 backdrop-blur px-2 py-1 rounded">
-          {mode === "hadr" ? "حدر" : "مشق"}
+          {mode === "hadr" ? "حدر" : usingFallback ? "حدر (متبادل)" : "مشق"}
         </span>
       </div>
 
@@ -259,26 +259,26 @@ function ReciterCard({
         <p className="text-sm font-semibold text-emerald-deep/80">{r.name}</p>
         <p className="text-xs text-emerald-deep/50 mb-4">{r.origin}</p>
 
-        <button
-          onClick={() => onPlay(r)}
-          disabled={!hasMashq}
-          className={
-            !hasMashq
-              ? "mt-auto w-full bg-stone-100 text-stone-400 py-2.5 rounded-lg text-sm font-bold cursor-not-allowed"
-              : isPlaying
-              ? "mt-auto w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
-              : "mt-auto w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
-          }
-        >
-          {!hasMashq ? (
-            <span>مشق دستیاب نہیں</span>
-          ) : (
-            <>
-              <span>{isPlaying ? "⏸" : "▶"}</span>
-              <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
-            </>
-          )}
-        </button>
+        <div className="mt-auto flex flex-col gap-2">
+          <button
+            onClick={() => onPlay(r)}
+            className={
+              isPlaying
+                ? "w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
+                : "w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
+            }
+          >
+            <span>{isPlaying ? "⏸" : "▶"}</span>
+            <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
+          </button>
+          <Link
+            to="/reciters"
+            className="w-full bg-gold-leaf/10 text-gold-leaf py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-leaf hover:text-white transition-colors"
+          >
+            <span>🎥</span>
+            <span dir="rtl">ویڈیو تلاوت دیکھیں</span>
+          </Link>
+        </div>
       </div>
     </article>
   );
