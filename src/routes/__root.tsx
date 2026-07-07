@@ -130,8 +130,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AudioPlayerProvider>
+        <AnnouncementsBanner />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <FeedbackWidget />
         <AudioPlayerBar />
       </AudioPlayerProvider>
     </QueryClientProvider>
