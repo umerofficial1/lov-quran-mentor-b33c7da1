@@ -300,8 +300,8 @@ export function RecitersSection() {
 
   const handlePlay = (r: Reciter) => {
     const key = `${r.id}-${mode}-${surahNum}`;
-    const base = mode === "hadr" ? r.hadrServer : r.mashqServer;
-    if (!base) return;
+    // Fall back to hadr when mashq unavailable so every reciter plays
+    const base = mode === "hadr" ? r.hadrServer : (r.mashqServer ?? r.hadrServer);
     const src = `${base}${padSurah(surahNum)}.mp3`;
 
     if (playingId === key) {
