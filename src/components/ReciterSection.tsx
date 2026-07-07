@@ -95,6 +95,31 @@ const misriQurra: Reciter[] = [
     mashqServer: "https://server6.mp3quran.net/ayyub_mtj/",
     gradient: "from-emerald-800 to-teal-900",
   },
+  {
+    id: "shahat",
+    name: "Al-Shahat Muhammad Anwar",
+    nameUr: "الشحات محمد أنور",
+    origin: "Egypt • مجوّد",
+    hadrServer: "https://server11.mp3quran.net/shhat/",
+    mashqServer: "https://server11.mp3quran.net/shhat_mjwd/",
+    gradient: "from-stone-800 to-amber-900",
+  },
+  {
+    id: "abdulbary",
+    name: "Abdel Bary Mohammad",
+    nameUr: "عبد الباری محمد",
+    origin: "Egypt",
+    hadrServer: "https://server11.mp3quran.net/abd_bary/",
+    gradient: "from-emerald-700 to-stone-800",
+  },
+  {
+    id: "leithy",
+    name: "Muhammad Al-Leithy",
+    nameUr: "محمد اللیثی",
+    origin: "Egypt • مجوّد",
+    hadrServer: "https://server6.mp3quran.net/lithi/",
+    gradient: "from-amber-800 to-stone-900",
+  },
 ];
 
 const imameKaaba: Reciter[] = [
