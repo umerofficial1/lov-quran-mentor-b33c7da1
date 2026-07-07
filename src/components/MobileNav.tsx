@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BookOpen, MessageSquare, Compass, LayoutDashboard } from "lucide-react";
+import { Home, BookOpen, MessageSquare, Compass, Search } from "lucide-react";
 
 export function MobileNav() {
   return (
