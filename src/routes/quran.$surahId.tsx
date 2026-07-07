@@ -1,17 +1,18 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { Play, Pause, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { fetchSurahVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => {
@@ -188,40 +189,13 @@ function SurahReader() {
               isBookmarked={bookmarks.has(`${id}:${v.verse_number}`)}
               onToggleBookmark={() => toggleBookmark(v.verse_number)}
               onVisible={markRead}
+              onPlayFrom={playFromKey}
             />
           ))}
         </div>
       </main>
         )}
       </ReadingChrome>
-
-      {audioUrl.data && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-2xl z-40">
-          <div className="bg-emerald-950/90 backdrop-blur-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] rounded-2xl p-4 flex items-center gap-4">
-            <button
-              onClick={togglePlay}
-              className="size-12 rounded-full bg-white text-emerald-950 grid place-items-center shadow-lg hover:scale-105 transition-transform"
-              aria-label={playing ? "Pause" : "Play"}
-            >
-              {playing ? <Pause className="size-5" /> : <Play className="size-5 ml-0.5" />}
-            </button>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Now Playing</p>
-              <p className="text-sm font-bold text-white truncate" dir="rtl">{surah.nameAr}</p>
-            </div>
-            <audio
-              ref={audioRef}
-              src={audioUrl.data}
-              loop={loop}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onEnded={() => setPlaying(false)}
-              controls
-              className="hidden sm:block h-10"
-            />
-          </div>
-        </div>
-      )}
 
       <QuranSettings prefs={prefs} update={update} />
       <MobileNav />
