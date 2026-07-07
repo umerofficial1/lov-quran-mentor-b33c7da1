@@ -1,12 +1,17 @@
 {
-  "name": "Love Qran — Learn the Quran",
-  "short_name": "Love Qran",
-  "description": "Learn, recite and memorize the Holy Quran with audio, translations, and an AI teacher.",
+  "name": "Verse Wise Mentor",
+  "short_name": "Verse Wise",
+  "description": "AI-guided Quran learning in Arabic, English and Urdu — recitation, tafsir, hifz tracking and Islamic tools.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#042f2e",
-  "theme_color": "#042f2e",
+  "orientation": "portrait",
+  "background_color": "#070C1F",
+  "theme_color": "#070C1F",
+  "categories": ["education", "books", "lifestyle"],
   "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
   ]
 }
