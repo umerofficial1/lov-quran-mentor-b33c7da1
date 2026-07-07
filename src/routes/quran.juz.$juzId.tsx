@@ -7,6 +7,7 @@ import { fetchJuzVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
+import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
 import { JUZ_COUNT } from "@/lib/quran-meta";
 
@@ -36,7 +37,9 @@ function JuzReader() {
   return (
     <div className="min-h-screen pb-24">
       <SiteNav />
-      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8">
+      <ReadingChrome prefs={prefs}>
+        {({ markRead, containerClass }) => (
+      <main className={`max-w-4xl mx-auto px-4 md:px-6 py-8 ${containerClass}`}>
         <div className="flex items-center justify-between mb-6 text-sm">
           <Link to="/quran" className="text-slate-400 hover:text-amber-300">← Quran home</Link>
           <div className="flex items-center gap-2">
@@ -81,10 +84,13 @@ function JuzReader() {
               isBookmarked={false}
               onToggleBookmark={() => {}}
               showSurahInHeader
+              onVisible={markRead}
             />
           ))}
         </div>
       </main>
+        )}
+      </ReadingChrome>
 
       <QuranSettings prefs={prefs} update={update} />
       <MobileNav />
