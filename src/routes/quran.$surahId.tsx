@@ -207,10 +207,13 @@ function SurahReader() {
               prefs={prefs}
               isBookmarked={bookmarks.has(`${id}:${v.verse_number}`)}
               onToggleBookmark={() => toggleBookmark(v.verse_number)}
+              onVisible={markRead}
             />
           ))}
         </div>
       </main>
+        )}
+      </ReadingChrome>
 
       {audioUrl.data && (
         <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-2xl z-40">
