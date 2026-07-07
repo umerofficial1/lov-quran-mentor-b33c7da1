@@ -40,18 +40,51 @@ const DHIKR = [
 function ToolsPage() {
   const [coords, setCoords] = useState<Coords | null>(null);
   const [geoErr, setGeoErr] = useState<string | null>(null);
+  const [manualCity, setManualCity] = useState<string>("");
+  const [activeCity, setActiveCity] = useState<string>("");
+  const [locating, setLocating] = useState(false);
 
-  useEffect(() => {
+  const requestLocation = () => {
+    setGeoErr(null);
     if (!("geolocation" in navigator)) {
       setGeoErr("Geolocation is not available in this browser.");
       return;
     }
+    setLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => setGeoErr(e.message || "Location permission denied"),
-      { timeout: 10000, maximumAge: 60_000 },
+      (p) => {
+        setCoords({ lat: p.coords.latitude, lng: p.coords.longitude });
+        setActiveCity("");
+        setLocating(false);
+      },
+      (e) => {
+        setGeoErr(e.message || "Location permission denied");
+        setLocating(false);
+      },
+      { timeout: 10000, maximumAge: 60_000, enableHighAccuracy: true },
     );
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedCity = localStorage.getItem("vw:prayer-city");
+    if (savedCity) {
+      setActiveCity(savedCity);
+      setManualCity(savedCity);
+      return;
+    }
+    requestLocation();
   }, []);
+
+  const submitCity = (e: React.FormEvent) => {
+    e.preventDefault();
+    const c = manualCity.trim();
+    if (!c) return;
+    setActiveCity(c);
+    setCoords(null);
+    setGeoErr(null);
+    localStorage.setItem("vw:prayer-city", c);
+  };
 
   const dua = useMemo(() => {
     const day = Math.floor(Date.now() / 86_400_000);
@@ -67,17 +100,43 @@ function ToolsPage() {
             <Compass className="size-3" /> Islamic Tools
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mt-3">Prayer • Qibla • Tasbeeh • Du'a</h1>
-          <p className="text-slate-400 text-sm mt-2">All calculated live from your location. Nothing is stored.</p>
+          <p className="text-slate-400 text-sm mt-2">Calculated live from your location — or a city you choose.</p>
         </header>
 
-        {geoErr && (
+        <section className="rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col md:flex-row md:items-center gap-3">
+          <button
+            onClick={requestLocation}
+            disabled={locating}
+            className="inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] text-sm font-semibold transition-colors disabled:opacity-60"
+          >
+            <MapPin className="size-4" /> {locating ? "Locating…" : "Use my location"}
+          </button>
+          <form onSubmit={submitCity} className="flex-1 flex gap-2">
+            <input
+              type="text"
+              value={manualCity}
+              onChange={(e) => setManualCity(e.target.value)}
+              placeholder="Or enter a city (e.g. Karachi, London, Cairo)"
+              className="flex-1 min-h-11 px-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:border-[#C9A24C]/60"
+              aria-label="City name"
+            />
+            <button
+              type="submit"
+              className="min-h-11 px-4 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] text-sm font-semibold transition-colors"
+            >
+              Set city
+            </button>
+          </form>
+        </section>
+
+        {geoErr && !activeCity && (
           <div className="rounded-2xl bg-amber-500/10 border border-amber-400/30 p-4 text-amber-100 text-sm text-center">
-            {geoErr}. Prayer times and Qibla need location access to be accurate.
+            {geoErr}. Allow location, or enter your city above to see accurate prayer times and Qibla.
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PrayerTimes coords={coords} />
+          <PrayerTimes coords={coords} city={activeCity} />
           <QiblaCompass coords={coords} />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -90,6 +149,7 @@ function ToolsPage() {
     </div>
   );
 }
+
 
 /* ---------------- Prayer Times ---------------- */
 
