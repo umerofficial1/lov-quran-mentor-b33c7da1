@@ -230,7 +230,7 @@ function SearchPage() {
                           {surah?.nameAr ?? `Surah ${sNum}`} · {hit.verse_key}
                         </p>
                         <span className="text-[10px] text-slate-500">
-                          {surah?.name}
+                          {surah?.nameUr}
                         </span>
                       </div>
                       <p
