@@ -21,6 +21,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
+import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -89,6 +90,11 @@ const QuranIndexRoute = QuranIndexRouteImport.update({
 const QuranSurahIdRoute = QuranSurahIdRouteImport.update({
   id: '/quran/$surahId',
   path: '/quran/$surahId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesLevelRoute = CoursesLevelRouteImport.update({
+  id: '/courses/$level',
+  path: '/courses/$level',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
     | '/.lovable/oauth/consent'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/courses/$level'
     | '/quran/$surahId'
     | '/quran'
     | '/.lovable/oauth/consent'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/hifz'
     | '/api/chat'
+    | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
     | '/.lovable/oauth/consent'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
+  CoursesLevelRoute: typeof CoursesLevelRoute
   QuranSurahIdRoute: typeof QuranSurahIdRoute
   QuranIndexRoute: typeof QuranIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/quran/$surahId'
       fullPath: '/quran/$surahId'
       preLoaderRoute: typeof QuranSurahIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/courses/$level': {
+      id: '/courses/$level'
+      path: '/courses/$level'
+      fullPath: '/courses/$level'
+      preLoaderRoute: typeof CoursesLevelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -499,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
+  CoursesLevelRoute: CoursesLevelRoute,
   QuranSurahIdRoute: QuranSurahIdRoute,
   QuranIndexRoute: QuranIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
