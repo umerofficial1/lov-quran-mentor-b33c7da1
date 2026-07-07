@@ -208,7 +208,8 @@ function PrayerTimes({ coords, city }: { coords: Coords | null; city: string }) 
         <MapPin className="size-5 text-amber-400" />
       </div>
 
-      {!coords && <p className="text-slate-400 text-sm">Waiting for location…</p>}
+      {!coords && !city && <p className="text-slate-400 text-sm">Allow location or set a city above to see prayer times.</p>}
+      {city && !coords && <p className="text-xs text-emerald-300 mb-2">Showing times for <span className="font-semibold">{city}</span></p>}
       {query.isLoading && <p className="text-slate-400 text-sm">Loading prayer times…</p>}
       {query.error && <p className="text-red-400 text-sm">Couldn't load times. Please retry.</p>}
 
