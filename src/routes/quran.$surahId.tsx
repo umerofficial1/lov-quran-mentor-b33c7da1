@@ -10,6 +10,7 @@ import { fetchSurahVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
+import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
 
 export const Route = createFileRoute("/quran/$surahId")({
