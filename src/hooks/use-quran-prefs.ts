@@ -36,6 +36,7 @@ const DEFAULTS: QuranPrefs = {
   nightMode: false,
   focusMode: false,
   brightness: 1,
+  wordByWord: false,
 };
 
 function read(): QuranPrefs {
