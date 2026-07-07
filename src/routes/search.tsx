@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/search")({
       },
     ],
   }),
-  component: SearchPage,
+  component: () => (<RequireAuth><SearchPage /></RequireAuth>),
 });
 
 type Hit = {

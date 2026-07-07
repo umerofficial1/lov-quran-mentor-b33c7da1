@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/quran/page/$pageId")({
       { property: "og:title", content: `Mushaf Page ${params.pageId} — Verse Wise Mentor` },
     ],
   }),
-  component: PageReader,
+  component: () => (<RequireAuth><PageReader /></RequireAuth>),
 });
 
 function PageReader() {
