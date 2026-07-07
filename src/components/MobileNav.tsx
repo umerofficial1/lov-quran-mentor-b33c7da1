@@ -12,7 +12,7 @@ export function MobileNav() {
         <Item to="/quran" icon={<BookOpen className="size-5" />} label="Quran" />
         <Item to="/chat" icon={<MessageSquare className="size-5" />} label="AI" />
         <Item to="/tools" icon={<Compass className="size-5" />} label="Tools" />
-        <Item to="/dashboard" icon={<LayoutDashboard className="size-5" />} label="Me" />
+        <Item to="/search" icon={<Search className="size-5" />} label="Search" />
       </ul>
     </nav>
   );
