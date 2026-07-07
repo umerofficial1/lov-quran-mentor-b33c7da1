@@ -3,9 +3,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
+import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { Play, Pause, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
-import DOMPurify from "dompurify";
+import { Play, Pause, ChevronLeft, ChevronRight, Repeat } from "lucide-react";
+import { fetchSurahVerses } from "@/lib/quran-api";
+import { VerseCard } from "@/components/VerseCard";
+import { QuranSettings } from "@/components/QuranSettings";
+import { QuranJumpBar } from "@/components/QuranJumpBar";
+import { useQuranPrefs } from "@/hooks/use-quran-prefs";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => {
@@ -14,22 +19,14 @@ export const Route = createFileRoute("/quran/$surahId")({
     return {
       meta: [
         { title: `${label} — Verse Wise Mentor` },
-        { name: "description", content: `Read ${label} with Arabic, English and Urdu translation, verse-by-verse audio and bookmarks.` },
+        { name: "description", content: `Read ${label} in Uthmani and IndoPak script with English and Urdu translation, verse-by-verse audio, sajdah indicators and bookmarks.` },
         { property: "og:title", content: `${label} — Verse Wise Mentor` },
-        { property: "og:description", content: `Recite ${label} with translation and audio.` },
+        { property: "og:description", content: `Recite ${label} with adjustable script, font size and translation.` },
       ],
     };
   },
   component: SurahReader,
 });
-
-type Verse = {
-  id: number;
-  verse_key: string;
-  verse_number: number;
-  text_uthmani: string;
-  translations?: { text: string }[];
-};
 
 const RECITERS = [
   { id: 7, name: "Mishary Alafasy" },
@@ -42,15 +39,6 @@ const RECITERS = [
   { id: 9, name: "Mohamed Siddiq al-Minshawi" },
   { id: 10, name: "Maher al-Muaiqly" },
 ];
-
-async function fetchSurah(id: number, translation: number) {
-  const res = await fetch(
-    `https://api.quran.com/api/v4/verses/by_chapter/${id}?language=en&words=false&translations=${translation}&fields=text_uthmani&per_page=300`,
-  );
-  if (!res.ok) throw new Error("Failed to load surah");
-  const data = await res.json();
-  return data.verses as Verse[];
-}
 
 async function fetchAudio(reciterId: number, surahId: number) {
   const res = await fetch(
@@ -66,16 +54,17 @@ function SurahReader() {
   const id = Math.max(1, Math.min(114, Number(surahId) || 1));
   const surah = SURAHS.find((s) => s.n === id)!;
   const [reciter, setReciter] = useState(7);
-  const [translation, setTranslation] = useState(131); // 131 = Saheeh International
+  const [translation, setTranslation] = useState(131);
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [userId, setUserId] = useState<string | null>(null);
   const [loop, setLoop] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const { prefs, update } = useQuranPrefs();
 
   const verses = useQuery({
-    queryKey: ["surah", id, translation],
-    queryFn: () => fetchSurah(id, translation),
+    queryKey: ["surah-v2", id, translation],
+    queryFn: () => fetchSurahVerses(id, translation),
   });
 
   const audioUrl = useQuery({
@@ -93,7 +82,6 @@ function SurahReader() {
         .eq("user_id", data.session.user.id)
         .eq("surah", id);
       if (rows) setBookmarks(new Set(rows.map((r) => `${r.surah}:${r.ayah}`)));
-      // update last_read
       await supabase.from("last_read").upsert({
         user_id: data.session.user.id,
         surah: id,
@@ -130,26 +118,26 @@ function SurahReader() {
   const next = useMemo(() => (id < 114 ? id + 1 : null), [id]);
 
   return (
-    <div className="min-h-screen pb-40">
+    <div className="min-h-screen pb-40 md:pb-24">
       <SiteNav />
-      <main className="max-w-4xl mx-auto px-6 py-10">
+      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8">
         <div className="flex items-center justify-between mb-6 text-sm">
           <Link to="/quran" className="text-slate-400 hover:text-amber-300">← All Surahs</Link>
           <div className="flex items-center gap-2">
             {prev && (
-              <Link to="/quran/$surahId" params={{ surahId: String(prev) }} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
+              <Link to="/quran/$surahId" params={{ surahId: String(prev) }} aria-label="Previous surah" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
                 <ChevronRight className="size-4" />
               </Link>
             )}
             {next && (
-              <Link to="/quran/$surahId" params={{ surahId: String(next) }} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
+              <Link to="/quran/$surahId" params={{ surahId: String(next) }} aria-label="Next surah" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
                 <ChevronLeft className="size-4" />
               </Link>
             )}
           </div>
         </div>
 
-        <div className="text-center mb-10 rounded-3xl bg-gradient-to-b from-emerald-800/40 to-emerald-950/40 backdrop-blur-xl border border-white/10 p-10">
+        <div className="text-center mb-6 rounded-3xl bg-gradient-to-b from-emerald-800/40 to-emerald-950/40 backdrop-blur-xl border border-white/10 p-10">
           <p className="text-xs uppercase tracking-widest text-amber-400 font-bold">Surah {id}</p>
           <h1 className="text-5xl font-bold text-white mt-2 font-arabic" dir="rtl">{surah.nameAr}</h1>
           <p className="text-slate-400 mt-2" dir="rtl">{surah.nameUr}</p>
@@ -158,6 +146,10 @@ function SurahReader() {
               بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
             </p>
           )}
+        </div>
+
+        <div className="mb-4">
+          <QuranJumpBar current={{ mode: "surah", id }} />
         </div>
 
         <div className="flex flex-wrap gap-3 items-center mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -205,43 +197,20 @@ function SurahReader() {
         )}
 
         <div className="space-y-4">
-          {verses.data?.map((v) => {
-            const key = `${id}:${v.verse_number}`;
-            const isBookmarked = bookmarks.has(key);
-            return (
-              <article
-                key={v.id}
-                className="rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:border-amber-400/20 transition-all"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="size-9 rounded-full bg-amber-500/15 border border-amber-400/30 grid place-items-center text-amber-300 text-xs font-bold">
-                    {v.verse_number}
-                  </div>
-                  <button
-                    onClick={() => toggleBookmark(v.verse_number)}
-                    className="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-amber-300 transition-colors"
-                    aria-label="Bookmark"
-                  >
-                    {isBookmarked ? <BookmarkCheck className="size-5 text-amber-400" /> : <Bookmark className="size-5" />}
-                  </button>
-                </div>
-                <p className="text-3xl leading-loose text-white font-arabic text-right" dir="rtl">
-                  {v.text_uthmani}
-                </p>
-                {v.translations?.[0]?.text && (
-                  <p
-                    className="text-slate-300 mt-4 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(v.translations[0].text) }}
-                  />
-                )}
-              </article>
-            );
-          })}
+          {verses.data?.map((v) => (
+            <VerseCard
+              key={v.id}
+              v={v}
+              prefs={prefs}
+              isBookmarked={bookmarks.has(`${id}:${v.verse_number}`)}
+              onToggleBookmark={() => toggleBookmark(v.verse_number)}
+            />
+          ))}
         </div>
       </main>
 
       {audioUrl.data && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-2xl z-40">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-2xl z-40">
           <div className="bg-emerald-950/90 backdrop-blur-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] rounded-2xl p-4 flex items-center gap-4">
             <button
               onClick={togglePlay}
@@ -267,6 +236,9 @@ function SurahReader() {
           </div>
         </div>
       )}
+
+      <QuranSettings prefs={prefs} update={update} />
+      <MobileNav />
     </div>
   );
 }
