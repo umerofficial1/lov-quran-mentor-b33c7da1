@@ -167,3 +167,68 @@
   }
   .gold-underline:hover::after { transform: scaleX(1); transform-origin: left; }
 }
+
+/* ===== Reading Mode / Tajweed ===== */
+@layer utilities {
+  /* Tajweed color coding for <tajweed class="..."> spans returned by quran.com */
+  .tajweed tajweed { color: inherit; }
+  .tajweed tajweed.ham_wasl { color: #9AA6BF; }
+  .tajweed tajweed.slnt, .tajweed tajweed.silent { color: #6B7590; }
+  .tajweed tajweed.laam_shamsiyah { color: #9AA6BF; }
+  .tajweed tajweed.madda_normal { color: #4FB3E8; }
+  .tajweed tajweed.madda_permissible { color: #7CC7FF; }
+  .tajweed tajweed.madda_necessary { color: #1E88E5; }
+  .tajweed tajweed.madda_obligatory { color: #1565C0; }
+  .tajweed tajweed.qalaqah { color: #E53935; }
+  .tajweed tajweed.ikhafa_shafawi { color: #C9A24C; }
+  .tajweed tajweed.ikhafa { color: #E8A33B; }
+  .tajweed tajweed.iqlab { color: #8E24AA; }
+  .tajweed tajweed.idgham_shafawi { color: #6D4C41; }
+  .tajweed tajweed.idgham_ghunnah,
+  .tajweed tajweed.idgham_with_ghunnah { color: #43A047; }
+  .tajweed tajweed.idgham_wo_ghunnah { color: #2E7D32; }
+  .tajweed tajweed.idgham_mutajanisayn,
+  .tajweed tajweed.idgham_mutaqaribayn { color: #558B2F; }
+  .tajweed tajweed.ghunnah { color: #26A69A; }
+
+  /* Night mode: deepen darkness, warmer text */
+  .night-mode {
+    background: #000 !important;
+  }
+  .night-mode main, .night-mode article {
+    filter: sepia(0.15) hue-rotate(-10deg);
+  }
+
+  /* Focus mode dims non-hovered verse cards */
+  .focus-mode article.verse-card { transition: opacity 300ms ease, filter 300ms ease; opacity: 0.35; filter: blur(0.5px); }
+  .focus-mode article.verse-card:hover,
+  .focus-mode article.verse-card:focus-within,
+  .focus-mode article.verse-card.is-focused { opacity: 1; filter: none; }
+
+  /* Page flip: snap sections */
+  .pageflip { scroll-snap-type: y mandatory; }
+  .pageflip > article {
+    scroll-snap-align: start;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Mushaf layout hints (visual differentiation) */
+  .layout-15line article.verse-card,
+  .layout-16line article.verse-card,
+  .layout-madani article.verse-card {
+    background: linear-gradient(180deg, rgba(238,232,205,0.06) 0%, rgba(238,232,205,0.02) 100%);
+    border-color: rgba(201, 162, 76, 0.25);
+  }
+  .layout-madani article.verse-card p[dir="rtl"] { font-family: "Amiri", "Scheherazade New", serif; }
+  .layout-15line article.verse-card p[dir="rtl"] { line-height: 2.4; }
+  .layout-16line article.verse-card p[dir="rtl"] { line-height: 2.2; }
+
+  /* Brightness overlay */
+  .brightness-dim {
+    position: fixed; inset: 0; pointer-events: none; z-index: 60;
+    background: #000;
+  }
+}
