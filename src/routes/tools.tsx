@@ -40,18 +40,51 @@ const DHIKR = [
 function ToolsPage() {
   const [coords, setCoords] = useState<Coords | null>(null);
   const [geoErr, setGeoErr] = useState<string | null>(null);
+  const [manualCity, setManualCity] = useState<string>("");
+  const [activeCity, setActiveCity] = useState<string>("");
+  const [locating, setLocating] = useState(false);
 
-  useEffect(() => {
+  const requestLocation = () => {
+    setGeoErr(null);
     if (!("geolocation" in navigator)) {
       setGeoErr("Geolocation is not available in this browser.");
       return;
     }
+    setLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => setGeoErr(e.message || "Location permission denied"),
-      { timeout: 10000, maximumAge: 60_000 },
+      (p) => {
+        setCoords({ lat: p.coords.latitude, lng: p.coords.longitude });
+        setActiveCity("");
+        setLocating(false);
+      },
+      (e) => {
+        setGeoErr(e.message || "Location permission denied");
+        setLocating(false);
+      },
+      { timeout: 10000, maximumAge: 60_000, enableHighAccuracy: true },
     );
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedCity = localStorage.getItem("vw:prayer-city");
+    if (savedCity) {
+      setActiveCity(savedCity);
+      setManualCity(savedCity);
+      return;
+    }
+    requestLocation();
   }, []);
+
+  const submitCity = (e: React.FormEvent) => {
+    e.preventDefault();
+    const c = manualCity.trim();
+    if (!c) return;
+    setActiveCity(c);
+    setCoords(null);
+    setGeoErr(null);
+    localStorage.setItem("vw:prayer-city", c);
+  };
 
   const dua = useMemo(() => {
     const day = Math.floor(Date.now() / 86_400_000);
@@ -67,17 +100,43 @@ function ToolsPage() {
             <Compass className="size-3" /> Islamic Tools
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mt-3">Prayer • Qibla • Tasbeeh • Du'a</h1>
-          <p className="text-slate-400 text-sm mt-2">All calculated live from your location. Nothing is stored.</p>
+          <p className="text-slate-400 text-sm mt-2">Calculated live from your location — or a city you choose.</p>
         </header>
 
-        {geoErr && (
+        <section className="rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col md:flex-row md:items-center gap-3">
+          <button
+            onClick={requestLocation}
+            disabled={locating}
+            className="inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] text-sm font-semibold transition-colors disabled:opacity-60"
+          >
+            <MapPin className="size-4" /> {locating ? "Locating…" : "Use my location"}
+          </button>
+          <form onSubmit={submitCity} className="flex-1 flex gap-2">
+            <input
+              type="text"
+              value={manualCity}
+              onChange={(e) => setManualCity(e.target.value)}
+              placeholder="Or enter a city (e.g. Karachi, London, Cairo)"
+              className="flex-1 min-h-11 px-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:border-[#C9A24C]/60"
+              aria-label="City name"
+            />
+            <button
+              type="submit"
+              className="min-h-11 px-4 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] text-sm font-semibold transition-colors"
+            >
+              Set city
+            </button>
+          </form>
+        </section>
+
+        {geoErr && !activeCity && (
           <div className="rounded-2xl bg-amber-500/10 border border-amber-400/30 p-4 text-amber-100 text-sm text-center">
-            {geoErr}. Prayer times and Qibla need location access to be accurate.
+            {geoErr}. Allow location, or enter your city above to see accurate prayer times and Qibla.
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PrayerTimes coords={coords} />
+          <PrayerTimes coords={coords} city={activeCity} />
           <QiblaCompass coords={coords} />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -91,6 +150,7 @@ function ToolsPage() {
   );
 }
 
+
 /* ---------------- Prayer Times ---------------- */
 
 type AladhanResp = {
@@ -101,20 +161,24 @@ type AladhanResp = {
   };
 };
 
-function PrayerTimes({ coords }: { coords: Coords | null }) {
+function PrayerTimes({ coords, city }: { coords: Coords | null; city: string }) {
   const query = useQuery({
-    queryKey: ["aladhan", coords?.lat, coords?.lng],
-    enabled: !!coords,
+    queryKey: ["aladhan", coords?.lat, coords?.lng, city],
+    enabled: !!coords || !!city,
     staleTime: 30 * 60 * 1000,
     queryFn: async (): Promise<AladhanResp["data"]> => {
       const today = new Date();
-      const url = `https://api.aladhan.com/v1/timings/${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}?latitude=${coords!.lat}&longitude=${coords!.lng}&method=2`;
+      const d = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
+      const url = city
+        ? `https://api.aladhan.com/v1/timingsByAddress/${d}?address=${encodeURIComponent(city)}&method=2`
+        : `https://api.aladhan.com/v1/timings/${d}?latitude=${coords!.lat}&longitude=${coords!.lng}&method=2`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to load prayer times");
       const json = (await res.json()) as AladhanResp;
       return json.data;
     },
   });
+
 
   const order = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
   const now = new Date();
@@ -144,7 +208,8 @@ function PrayerTimes({ coords }: { coords: Coords | null }) {
         <MapPin className="size-5 text-amber-400" />
       </div>
 
-      {!coords && <p className="text-slate-400 text-sm">Waiting for location…</p>}
+      {!coords && !city && <p className="text-slate-400 text-sm">Allow location or set a city above to see prayer times.</p>}
+      {city && !coords && <p className="text-xs text-emerald-300 mb-2">Showing times for <span className="font-semibold">{city}</span></p>}
       {query.isLoading && <p className="text-slate-400 text-sm">Loading prayer times…</p>}
       {query.error && <p className="text-red-400 text-sm">Couldn't load times. Please retry.</p>}
 
