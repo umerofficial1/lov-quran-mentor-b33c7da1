@@ -3,6 +3,8 @@ import DOMPurify from "dompurify";
 import { Bookmark, BookmarkCheck, Play, Pause } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { TafsirButton } from "@/components/TafsirPanel";
+import { WordByWord } from "@/components/WordByWord";
 
 export type QuranVerse = {
   id: number;
