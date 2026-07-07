@@ -346,6 +346,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     setPlaybackRate: (v) => updatePrefs({ playbackRate: v }),
     setRepeat: (m) => updatePrefs({ repeat: m }),
     setAutoScroll: (v) => updatePrefs({ autoScroll: v }),
+    cacheQueue,
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
