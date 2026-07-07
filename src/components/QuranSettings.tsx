@@ -166,6 +166,14 @@ export function QuranSettings({
               onChange={(v) => update({ focusMode: v })}
             />
 
+            {/* Word by Word */}
+            <Toggle
+              label="Word-by-word"
+              hint="Arabic + English + Urdu + Roman + root + pronunciation"
+              checked={prefs.wordByWord}
+              onChange={(v) => update({ wordByWord: v })}
+            />
+
             {/* Translation */}
             <Toggle
               label="Show translation"
