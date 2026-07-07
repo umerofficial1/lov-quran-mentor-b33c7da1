@@ -10,6 +10,8 @@ import { TeacherDashboard } from "@/components/dashboards/TeacherDashboard";
 import { ParentDashboard } from "@/components/dashboards/ParentDashboard";
 import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
 import { claimFirstAdmin } from "@/lib/admin.functions";
+import { RoleSettings } from "@/components/RoleSettings";
+import { ProBadge } from "@/components/ProBadge";
 import { GraduationCap, User, Baby, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
