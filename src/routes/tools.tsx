@@ -161,20 +161,24 @@ type AladhanResp = {
   };
 };
 
-function PrayerTimes({ coords }: { coords: Coords | null }) {
+function PrayerTimes({ coords, city }: { coords: Coords | null; city: string }) {
   const query = useQuery({
-    queryKey: ["aladhan", coords?.lat, coords?.lng],
-    enabled: !!coords,
+    queryKey: ["aladhan", coords?.lat, coords?.lng, city],
+    enabled: !!coords || !!city,
     staleTime: 30 * 60 * 1000,
     queryFn: async (): Promise<AladhanResp["data"]> => {
       const today = new Date();
-      const url = `https://api.aladhan.com/v1/timings/${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}?latitude=${coords!.lat}&longitude=${coords!.lng}&method=2`;
+      const d = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
+      const url = city
+        ? `https://api.aladhan.com/v1/timingsByAddress/${d}?address=${encodeURIComponent(city)}&method=2`
+        : `https://api.aladhan.com/v1/timings/${d}?latitude=${coords!.lat}&longitude=${coords!.lng}&method=2`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to load prayer times");
       const json = (await res.json()) as AladhanResp;
       return json.data;
     },
   });
+
 
   const order = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
   const now = new Date();
