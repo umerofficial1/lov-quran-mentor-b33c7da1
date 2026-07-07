@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
@@ -7,6 +8,7 @@ export type QuranVerse = {
   verse_key: string; // "s:a"
   verse_number: number;
   text_uthmani?: string;
+  text_uthmani_tajweed?: string;
   text_indopak?: string;
   juz_number?: number;
   hizb_number?: number;
@@ -17,29 +19,60 @@ export type QuranVerse = {
   translations?: { text: string }[];
 };
 
+const TAJWEED_SANITIZE = {
+  ADD_TAGS: ["tajweed"],
+  ADD_ATTR: ["class"],
+};
+
 export function VerseCard({
   v,
   prefs,
   isBookmarked,
   onToggleBookmark,
   showSurahInHeader = false,
+  onVisible,
 }: {
   v: QuranVerse;
   prefs: QuranPrefs;
   isBookmarked: boolean;
   onToggleBookmark: () => void;
   showSurahInHeader?: boolean;
+  onVisible?: (key: string) => void;
 }) {
-  const arabic =
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!onVisible || !ref.current || typeof IntersectionObserver === "undefined") return;
+    const el = ref.current;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio > 0.5) {
+            onVisible(v.verse_key);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: [0.5] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [onVisible, v.verse_key]);
+
+  const useTajweed = prefs.tajweed && !!v.text_uthmani_tajweed && prefs.script !== "indopak";
+  const arabicPlain =
     prefs.script === "indopak"
       ? v.text_indopak ?? v.text_uthmani ?? ""
       : v.text_uthmani ?? v.text_indopak ?? "";
   const scriptClass = prefs.script === "indopak" ? "font-indopak" : "font-uthmani";
+  const effectiveFontSize = Math.round(prefs.fontSize * (prefs.zoom || 1));
 
   return (
     <article
+      ref={ref}
       id={`v-${v.verse_key.replace(":", "-")}`}
-      className="rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:border-amber-400/20 transition-all scroll-mt-24"
+      className="verse-card rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:border-amber-400/20 transition-all scroll-mt-24"
     >
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
@@ -71,17 +104,29 @@ export function VerseCard({
         </div>
       </div>
 
-      <p
-        className={`text-white text-right ${scriptClass}`}
-        dir="rtl"
-        lang="ar"
-        style={{ fontSize: `${prefs.fontSize}px`, lineHeight: prefs.lineSpacing }}
-      >
-        {arabic}
-        {v.rub_el_hizb_number != null && v.verse_number === 1 && (
-          <span className="text-amber-300 mx-1" aria-hidden>۞</span>
-        )}
-      </p>
+      {useTajweed ? (
+        <p
+          className={`text-white text-right tajweed ${scriptClass}`}
+          dir="rtl"
+          lang="ar"
+          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing }}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(v.text_uthmani_tajweed ?? "", TAJWEED_SANITIZE),
+          }}
+        />
+      ) : (
+        <p
+          className={`text-white text-right ${scriptClass}`}
+          dir="rtl"
+          lang="ar"
+          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing }}
+        >
+          {arabicPlain}
+          {v.rub_el_hizb_number != null && v.verse_number === 1 && (
+            <span className="text-amber-300 mx-1" aria-hidden>۞</span>
+          )}
+        </p>
+      )}
 
       {prefs.showTranslation && v.translations?.[0]?.text && (
         <p
