@@ -10,6 +10,8 @@ import { TeacherDashboard } from "@/components/dashboards/TeacherDashboard";
 import { ParentDashboard } from "@/components/dashboards/ParentDashboard";
 import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
 import { claimFirstAdmin } from "@/lib/admin.functions";
+import { RoleSettings } from "@/components/RoleSettings";
+import { ProBadge } from "@/components/ProBadge";
 import { GraduationCap, User, Baby, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -61,9 +63,14 @@ function DashboardPage() {
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-8 space-y-6">
         <header>
           <p className="text-xs uppercase tracking-widest text-amber-400 font-bold">Assalamu alaikum</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mt-1">{user.email?.split("@")[0]}</h1>
+          <div className="flex items-center gap-3 mt-1 flex-wrap">
+            <h1 className="text-3xl md:text-4xl font-bold text-white">{user.email?.split("@")[0]}</h1>
+            <ProBadge />
+          </div>
           <p className="text-slate-400 text-sm mt-1">Your personal Quran journey at a glance.</p>
         </header>
+
+        <RoleSettings />
 
         {loading ? (
           <p className="text-slate-400 text-sm">Loading roles…</p>

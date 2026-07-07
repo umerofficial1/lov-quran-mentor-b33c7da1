@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/chat")({
       { property: "og:description", content: "Trilingual AI teacher for Quran, tafsir and Islamic knowledge." },
     ],
   }),
-  component: ChatPage,
+  component: () => (<RequireAuth><ChatPage /></RequireAuth>),
 });
 
 type Mode = "ask" | "learning" | "tafsir" | "translation" | "mistake" | "quiz";

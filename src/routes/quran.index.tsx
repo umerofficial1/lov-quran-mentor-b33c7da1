@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/quran/")({
       { property: "og:description", content: "The complete Quran with translation, audio and personal bookmarks." },
     ],
   }),
-  component: QuranIndex,
+  component: () => (<RequireAuth><QuranIndex /></RequireAuth>),
 });
 
 function QuranIndex() {

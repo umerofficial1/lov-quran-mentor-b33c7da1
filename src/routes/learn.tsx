@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import ReactMarkdown from "react-markdown";
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/learn")({
       { property: "og:description", content: "Six AI-guided tools to learn, memorize and revise the Quran." },
     ],
   }),
-  component: LearnPage,
+  component: () => (<RequireAuth><LearnPage /></RequireAuth>),
 });
 
 type Tab = "compare" | "quiz" | "coach" | "revise" | "listen" | "mistake";

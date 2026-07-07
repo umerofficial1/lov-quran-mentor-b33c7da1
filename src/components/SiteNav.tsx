@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { ProBadge } from "@/components/ProBadge";
 import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles } from "lucide-react";
 
 export function SiteNav() {
@@ -9,7 +10,7 @@ export function SiteNav() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/" });
+    navigate({ to: "/auth", replace: true });
   };
 
   return (
@@ -37,11 +38,14 @@ export function SiteNav() {
             </svg>
           </span>
           <span className="flex flex-col leading-none">
-            <span
-              className="font-display font-semibold text-base md:text-lg tracking-[0.22em] uppercase bg-clip-text text-transparent transition-[filter] duration-300 group-hover:[filter:drop-shadow(0_0_8px_rgba(212,175,55,0.45))]"
-              style={{ backgroundImage: "linear-gradient(135deg, #F4E4A6 0%, #D4AF37 55%, #0F6D4F 140%)" }}
-            >
-              Ayatica
+            <span className="flex items-center gap-2">
+              <span
+                className="font-display font-semibold text-base md:text-lg tracking-[0.22em] uppercase bg-clip-text text-transparent transition-[filter] duration-300 group-hover:[filter:drop-shadow(0_0_8px_rgba(212,175,55,0.45))]"
+                style={{ backgroundImage: "linear-gradient(135deg, #F4E4A6 0%, #D4AF37 55%, #0F6D4F 140%)" }}
+              >
+                Ayatica
+              </span>
+              {user && <ProBadge />}
             </span>
             <span className="hidden sm:inline mt-1.5 text-[9px] tracking-[0.32em] uppercase text-[#0F6D4F] font-medium">
               Read · Reflect · Live
