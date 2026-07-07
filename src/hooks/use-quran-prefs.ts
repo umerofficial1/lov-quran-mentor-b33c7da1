@@ -18,6 +18,7 @@ export type QuranPrefs = {
   nightMode: boolean;
   focusMode: boolean;
   brightness: number; // 0.3 – 1
+  wordByWord: boolean;
 };
 
 const KEY = "vwm.quran.prefs.v2";
