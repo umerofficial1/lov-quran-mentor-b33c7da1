@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AudioPlayerProvider } from "@/hooks/use-audio-player";
 import { AudioPlayerBar } from "@/components/AudioPlayerBar";
+import { AnnouncementsBanner } from "@/components/AnnouncementsBanner";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 function NotFoundComponent() {
   return (
@@ -128,8 +130,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AudioPlayerProvider>
+        <AnnouncementsBanner />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <FeedbackWidget />
         <AudioPlayerBar />
       </AudioPlayerProvider>
     </QueryClientProvider>
