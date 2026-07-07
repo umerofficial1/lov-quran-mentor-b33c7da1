@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { SURAHS, padSurah } from "@/lib/surahs";
 
 type Reciter = {
@@ -6,9 +7,9 @@ type Reciter = {
   name: string;
   nameUr: string;
   origin: string;
-  /** Base server URL ending in "/" — append {001..114}.mp3 */
+  /** Base server URL ending in "/" — append {001..114}.mp3 — HADR (fast) */
   hadrServer: string;
-  /** Optional teaching (mu'allim) server — falls back to hadr if absent */
+  /** Optional MASHQ (slow, teaching/mujawwad) server — falls back to hadr if absent */
   mashqServer?: string;
   /** Decorative gradient classes for avatar */
   gradient: string;
@@ -48,14 +49,16 @@ const misriQurra: Reciter[] = [
     nameUr: "مصطفیٰ اسماعیل",
     origin: "Egypt • مجوّد",
     hadrServer: "https://server14.mp3quran.net/mustafa_ismail/",
+    mashqServer: "https://server6.mp3quran.net/mustafa_ismail_mjwd/",
     gradient: "from-stone-700 to-stone-900",
   },
   {
     id: "albanna",
     name: "Mahmoud Ali Al-Banna",
     nameUr: "محمود علی البنا",
-    origin: "Egypt",
+    origin: "Egypt • مجوّد",
     hadrServer: "https://server8.mp3quran.net/banna/",
+    mashqServer: "https://server8.mp3quran.net/banna_mjwd/",
     gradient: "from-amber-800 to-orange-900",
   },
   {
@@ -64,6 +67,7 @@ const misriQurra: Reciter[] = [
     nameUr: "محمد محمود الطبلاوی",
     origin: "Egypt",
     hadrServer: "https://server16.mp3quran.net/tblawi/",
+    mashqServer: "https://server10.mp3quran.net/tblawi_mjwd/",
     gradient: "from-teal-800 to-emerald-deep",
   },
   {
@@ -81,6 +85,15 @@ const misriQurra: Reciter[] = [
     origin: "Saudi Arabia",
     hadrServer: "https://server8.mp3quran.net/rifai/",
     gradient: "from-amber-700 to-amber-900",
+  },
+  {
+    id: "ayyub",
+    name: "Muhammad Ayyub",
+    nameUr: "محمد أیوب",
+    origin: "Imam, Masjid An-Nabawi",
+    hadrServer: "https://server16.mp3quran.net/ayyub/",
+    mashqServer: "https://server6.mp3quran.net/ayyub_mtj/",
+    gradient: "from-emerald-800 to-teal-900",
   },
 ];
 
@@ -224,7 +237,7 @@ function ReciterCard({
   onPlay: (r: Reciter) => void;
 }) {
   const surah = SURAHS.find((s) => s.n === surahNum)!;
-  const hasMashq = mode === "mashq" ? Boolean(r.mashqServer) : true;
+  const usingFallback = mode === "mashq" && !r.mashqServer;
 
   return (
     <article className="group bg-white border border-emerald-deep/10 rounded-2xl overflow-hidden hover:border-gold-leaf/40 hover:shadow-lg transition-all flex flex-col">
@@ -235,7 +248,7 @@ function ReciterCard({
           {r.nameUr.split(" ")[0]}
         </p>
         <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest text-white bg-black/20 backdrop-blur px-2 py-1 rounded">
-          {mode === "hadr" ? "حدر" : "مشق"}
+          {mode === "hadr" ? "حدر" : usingFallback ? "حدر (متبادل)" : "مشق"}
         </span>
       </div>
 
@@ -246,26 +259,26 @@ function ReciterCard({
         <p className="text-sm font-semibold text-emerald-deep/80">{r.name}</p>
         <p className="text-xs text-emerald-deep/50 mb-4">{r.origin}</p>
 
-        <button
-          onClick={() => onPlay(r)}
-          disabled={!hasMashq}
-          className={
-            !hasMashq
-              ? "mt-auto w-full bg-stone-100 text-stone-400 py-2.5 rounded-lg text-sm font-bold cursor-not-allowed"
-              : isPlaying
-              ? "mt-auto w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
-              : "mt-auto w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
-          }
-        >
-          {!hasMashq ? (
-            <span>مشق دستیاب نہیں</span>
-          ) : (
-            <>
-              <span>{isPlaying ? "⏸" : "▶"}</span>
-              <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
-            </>
-          )}
-        </button>
+        <div className="mt-auto flex flex-col gap-2">
+          <button
+            onClick={() => onPlay(r)}
+            className={
+              isPlaying
+                ? "w-full bg-emerald-deep text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
+                : "w-full bg-emerald-deep/5 text-emerald-deep py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-emerald-deep hover:text-white transition-colors"
+            }
+          >
+            <span>{isPlaying ? "⏸" : "▶"}</span>
+            <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
+          </button>
+          <Link
+            to="/reciters"
+            className="w-full bg-gold-leaf/10 text-gold-leaf py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-leaf hover:text-white transition-colors"
+          >
+            <span>🎥</span>
+            <span dir="rtl">ویڈیو تلاوت دیکھیں</span>
+          </Link>
+        </div>
       </div>
     </article>
   );
@@ -287,8 +300,8 @@ export function RecitersSection() {
 
   const handlePlay = (r: Reciter) => {
     const key = `${r.id}-${mode}-${surahNum}`;
-    const base = mode === "hadr" ? r.hadrServer : r.mashqServer;
-    if (!base) return;
+    // Fall back to hadr when mashq unavailable so every reciter plays
+    const base = mode === "hadr" ? r.hadrServer : (r.mashqServer ?? r.hadrServer);
     const src = `${base}${padSurah(surahNum)}.mp3`;
 
     if (playingId === key) {
@@ -419,7 +432,7 @@ export function RecitersSection() {
           </p>
         ) : (
           <p>
-            <strong className="text-emerald-deep">مشق:</strong> آہستہ تعلیمی انداز (مُعَلِّم) — صرف بعض مصری قراء (الحصری، المنشاوی، عبد الباسط) کے لیے دستیاب۔
+            <strong className="text-emerald-deep">مشق (مجوّد / مُعَلِّم):</strong> آہستہ، خوبصورت انداز — الحصری، المنشاوی، عبد الباسط، مصطفیٰ اسماعیل، البنا، الطبلاوی، محمد أیوب، عبداللہ بصفر کے لیے اصل مشق دستیاب۔ باقی قراء کے لیے حدر پر واپس آ جائے گا۔
           </p>
         )}
       </div>
