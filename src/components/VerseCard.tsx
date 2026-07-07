@@ -102,6 +102,17 @@ export function VerseCard({
               ۩ Sajdah
             </span>
           )}
+          {onPlayFrom && (
+            <button
+              onClick={() => (isCurrentPlaying ? audio.pause() : onPlayFrom(v.verse_key))}
+              className={`p-2 rounded-lg transition-colors ${
+                isCurrent ? "text-amber-300 bg-amber-400/10" : "text-slate-400 hover:text-amber-300 hover:bg-white/5"
+              }`}
+              aria-label={isCurrentPlaying ? "Pause" : "Play from this ayah"}
+            >
+              {isCurrentPlaying ? <Pause className="size-5" /> : <Play className="size-5" />}
+            </button>
+          )}
           <button
             onClick={onToggleBookmark}
             className="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-amber-300 transition-colors"
