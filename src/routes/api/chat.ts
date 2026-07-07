@@ -54,15 +54,25 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("Unauthorized", { status: 401 });
         }
 
-        const { messages } = (await request.json()) as { messages?: UIMessage[] };
+        const body = (await request.json()) as {
+          messages?: UIMessage[];
+          mode?: string;
+          context?: string;
+        };
+        const { messages, mode, context: ctx } = body;
         if (!Array.isArray(messages)) return new Response("Messages required", { status: 400 });
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
+        const baseSystem = MODE_SYSTEMS[mode ?? "ask"] ?? BASE_SYSTEM;
+        const system = ctx
+          ? `${baseSystem}\n\nCONTEXT (may be a verse or topic the user is studying):\n${ctx}`
+          : baseSystem;
+
         const gateway = createLovableAiGatewayProvider(key);
         const result = streamText({
           model: gateway("google/gemini-2.5-flash"),
-          system: SYSTEM,
+          system,
           messages: await convertToModelMessages(messages),
         });
         return result.toUIMessageStreamResponse({ originalMessages: messages });
