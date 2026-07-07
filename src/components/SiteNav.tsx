@@ -26,6 +26,7 @@ export function SiteNav() {
         <div className="hidden md:flex items-center gap-1 text-sm">
           <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
           <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
+          <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
           <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
           <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
           {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
