@@ -1,20 +1,40 @@
 import { useEffect, useState } from "react";
 
 export type QuranScript = "uthmani" | "indopak";
+export type MushafLayout = "flow" | "15line" | "16line" | "madani";
+export type ViewMode = "continuous" | "pageflip";
 
 export type QuranPrefs = {
   script: QuranScript;
   fontSize: number; // px for Arabic text
   lineSpacing: number; // line-height multiplier
   showTranslation: boolean;
+  tajweed: boolean;
+  layout: MushafLayout;
+  viewMode: ViewMode;
+  zoom: number; // 0.8 – 1.6
+  autoScroll: boolean;
+  autoScrollSpeed: number; // px per second
+  nightMode: boolean;
+  focusMode: boolean;
+  brightness: number; // 0.3 – 1
 };
 
-const KEY = "vwm.quran.prefs.v1";
+const KEY = "vwm.quran.prefs.v2";
 const DEFAULTS: QuranPrefs = {
   script: "uthmani",
   fontSize: 32,
   lineSpacing: 2,
   showTranslation: true,
+  tajweed: false,
+  layout: "flow",
+  viewMode: "continuous",
+  zoom: 1,
+  autoScroll: false,
+  autoScrollSpeed: 30,
+  nightMode: false,
+  focusMode: false,
+  brightness: 1,
 };
 
 function read(): QuranPrefs {

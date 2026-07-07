@@ -1,7 +1,7 @@
 import type { QuranVerse } from "@/components/VerseCard";
 
 const FIELDS =
-  "text_uthmani,text_indopak,juz_number,hizb_number,rub_el_hizb_number,page_number,sajdah_number,sajdah_type";
+  "text_uthmani,text_uthmani_tajweed,text_indopak,juz_number,hizb_number,rub_el_hizb_number,page_number,sajdah_number,sajdah_type";
 
 async function fetchAll(url: string, translation: number): Promise<QuranVerse[]> {
   const all: QuranVerse[] = [];
