@@ -121,7 +121,9 @@ function SurahReader() {
   return (
     <div className="min-h-screen pb-40 md:pb-24">
       <SiteNav />
-      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8">
+      <ReadingChrome prefs={prefs}>
+        {({ markRead, containerClass }) => (
+      <main className={`max-w-4xl mx-auto px-4 md:px-6 py-8 ${containerClass}`}>
         <div className="flex items-center justify-between mb-6 text-sm">
           <Link to="/quran" className="text-slate-400 hover:text-amber-300">← All Surahs</Link>
           <div className="flex items-center gap-2">
