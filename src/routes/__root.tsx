@@ -18,23 +18,32 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <main className="flex min-h-dvh items-center justify-center px-4 py-16">
+      <div className="max-w-md text-center animate-fade-in">
+        <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#C9A24C]/30 to-[#1FB6B0]/20 grid place-items-center border border-white/10">
+          <span className="text-4xl font-display text-[#C9A24C]">﷽</span>
+        </div>
+        <h1 className="text-5xl font-display font-bold text-white">404</h1>
+        <h2 className="mt-3 text-lg font-semibold text-white/90">This page isn't here</h2>
+        <p className="mt-2 text-sm text-white/60">
+          The verse you seek has moved. Return home and continue your journey.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#C9A24C] px-5 text-sm font-semibold text-[#070C1F] transition-transform hover:scale-[1.02]"
           >
             Go home
           </Link>
+          <Link
+            to="/quran"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-white/90 hover:bg-white/5 transition-colors"
+          >
+            Open the Quran
+          </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -46,13 +55,16 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+    <main className="flex min-h-dvh items-center justify-center px-4 py-16">
+      <div className="max-w-md text-center animate-fade-in">
+        <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-red-500/10 border border-red-400/30 grid place-items-center">
+          <span className="text-2xl">⚠</span>
+        </div>
+        <h1 className="text-xl font-semibold tracking-tight text-white">
           This page didn't load
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <p className="mt-2 text-sm text-white/60">
+          Something went wrong on our end. Try again, or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -60,19 +72,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#1FB6B0] px-5 text-sm font-semibold text-[#070C1F] transition-transform hover:scale-[1.02]"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-white/90 hover:bg-white/5 transition-colors"
           >
             Go home
           </a>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /dashboard
+Disallow: /hifz
+Disallow: /.lovable/
+Disallow: /.mcp/
+Disallow: /.well-known/
+Disallow: /api/
+
+Sitemap: https://verse-wise-mentor.lovable.app/sitemap.xml
