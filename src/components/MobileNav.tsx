@@ -3,7 +3,10 @@ import { Home, BookOpen, MessageSquare, Compass, LayoutDashboard } from "lucide-
 
 export function MobileNav() {
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-emerald-950/90 backdrop-blur-2xl border-t border-white/10">
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#0F1E3D]/95 backdrop-blur-2xl border-t border-white/10"
+      aria-label="Primary"
+    >
       <ul className="grid grid-cols-5 text-[10px] font-bold uppercase tracking-wider">
         <Item to="/" icon={<Home className="size-5" />} label="Home" exact />
         <Item to="/quran" icon={<BookOpen className="size-5" />} label="Quran" />
@@ -30,8 +33,8 @@ function Item({
     <li>
       <Link
         to={to}
-        className="flex flex-col items-center gap-1 py-2.5 text-slate-400 hover:text-amber-300"
-        activeProps={{ className: "flex flex-col items-center gap-1 py-2.5 text-amber-300" }}
+        className="min-h-11 flex flex-col items-center gap-1 py-2.5 text-white/60 hover:text-[#C9A24C] transition-colors"
+        activeProps={{ className: "min-h-11 flex flex-col items-center gap-1 py-2.5 text-[#C9A24C]" }}
         activeOptions={{ exact: !!exact }}
       >
         {icon}

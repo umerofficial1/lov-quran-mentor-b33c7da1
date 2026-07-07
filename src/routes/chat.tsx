@@ -10,8 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/chat")({
   head: () => ({
     meta: [
-      { title: "AI Teacher — Love Qran" },
-      { name: "description", content: "Ask the AI Quran teacher anything about Quran, Tafsir, Tajweed and Islam." },
+      { title: "AI Mentor — Verse Wise Mentor" },
+      { name: "description", content: "Ask an AI Quran mentor about tajweed, tafsir, hifz technique and Islamic questions — grounded in classical scholarship." },
+      { property: "og:title", content: "AI Mentor — Verse Wise Mentor" },
+      { property: "og:description", content: "Trilingual AI teacher for Quran, tafsir and Islamic knowledge." },
     ],
   }),
   component: ChatPage,

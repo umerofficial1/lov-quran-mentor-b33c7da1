@@ -8,8 +8,10 @@ import { Search, BookOpen } from "lucide-react";
 export const Route = createFileRoute("/quran")({
   head: () => ({
     meta: [
-      { title: "Quran — Love Qran" },
-      { name: "description", content: "Read the full Quran with audio, translation, and bookmarks." },
+      { title: "Read the Quran — Verse Wise Mentor" },
+      { name: "description", content: "All 114 surahs of the Quran with Arabic, English and Urdu translations, world-class reciters and bookmarks." },
+      { property: "og:title", content: "Read the Quran — Verse Wise Mentor" },
+      { property: "og:description", content: "The complete Quran with translation, audio and personal bookmarks." },
     ],
   }),
   component: QuranIndex,

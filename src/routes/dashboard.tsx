@@ -8,7 +8,13 @@ import { SURAHS } from "@/lib/surahs";
 import { BookOpen, Bookmark, Flame, Sparkles, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Love Qran" }] }),
+  head: () => ({
+    meta: [
+      { title: "Your Dashboard — Verse Wise Mentor" },
+      { name: "description", content: "Continue reading, review your bookmarks and track hifz progress across every surah." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Dashboard,
 });
 

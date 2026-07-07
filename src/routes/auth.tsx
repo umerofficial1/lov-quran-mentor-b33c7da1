@@ -5,7 +5,13 @@ import { lovable } from "@/integrations/lovable/index";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Love Qran" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Verse Wise Mentor" },
+      { name: "description", content: "Sign in or create your Verse Wise Mentor account to save bookmarks, track hifz progress and chat with the AI mentor." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   validateSearch: (s: Record<string, unknown>) => ({
     next: typeof s.next === "string" ? s.next : undefined,
   }),
