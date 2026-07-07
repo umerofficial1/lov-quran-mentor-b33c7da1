@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { qiblaBearing } from "@/lib/qibla";
 import { Compass, MapPin, RotateCcw, Plus, Minus, Heart } from "lucide-react";
@@ -84,6 +85,7 @@ function ToolsPage() {
           <DuaCard ar={dua.ar} tr={dua.tr} />
         </div>
       </main>
+      <SiteFooter />
       <MobileNav />
     </div>
   );

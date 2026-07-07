@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
+import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, BookOpen } from "lucide-react";
 
@@ -93,6 +95,8 @@ function QuranIndex() {
           ))}
         </div>
       </main>
+      <SiteFooter />
+      <MobileNav />
     </div>
   );
 }
