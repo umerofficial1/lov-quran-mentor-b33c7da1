@@ -47,9 +47,12 @@ function AuthPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const returnUrl = isSafeRelative(next)
-    ? `${window.location.origin}${next}`
-    : window.location.origin;
+  const returnUrl =
+    typeof window === "undefined"
+      ? "/"
+      : isSafeRelative(next)
+        ? `${window.location.origin}${next}`
+        : window.location.origin;
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
