@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { SURAHS, padSurah } from "@/lib/surahs";
 
 type Reciter = {
@@ -6,9 +7,9 @@ type Reciter = {
   name: string;
   nameUr: string;
   origin: string;
-  /** Base server URL ending in "/" — append {001..114}.mp3 */
+  /** Base server URL ending in "/" — append {001..114}.mp3 — HADR (fast) */
   hadrServer: string;
-  /** Optional teaching (mu'allim) server — falls back to hadr if absent */
+  /** Optional MASHQ (slow, teaching/mujawwad) server — falls back to hadr if absent */
   mashqServer?: string;
   /** Decorative gradient classes for avatar */
   gradient: string;
@@ -48,14 +49,16 @@ const misriQurra: Reciter[] = [
     nameUr: "مصطفیٰ اسماعیل",
     origin: "Egypt • مجوّد",
     hadrServer: "https://server14.mp3quran.net/mustafa_ismail/",
+    mashqServer: "https://server6.mp3quran.net/mustafa_ismail_mjwd/",
     gradient: "from-stone-700 to-stone-900",
   },
   {
     id: "albanna",
     name: "Mahmoud Ali Al-Banna",
     nameUr: "محمود علی البنا",
-    origin: "Egypt",
+    origin: "Egypt • مجوّد",
     hadrServer: "https://server8.mp3quran.net/banna/",
+    mashqServer: "https://server8.mp3quran.net/banna_mjwd/",
     gradient: "from-amber-800 to-orange-900",
   },
   {
@@ -64,6 +67,7 @@ const misriQurra: Reciter[] = [
     nameUr: "محمد محمود الطبلاوی",
     origin: "Egypt",
     hadrServer: "https://server16.mp3quran.net/tblawi/",
+    mashqServer: "https://server10.mp3quran.net/tblawi_mjwd/",
     gradient: "from-teal-800 to-emerald-deep",
   },
   {
@@ -81,6 +85,15 @@ const misriQurra: Reciter[] = [
     origin: "Saudi Arabia",
     hadrServer: "https://server8.mp3quran.net/rifai/",
     gradient: "from-amber-700 to-amber-900",
+  },
+  {
+    id: "ayyub",
+    name: "Muhammad Ayyub",
+    nameUr: "محمد أیوب",
+    origin: "Imam, Masjid An-Nabawi",
+    hadrServer: "https://server16.mp3quran.net/ayyub/",
+    mashqServer: "https://server6.mp3quran.net/ayyub_mtj/",
+    gradient: "from-emerald-800 to-teal-900",
   },
 ];
 
