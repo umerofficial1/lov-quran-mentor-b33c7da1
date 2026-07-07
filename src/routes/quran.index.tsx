@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, BookOpen } from "lucide-react";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 
-export const Route = createFileRoute("/quran")({
+export const Route = createFileRoute("/quran/")({
   head: () => ({
     meta: [
       { title: "Read the Quran — Verse Wise Mentor" },
