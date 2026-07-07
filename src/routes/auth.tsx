@@ -5,7 +5,13 @@ import { lovable } from "@/integrations/lovable/index";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Love Qran" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Verse Wise Mentor" },
+      { name: "description", content: "Sign in or create your Verse Wise Mentor account to save bookmarks, track hifz progress and chat with the AI mentor." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   validateSearch: (s: Record<string, unknown>) => ({
     next: typeof s.next === "string" ? s.next : undefined,
   }),
@@ -149,17 +155,37 @@ function AuthPage() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-[0_0_20px_rgba(5,150,105,0.4)] border border-emerald-400/30 disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] font-semibold transition-all disabled:opacity-50"
             >
               {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
             </button>
           </form>
 
-          <p className="mt-6 text-sm text-center text-slate-400">
+          {mode === "signin" && (
+            <p className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={async () => {
+                  setErr(null);
+                  if (!email) return setErr("Enter your email above first.");
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) setErr(error.message);
+                  else setErr("Check your inbox for a reset link.");
+                }}
+                className="text-xs text-white/50 hover:text-[#C9A24C] transition-colors"
+              >
+                Forgot password?
+              </button>
+            </p>
+          )}
+
+          <p className="mt-6 text-sm text-center text-white/60">
             {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
             <button
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="text-amber-400 font-semibold hover:text-amber-300"
+              className="text-[#C9A24C] font-semibold hover:text-[#E0BC6A]"
             >
               {mode === "signin" ? "Sign up" : "Sign in"}
             </button>

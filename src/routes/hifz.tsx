@@ -8,7 +8,14 @@ import { SURAHS } from "@/lib/surahs";
 import { Plus, Trash2, Search } from "lucide-react";
 
 export const Route = createFileRoute("/hifz")({
-  head: () => ({ meta: [{ title: "Hifz Tracker — Love Qran" }] }),
+  head: () => ({
+    meta: [
+      { title: "Hifz Tracker — Verse Wise Mentor" },
+      { name: "description", content: "Track your Quran memorization surah by surah with streaks, mastery levels and revision reminders." },
+      { property: "og:title", content: "Hifz Tracker — Verse Wise Mentor" },
+      { property: "og:description", content: "Structured memorization tracking for every surah of the Quran." },
+    ],
+  }),
   component: HifzPage,
 });
 

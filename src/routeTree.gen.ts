@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as QuranRouteImport } from './routes/quran'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as HifzRouteImport } from './routes/hifz'
@@ -27,6 +28,11 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuranRoute = QuranRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/hifz': typeof HifzRoute
   '/mcp': typeof McpRoute
   '/quran': typeof QuranRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/tools': typeof ToolsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/hifz'
     | '/mcp'
     | '/quran'
+    | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/hifz'
     | '/mcp'
     | '/quran'
+    | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/hifz'
     | '/mcp'
     | '/quran'
+    | '/reset-password'
     | '/tools'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   HifzRoute: typeof HifzRoute
   McpRoute: typeof McpRoute
   QuranRoute: typeof QuranRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ToolsRoute: typeof ToolsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quran': {
@@ -335,6 +355,7 @@ const rootRouteChildren: RootRouteChildren = {
   HifzRoute: HifzRoute,
   McpRoute: McpRoute,
   QuranRoute: QuranRouteWithChildren,
+  ResetPasswordRoute: ResetPasswordRoute,
   ToolsRoute: ToolsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

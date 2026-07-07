@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { qiblaBearing } from "@/lib/qibla";
 import { Compass, MapPin, RotateCcw, Plus, Minus, Heart } from "lucide-react";
@@ -9,8 +10,10 @@ import { Compass, MapPin, RotateCcw, Plus, Minus, Heart } from "lucide-react";
 export const Route = createFileRoute("/tools")({
   head: () => ({
     meta: [
-      { title: "Islamic Tools — Prayer, Qibla, Tasbeeh — Love Qran" },
-      { name: "description", content: "Accurate prayer times, Qibla direction, Tasbeeh counter and daily duas." },
+      { title: "Prayer Times, Qibla & Tasbeeh — Verse Wise Mentor" },
+      { name: "description", content: "Live prayer times, accurate Qibla direction, tasbeeh counter and a daily du'a — calculated from your location, private by default." },
+      { property: "og:title", content: "Prayer Times, Qibla & Tasbeeh — Verse Wise Mentor" },
+      { property: "og:description", content: "Everyday Islamic tools — prayer, qibla, dhikr and du'a — in one place." },
     ],
   }),
   component: ToolsPage,
@@ -82,6 +85,7 @@ function ToolsPage() {
           <DuaCard ar={dua.ar} tr={dua.tr} />
         </div>
       </main>
+      <SiteFooter />
       <MobileNav />
     </div>
   );

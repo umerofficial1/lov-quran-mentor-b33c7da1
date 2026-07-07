@@ -8,9 +8,18 @@ import { Play, Pause, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Repeat
 import DOMPurify from "dompurify";
 
 export const Route = createFileRoute("/quran/$surahId")({
-  head: ({ params }) => ({
-    meta: [{ title: `Surah ${params.surahId} — Love Qran` }],
-  }),
+  head: ({ params }) => {
+    const s = SURAHS.find((x) => x.n === Number(params.surahId));
+    const label = s ? `Surah ${s.n} — ${s.nameAr}` : `Surah ${params.surahId}`;
+    return {
+      meta: [
+        { title: `${label} — Verse Wise Mentor` },
+        { name: "description", content: `Read ${label} with Arabic, English and Urdu translation, verse-by-verse audio and bookmarks.` },
+        { property: "og:title", content: `${label} — Verse Wise Mentor` },
+        { property: "og:description", content: `Recite ${label} with translation and audio.` },
+      ],
+    };
+  },
   component: SurahReader,
 });
 
