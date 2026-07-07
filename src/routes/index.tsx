@@ -134,15 +134,8 @@ function Home() {
             </Link>
           </div>
 
-          <div className="space-y-5">
-            <h4 className="text-[#C9A24C] font-display text-lg border-b border-[#C9A24C]/20 pb-2">Your Journey</h4>
-            <ProgressBar label="Surah Al-Baqarah · Tajweed" value={68} />
-            <ProgressBar label="Hifz · Juz 30" value={42} />
-            <ProgressBar label="Tafsir Roots" value={21} />
-            <Link to="/dashboard" className="inline-flex items-center gap-2 text-white/60 hover:text-[#1FB6B0] text-xs uppercase tracking-widest transition-colors">
-              View Full Progress <ArrowRight className="size-3" />
-            </Link>
-          </div>
+          <JourneyPanel />
+
 
           <div className="bg-[#0F1E3D]/50 border border-white/10 p-6">
             <div className="flex items-center justify-between mb-4">
