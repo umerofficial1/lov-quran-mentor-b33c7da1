@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import ReactMarkdown from "react-markdown";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, ExternalLink, Mic, Square, Smartphone,
+  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, Mic, Square, Smartphone,
 } from "lucide-react";
 import {
   translationCompare, generateQuiz, memorizationCoach, revisionPlanner,
@@ -17,6 +17,7 @@ import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
     tool: search.tool === "mistake" ? ("mistake" as const) : undefined,
+    start: search.start === "voice" ? ("voice" as const) : undefined,
   }),
   head: () => ({
     meta: [
@@ -45,7 +46,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = 
 ];
 
 function LearnPage() {
-  const { tool } = Route.useSearch();
+  const { tool, start } = Route.useSearch();
   const [tab, setTab] = useState<Tab>(tool ?? "compare");
   const { user } = useAuth();
 
@@ -92,7 +93,7 @@ function LearnPage() {
           {tab === "coach" && <CoachTool />}
           {tab === "revise" && <ReviseTool />}
           {tab === "listen" && <ListenTool />}
-          {tab === "mistake" && <MistakeTool />}
+          {tab === "mistake" && <MistakeTool autoStart={tool === "mistake" && start === "voice"} />}
         </div>
       </main>
       <MobileNav />
@@ -343,16 +344,21 @@ function ListenTool() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-      const recorder = new MediaRecorder(stream, { mimeType: mime });
+      const mime = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
+        .find((type) => MediaRecorder.isTypeSupported(type));
+      const recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
       chunksRef.current = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunksRef.current.push(event.data); };
-      recorder.onstop = () => void checkRecording(new Blob(chunksRef.current, { type: mime }));
+      recorder.onstop = () => void checkRecording(new Blob(chunksRef.current, { type: recorder.mimeType || mime || "audio/webm" }));
       recRef.current = recorder;
-      recorder.start();
+      recorder.start(250);
       setRecording(true);
-    } catch {
-      setError("Mic permission blocked hai. Lock icon se Allow karein ya ‘Phone recorder’ dabayen.");
+    } catch (cause) {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
+      setError(permissionDenied
+        ? "Browser ne microphone access deny kiya. Start voice answer dobara dabayen aur saamne aane wale Allow button ko select karein."
+        : "Microphone start nahi hua. Kisi doosre app ki recording band karke dobara try karein.");
     }
   };
 
@@ -430,37 +436,24 @@ type MistakeResult = {
   tips: string[];
 };
 
-function MistakeTool() {
+function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
   const [verseKey, setVerseKey] = useState("1:1");
   const [reciterId, setReciterId] = useState(RECITERS[1].id);
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showMicHelp, setShowMicHelp] = useState(false);
   const [data, setData] = useState<MistakeResult | null>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const openMicTab = () => {
-    window.open(`${window.location.origin}/learn?tool=mistake`, "_blank", "noopener,noreferrer");
-  };
+  const autoStartedRef = useRef(false);
 
   const start = async () => {
     setError(null);
-    setShowMicHelp(false);
     setData(null);
 
-    if (window.self !== window.top) {
-      openMicTab();
-      setShowMicHelp(true);
-      setError("Mic preview ke andar block hai. Naya tab khul gaya hai—wahan Start recording dabayen aur Allow karein.");
-      return;
-    }
-
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-      setShowMicHelp(true);
       setError("Is browser mein microphone recording available nahi. App ko HTTPS par Chrome ya Safari mein kholen.");
       return;
     }
@@ -468,22 +461,29 @@ function MistakeTool() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-      const rec = new MediaRecorder(stream, { mimeType: mime });
+      const mime = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
+        .find((type) => MediaRecorder.isTypeSupported(type));
+      const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
       chunksRef.current = [];
       rec.ondataavailable = (e) => { if (e.data.size) chunksRef.current.push(e.data); };
-      rec.onstop = () => void submit(new Blob(chunksRef.current, { type: mime }));
+      rec.onstop = () => void submit(new Blob(chunksRef.current, { type: rec.mimeType || mime || "audio/webm" }));
       recRef.current = rec;
-      rec.start();
+      rec.start(250);
       setRecording(true);
     } catch (cause) {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
       const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
-      setShowMicHelp(true);
       setError(permissionDenied
-        ? "Microphone blocked hai. Address bar ke lock icon se Microphone → Allow karein, page reload karein, phir dobara try karein."
+        ? "Browser ne microphone access deny kiya. Start recording dobara dabayen aur saamne aane wale Allow button ko select karein."
         : "Microphone start nahi hua. Kisi doosre app ki recording band karke dobara try karein.");
     }
   };
+
+  useEffect(() => {
+    if (!autoStart || autoStartedRef.current) return;
+    autoStartedRef.current = true;
+    void start();
+  }, [autoStart]);
 
   const stop = () => {
     setRecording(false);
@@ -563,19 +563,10 @@ function MistakeTool() {
       </div>
       <ErrorBox error={error} />
       <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm font-bold text-amber-200">
-        <Smartphone className="size-4" /> Phone recorder (permission ke baghair)
+        <Smartphone className="size-4" /> Upload recording
         <input type="file" accept="audio/*" capture="user" className="sr-only"
           onChange={(event) => { const file = event.target.files?.[0]; if (file) void submit(file); event.target.value = ""; }} />
       </label>
-      {showMicHelp && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
-          <button type="button" onClick={openMicTab}
-            className="inline-flex items-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-bold text-black hover:bg-amber-300">
-            <ExternalLink className="size-4" /> Open microphone in new tab
-          </button>
-          <span className="text-xs text-amber-100">Naye tab mein Start recording → Allow dabayen.</span>
-        </div>
-      )}
 
       {data && (
         <div className="space-y-3">
