@@ -64,7 +64,7 @@ const COURSES: Record<LevelKey, Course> = {
         title: "AI voice coach — recite an ayah",
         desc: "Record any ayah and get real-time feedback on your pronunciation and flow.",
         to: "/learn",
-        search: { tool: "mistake" },
+        search: { tool: "mistake", start: "voice" },
         icon: <Mic className="size-4" />,
         cta: "Start voice session",
       },
