@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { RecitersSection } from "@/components/ReciterSection";
 import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
@@ -7,6 +7,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useReadingStats, formatDuration } from "@/hooks/use-reading-stats";
+import { requestMicrophoneStream } from "@/lib/microphone.client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -235,9 +236,7 @@ function Home() {
             <p className="text-white/60 leading-relaxed mb-6">
               Real-time tajweed feedback: recite any ayah into your microphone and the AI compares your pronunciation, elongation, and articulation points to a master reciter — ayah by ayah.
             </p>
-            <Link to="/learn" search={{ tool: "mistake", start: "voice" }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] font-semibold text-sm uppercase tracking-widest transition-colors">
-              <Mic className="size-4" /> Start Voice Session
-            </Link>
+            <StartVoiceSessionButton />
           </div>
           <div className="relative flex items-center justify-center">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(31,182,176,0.15)_0%,_transparent_60%)]" />
@@ -283,6 +282,29 @@ function Home() {
 
       <MobileNav />
     </div>
+  );
+}
+
+function StartVoiceSessionButton() {
+  const navigate = useNavigate();
+  const [starting, setStarting] = useState(false);
+
+  const startVoiceSession = async () => {
+    setStarting(true);
+    try {
+      await requestMicrophoneStream();
+    } catch {
+      // Continue to the recorder so the user can retry or upload audio.
+    }
+    await navigate({ to: "/learn", search: { tool: "mistake", start: "voice" } });
+  };
+
+  return (
+    <button type="button" onClick={startVoiceSession} disabled={starting}
+      className="inline-flex items-center gap-3 px-6 py-3 bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] font-semibold text-sm uppercase tracking-widest transition-colors disabled:opacity-60">
+      {starting ? <Loader2 className="size-4 animate-spin" /> : <Mic className="size-4" />}
+      {starting ? "Starting…" : "Start Voice Session"}
+    </button>
   );
 }
 

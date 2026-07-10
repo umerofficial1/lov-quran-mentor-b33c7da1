@@ -13,6 +13,7 @@ import {
   translationCompare, generateQuiz, memorizationCoach, revisionPlanner,
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
+import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone.client";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -342,7 +343,7 @@ function ListenTool() {
       return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await requestMicrophoneStream();
       streamRef.current = stream;
       const mime = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
         .find((type) => MediaRecorder.isTypeSupported(type));
@@ -354,7 +355,7 @@ function ListenTool() {
       recorder.start(250);
       setRecording(true);
     } catch (cause) {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      releaseMicrophoneStream(streamRef.current);
       const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
       setError(permissionDenied
         ? "Browser ne microphone access deny kiya. Start voice answer dobara dabayen aur saamne aane wale Allow button ko select karein."
@@ -365,7 +366,7 @@ function ListenTool() {
   const stopRecording = () => {
     setRecording(false);
     recRef.current?.stop();
-    streamRef.current?.getTracks().forEach((track) => track.stop());
+    releaseMicrophoneStream(streamRef.current);
   };
 
   return (
@@ -459,7 +460,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await requestMicrophoneStream();
       streamRef.current = stream;
       const mime = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
         .find((type) => MediaRecorder.isTypeSupported(type));
@@ -471,7 +472,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
       rec.start(250);
       setRecording(true);
     } catch (cause) {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      releaseMicrophoneStream(streamRef.current);
       const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
       setError(permissionDenied
         ? "Browser ne microphone access deny kiya. Start recording dobara dabayen aur saamne aane wale Allow button ko select karein."
@@ -488,7 +489,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
   const stop = () => {
     setRecording(false);
     recRef.current?.stop();
-    streamRef.current?.getTracks().forEach((t) => t.stop());
+    releaseMicrophoneStream(streamRef.current);
   };
 
   const submit = async (blob: Blob) => {
