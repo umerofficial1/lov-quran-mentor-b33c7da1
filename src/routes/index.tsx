@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { RecitersSection } from "@/components/ReciterSection";
 import { FamousClipsSection } from "@/components/FamousClipsSection";
 import { LanguagesSection } from "@/components/LanguagesSection";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
-import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock } from "lucide-react";
+import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useReadingStats, formatDuration } from "@/hooks/use-reading-stats";
 import { requestMicrophoneStream } from "@/lib/microphone.client";
