@@ -13,7 +13,7 @@ import {
   translationCompare, generateQuiz, memorizationCoach, revisionPlanner,
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
-import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone.client";
+import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({

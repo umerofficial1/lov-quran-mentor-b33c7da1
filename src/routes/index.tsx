@@ -293,7 +293,7 @@ function StartVoiceSessionButton() {
   const startVoiceSession = async () => {
     setStarting(true);
     try {
-      const { requestMicrophoneStream } = await import("@/lib/microphone.client");
+      const { requestMicrophoneStream } = await import("@/lib/microphone");
       await requestMicrophoneStream();
     } catch {
       // Continue to the recorder so the user can retry or upload audio.
