@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { generateText, Output } from "ai";
 
@@ -14,7 +14,6 @@ function getGateway() {
 
 // ---------- Translation comparison ----------
 export const translationCompare = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z.object({ verseKey: z.string().regex(/^\d+:\d+$/) }).parse(d),
   )
@@ -87,7 +86,6 @@ const QuizSchema = z.object({
 });
 
 export const generateQuiz = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
@@ -119,7 +117,6 @@ export const generateQuiz = createServerFn({ method: "POST" })
 
 // ---------- Memorization coach ----------
 export const memorizationCoach = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
@@ -143,7 +140,6 @@ export const memorizationCoach = createServerFn({ method: "POST" })
 
 // ---------- Revision planner ----------
 export const revisionPlanner = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
@@ -165,7 +161,6 @@ export const revisionPlanner = createServerFn({ method: "POST" })
 
 // ---------- Mistake checker (student recitation transcript vs actual ayah) ----------
 export const mistakeChecker = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
@@ -193,7 +188,6 @@ export const mistakeChecker = createServerFn({ method: "POST" })
 
 // ---------- Listening test evaluation ----------
 export const listeningTest = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
