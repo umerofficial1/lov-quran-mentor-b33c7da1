@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import DOMPurify from "dompurify";
 import { BookOpen, X } from "lucide-react";
 import { TAFSIRS, fetchTafsir } from "@/lib/tafsir";
+import { toCleanHtml } from "@/lib/clean-html";
 
 export function TafsirButton({ verseKey }: { verseKey: string }) {
   const [open, setOpen] = useState(false);
@@ -99,7 +99,7 @@ function TafsirModal({ verseKey, onClose }: { verseKey: string; onClose: () => v
                   ? { fontFamily: '"Noto Nastaliq Urdu", serif', lineHeight: 2.2 }
                   : undefined
               }
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(q.data.text) }}
+              dangerouslySetInnerHTML={{ __html: toCleanHtml(q.data.text) }}
             />
           )}
           {q.data === null && !q.isLoading && (
