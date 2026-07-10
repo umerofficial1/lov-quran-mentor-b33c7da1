@@ -8,7 +8,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { BookOpen, MessageSquare, Compass, Trophy, Mic, GraduationCap, Users, ArrowRight, Play, Lock, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useReadingStats, formatDuration } from "@/hooks/use-reading-stats";
-import { requestMicrophoneStream } from "@/lib/microphone.client";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -293,6 +293,7 @@ function StartVoiceSessionButton() {
   const startVoiceSession = async () => {
     setStarting(true);
     try {
+      const { requestMicrophoneStream } = await import("@/lib/microphone.client");
       await requestMicrophoneStream();
     } catch {
       // Continue to the recorder so the user can retry or upload audio.
