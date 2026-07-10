@@ -7,10 +7,10 @@ import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, ExternalLink,
+  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, ExternalLink, Mic, Square, Smartphone,
 } from "lucide-react";
 import {
-  translationCompare, generateQuiz, memorizationCoach, revisionPlanner, listeningTest,
+  translationCompare, generateQuiz, memorizationCoach, revisionPlanner,
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 
@@ -295,13 +295,17 @@ function ReviseTool() {
 
 /* ---------- Listening test ---------- */
 function ListenTool() {
-  const evalFn = useServerFn(listeningTest);
   const [surah, setSurah] = useState(112);
   const [ayah, setAyah] = useState(1);
   const [reciterId, setReciterId] = useState(RECITERS[1].id);
-  const [answer, setAnswer] = useState("");
+  const [recording, setRecording] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<MistakeResult | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { loading, error, data, run, setData } = useRun((a) => evalFn({ data: a as { verseKey: string; answer: string } }));
+  const recRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   const play = () => {
     const r = RECITERS.find((x) => x.id === reciterId) ?? RECITERS[1];
@@ -310,9 +314,57 @@ function ListenTool() {
     void audioRef.current.play();
   };
 
+  const checkRecording = async (blob: Blob) => {
+    if (blob.size < 2048) { setError("Recording bohat chhoti hai. Dobara record karein."); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      const ext = blob.type.includes("mp4") ? "mp4" : blob.type.includes("wav") ? "wav" : blob.type.includes("mpeg") ? "mp3" : "webm";
+      fd.append("audio", blob, `recording.${ext}`);
+      fd.append("verseKey", `${surah}:${ayah}`);
+      const res = await fetch("/api/mistake-check-voice", { method: "POST", body: fd });
+      if (!res.ok) throw new Error(await res.text().catch(() => "Voice check failed"));
+      setData(await res.json());
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Voice check failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startRecording = async () => {
+    setError(null);
+    setData(null);
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setError("Mic browser mein available nahi. Neeche ‘Phone recorder’ use karein.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const recorder = new MediaRecorder(stream, { mimeType: mime });
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => { if (event.data.size) chunksRef.current.push(event.data); };
+      recorder.onstop = () => void checkRecording(new Blob(chunksRef.current, { type: mime }));
+      recRef.current = recorder;
+      recorder.start();
+      setRecording(true);
+    } catch {
+      setError("Mic permission blocked hai. Lock icon se Allow karein ya ‘Phone recorder’ dabayen.");
+    }
+  };
+
+  const stopRecording = () => {
+    setRecording(false);
+    recRef.current?.stop();
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+  };
+
   return (
     <div className="space-y-4">
-      <ToolHeader title="Listening test" desc="Play a random or chosen ayah, then write what you heard. AI scores your answer." />
+      <ToolHeader title="Listening test (voice)" desc="Ayah sunain, phir mic mein jo suna woh parhein. AI aapki voice check karega." />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <Input label="Surah"><input type="number" min={1} max={114} value={surah} onChange={(e) => { setSurah(Number(e.target.value)); setData(null); }} className={inputCls} /></Input>
         <Input label="Ayah"><input type="number" min={1} value={ayah} onChange={(e) => { setAyah(Number(e.target.value)); setData(null); }} className={inputCls} /></Input>
@@ -327,28 +379,37 @@ function ListenTool() {
           className="inline-flex items-center gap-2 rounded-xl bg-teal-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
           <Play className="size-4" /> Play ayah
         </button>
+        {!recording ? (
+          <button type="button" onClick={startRecording} disabled={loading}
+            className="inline-flex items-center gap-2 rounded-xl bg-rose-500 text-white px-4 py-2.5 font-bold text-sm disabled:opacity-50">
+            <Mic className="size-4" /> Start voice answer
+          </button>
+        ) : (
+          <button type="button" onClick={stopRecording}
+            className="inline-flex items-center gap-2 rounded-xl bg-white text-black px-4 py-2.5 font-bold text-sm">
+            <Square className="size-4 fill-current" /> Stop &amp; check
+          </button>
+        )}
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm font-bold text-amber-200">
+          <Smartphone className="size-4" /> Phone recorder
+          <input type="file" accept="audio/*" capture="user" className="sr-only"
+            onChange={(event) => { const file = event.target.files?.[0]; if (file) void checkRecording(file); event.target.value = ""; }} />
+        </label>
+        {loading && <span className="inline-flex items-center gap-2 text-sm text-slate-300"><Loader2 className="size-4 animate-spin" /> Voice check ho rahi hai…</span>}
       </div>
-      <textarea
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        rows={3}
-        placeholder="Type what you heard (Arabic or transliteration)…"
-        dir="rtl"
-        className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/40"
-      />
-      <SubmitBtn loading={loading} onClick={() => run({ verseKey: `${surah}:${ayah}`, answer })}>Check my answer</SubmitBtn>
       <ErrorBox error={error} />
       {data && (
         <div className={`rounded-2xl border p-4 ${
-          data.verdict === "correct" ? "bg-emerald-500/10 border-emerald-400/40"
-          : data.verdict === "close" ? "bg-amber-400/10 border-amber-400/40"
+          data.overall === "correct" ? "bg-emerald-500/10 border-emerald-400/40"
+          : data.overall === "minor" ? "bg-amber-400/10 border-amber-400/40"
           : "bg-rose-500/10 border-rose-400/40"
         }`}>
           <div className="flex items-center gap-2 mb-2">
-            {data.verdict === "correct" ? <CheckCircle2 className="size-5 text-emerald-300" /> : <XCircle className="size-5 text-rose-300" />}
-            <p className="font-bold text-white">Score: {data.score}/100 · {data.verdict}</p>
+            {data.overall === "correct" ? <CheckCircle2 className="size-5 text-emerald-300" /> : <XCircle className="size-5 text-rose-300" />}
+            <p className="font-bold text-white">Score: {data.score}/100 · {data.overall}</p>
           </div>
-          <p className="text-slate-200 text-sm">{data.notes}</p>
+          <p className="text-slate-200 text-sm">{data.summary}</p>
+          <p className="mt-2 text-sm text-slate-400" dir="rtl">Aap ne parha: {data.transcript}</p>
           <p className="mt-3 font-uthmani text-white text-right text-2xl leading-loose" dir="rtl">{data.correct}</p>
         </div>
       )}
@@ -383,7 +444,7 @@ function MistakeTool() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const openMicTab = () => {
-    window.open(`${window.location.origin}/learn`, "_blank", "noopener,noreferrer");
+    window.open(`${window.location.origin}/learn?tool=mistake`, "_blank", "noopener,noreferrer");
   };
 
   const start = async () => {
@@ -501,6 +562,11 @@ function MistakeTool() {
         {loading && <span className="inline-flex items-center gap-2 text-slate-300 text-sm"><Loader2 className="size-4 animate-spin" /> Transcribing & analysing…</span>}
       </div>
       <ErrorBox error={error} />
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm font-bold text-amber-200">
+        <Smartphone className="size-4" /> Phone recorder (permission ke baghair)
+        <input type="file" accept="audio/*" capture="user" className="sr-only"
+          onChange={(event) => { const file = event.target.files?.[0]; if (file) void submit(file); event.target.value = ""; }} />
+      </label>
       {showMicHelp && (
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
           <button type="button" onClick={openMicTab}

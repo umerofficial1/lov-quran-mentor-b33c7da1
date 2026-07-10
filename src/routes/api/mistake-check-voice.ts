@@ -28,6 +28,14 @@ export const Route = createFileRoute("/api/mistake-check-voice")({
         if (!(audio instanceof Blob) || !/^\d+:\d+$/.test(verseKey)) {
           return new Response("bad request", { status: 400 });
         }
+        if (!audio.size || audio.size > 25 * 1024 * 1024) {
+          return new Response("Recording khali hai ya 25 MB se bari hai", { status: 400 });
+        }
+        const audioType = audio.type.split(";")[0];
+        const allowedTypes = ["audio/webm", "audio/mp4", "audio/mpeg", "audio/wav", "audio/x-wav", "audio/aac", "audio/ogg"];
+        if (audioType && !allowedTypes.includes(audioType)) {
+          return new Response("Is audio format ko support nahi kiya ja raha", { status: 400 });
+        }
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
@@ -41,12 +49,14 @@ export const Route = createFileRoute("/api/mistake-check-voice")({
         // 2. Transcribe the user's recording via Lovable AI STT
         const sttForm = new FormData();
         sttForm.append("model", "openai/gpt-4o-transcribe");
-        const type = (audio as Blob).type.split(";")[0];
+        const type = audioType;
         const ext =
           type === "audio/webm" ? "webm" :
           type === "audio/mp4"  ? "mp4"  :
           type === "audio/mpeg" ? "mp3"  :
-          type === "audio/wav"  ? "wav"  : "webm";
+          type === "audio/wav" || type === "audio/x-wav" ? "wav" :
+          type === "audio/aac" ? "aac" :
+          type === "audio/ogg" ? "ogg" : "webm";
         sttForm.append("file", audio, `recording.${ext}`);
         sttForm.append("language", "ar");
         const sttRes = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
