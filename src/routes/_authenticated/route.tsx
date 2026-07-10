@@ -1,15 +1,7 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
+// Auth requirement removed — this layout no longer gates its children.
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async ({ location }) => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) {
-      const next = location.pathname.startsWith("/auth") ? "/" : location.pathname + (location.searchStr ?? "");
-      throw redirect({ to: "/auth", search: { next } });
-    }
-    return { user: data.user };
-  },
   component: () => <Outlet />,
 });
