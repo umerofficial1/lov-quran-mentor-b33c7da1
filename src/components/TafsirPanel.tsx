@@ -99,7 +99,7 @@ function TafsirModal({ verseKey, onClose }: { verseKey: string; onClose: () => v
                   ? { fontFamily: '"Noto Nastaliq Urdu", serif', lineHeight: 2.2 }
                   : undefined
               }
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(q.data.text) }}
+              dangerouslySetInnerHTML={{ __html: toCleanHtml(q.data.text) }}
             />
           )}
           {q.data === null && !q.isLoading && (

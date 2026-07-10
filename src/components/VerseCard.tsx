@@ -152,10 +152,9 @@ export function VerseCard({
       {prefs.wordByWord && <WordByWord verseKey={v.verse_key} />}
 
       {prefs.showTranslation && v.translations?.[0]?.text && (
-        <p
-          className="text-slate-300 mt-4 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(v.translations[0].text) }}
-        />
+        <p className="text-slate-300 mt-4 leading-relaxed">
+          {toCleanText(v.translations[0].text)}
+        </p>
       )}
 
       <div className="mt-4 flex items-center gap-2">
