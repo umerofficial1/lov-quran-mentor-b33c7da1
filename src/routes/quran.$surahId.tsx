@@ -6,7 +6,7 @@ import { SURAHS } from "@/lib/surahs";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Mic } from "lucide-react";
 import { fetchSurahVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
@@ -14,6 +14,7 @@ import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { LiveRecitationDrawer } from "@/components/LiveRecitationDrawer";
 
 export const Route = createFileRoute("/quran/$surahId")({
   head: ({ params }) => {
