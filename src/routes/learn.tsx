@@ -7,7 +7,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle,
+  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, ExternalLink,
 } from "lucide-react";
 import {
   translationCompare, generateQuiz, memorizationCoach, revisionPlanner, listeningTest,
@@ -371,15 +371,35 @@ function MistakeTool() {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showMicHelp, setShowMicHelp] = useState(false);
   const [data, setData] = useState<MistakeResult | null>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const openMicTab = () => {
+    window.open(`${window.location.origin}/learn`, "_blank", "noopener,noreferrer");
+  };
+
   const start = async () => {
     setError(null);
+    setShowMicHelp(false);
     setData(null);
+
+    if (window.self !== window.top) {
+      openMicTab();
+      setShowMicHelp(true);
+      setError("Mic preview ke andar block hai. Naya tab khul gaya hai—wahan Start recording dabayen aur Allow karein.");
+      return;
+    }
+
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setShowMicHelp(true);
+      setError("Is browser mein microphone recording available nahi. App ko HTTPS par Chrome ya Safari mein kholen.");
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -391,8 +411,12 @@ function MistakeTool() {
       recRef.current = rec;
       rec.start();
       setRecording(true);
-    } catch {
-      setError("Microphone access denied. Please allow mic permission.");
+    } catch (cause) {
+      const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
+      setShowMicHelp(true);
+      setError(permissionDenied
+        ? "Microphone blocked hai. Address bar ke lock icon se Microphone → Allow karein, page reload karein, phir dobara try karein."
+        : "Microphone start nahi hua. Kisi doosre app ki recording band karke dobara try karein.");
     }
   };
 
@@ -473,6 +497,15 @@ function MistakeTool() {
         {loading && <span className="inline-flex items-center gap-2 text-slate-300 text-sm"><Loader2 className="size-4 animate-spin" /> Transcribing & analysing…</span>}
       </div>
       <ErrorBox error={error} />
+      {showMicHelp && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
+          <button type="button" onClick={openMicTab}
+            className="inline-flex items-center gap-2 rounded-lg bg-amber-400 px-4 py-2 text-sm font-bold text-black hover:bg-amber-300">
+            <ExternalLink className="size-4" /> Open microphone in new tab
+          </button>
+          <span className="text-xs text-amber-100">Naye tab mein Start recording → Allow dabayen.</span>
+        </div>
+      )}
 
       {data && (
         <div className="space-y-3">
