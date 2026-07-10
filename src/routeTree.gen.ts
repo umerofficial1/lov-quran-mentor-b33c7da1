@@ -25,6 +25,7 @@ import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
 import { Route as ApiTranscribeChunkRouteImport } from './routes/api/transcribe-chunk'
 import { Route as ApiMistakeCheckVoiceRouteImport } from './routes/api/mistake-check-voice'
+import { Route as ApiMistakeCheckTextRouteImport } from './routes/api/mistake-check-text'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -115,6 +116,11 @@ const ApiMistakeCheckVoiceRoute = ApiMistakeCheckVoiceRouteImport.update({
   path: '/api/mistake-check-voice',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMistakeCheckTextRoute = ApiMistakeCheckTextRouteImport.update({
+  id: '/api/mistake-check-text',
+  path: '/api/mistake-check-text',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
     | '/api/transcribe-chunk'
     | '/courses/$level'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
     | '/api/transcribe-chunk'
     | '/courses/$level'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
     | '/api/transcribe-chunk'
     | '/courses/$level'
@@ -352,6 +364,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiMistakeCheckTextRoute: typeof ApiMistakeCheckTextRoute
   ApiMistakeCheckVoiceRoute: typeof ApiMistakeCheckVoiceRoute
   ApiTranscribeChunkRoute: typeof ApiTranscribeChunkRoute
   CoursesLevelRoute: typeof CoursesLevelRoute
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMistakeCheckVoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mistake-check-text': {
+      id: '/api/mistake-check-text'
+      path: '/api/mistake-check-text'
+      fullPath: '/api/mistake-check-text'
+      preLoaderRoute: typeof ApiMistakeCheckTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -580,6 +600,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiMistakeCheckTextRoute: ApiMistakeCheckTextRoute,
   ApiMistakeCheckVoiceRoute: ApiMistakeCheckVoiceRoute,
   ApiTranscribeChunkRoute: ApiTranscribeChunkRoute,
   CoursesLevelRoute: CoursesLevelRoute,
