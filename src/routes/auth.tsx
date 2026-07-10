@@ -19,7 +19,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function isSafeRelative(p: string | undefined): p is string {
-  return !!p && p.startsWith("/") && !p.startsWith("//");
+  return !!p && p.startsWith("/") && !p.startsWith("//") && !p.startsWith("/auth");
 }
 
 function AuthPage() {
