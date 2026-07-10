@@ -644,7 +644,16 @@ function MistakeTool() {
       {liveTranscript && (
         <div className="rounded-xl bg-black/20 border border-white/10 p-3">
           <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Aap ne parha (live)</p>
-          <p className="font-uthmani text-white text-right text-xl leading-loose mt-1" dir="rtl">{liveTranscript}</p>
+          <div className="font-uthmani text-right text-xl leading-loose mt-1 flex flex-wrap gap-x-2 justify-end" dir="rtl">
+            {liveDiff?.spokenWords.map((word, index) => (
+              <span
+                key={`${word.word}-${index}`}
+                className={word.status === "match" ? "text-emerald-300" : "text-rose-300 underline decoration-rose-400"}
+              >
+                {word.word}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

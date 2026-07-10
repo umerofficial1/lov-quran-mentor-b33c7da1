@@ -28,9 +28,15 @@ export interface LiveWord {
   status: LiveStatus;
 }
 
+export interface SpokenWord {
+  word: string;
+  status: "match" | "wrong";
+}
+
 export interface AyahDiff {
   words: LiveWord[]; // one entry per expected word, in reading order
   extras: string[]; // spoken words that didn't align to any expected word
+  spokenWords: SpokenWord[];
   matched: number;
   total: number;
 }
@@ -98,5 +104,10 @@ export function diffAyah(
     if (!matchedSpoken.has(idx)) extras.push(s);
   });
 
-  return { words, extras, matched: matchedExpected.size, total: n };
+  const spokenWords = spoken.map((word, idx) => ({
+    word,
+    status: matchedSpoken.has(idx) ? ("match" as const) : ("wrong" as const),
+  }));
+
+  return { words, extras, spokenWords, matched: matchedExpected.size, total: n };
 }
