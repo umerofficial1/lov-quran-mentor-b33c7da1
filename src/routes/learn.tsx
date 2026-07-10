@@ -352,39 +352,193 @@ function ListenTool() {
   );
 }
 
-/* ---------- Mistake ---------- */
+/* ---------- Mistake (voice) ---------- */
+type WordDiff = { expected: string; heard: string; status: "ok" | "wrong" | "missing" | "extra"; issue: string };
+type MistakeResult = {
+  verseKey: string;
+  correct: string;
+  transcript: string;
+  overall: "correct" | "minor" | "major";
+  score: number;
+  summary: string;
+  words: WordDiff[];
+  tips: string[];
+};
+
 function MistakeTool() {
-  const checkFn = useServerFn(mistakeChecker);
   const [verseKey, setVerseKey] = useState("1:1");
-  const [transcript, setTranscript] = useState("");
-  const { loading, error, data, run } = useRun((a) => checkFn({ data: a as { verseKey: string; transcript: string } }));
+  const [reciterId, setReciterId] = useState(RECITERS[1].id);
+  const [recording, setRecording] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<MistakeResult | null>(null);
+  const recRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const start = async () => {
+    setError(null);
+    setData(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const rec = new MediaRecorder(stream, { mimeType: mime });
+      chunksRef.current = [];
+      rec.ondataavailable = (e) => { if (e.data.size) chunksRef.current.push(e.data); };
+      rec.onstop = () => void submit(new Blob(chunksRef.current, { type: mime }));
+      recRef.current = rec;
+      rec.start();
+      setRecording(true);
+    } catch {
+      setError("Microphone access denied. Please allow mic permission.");
+    }
+  };
+
+  const stop = () => {
+    setRecording(false);
+    recRef.current?.stop();
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+  };
+
+  const submit = async (blob: Blob) => {
+    if (blob.size < 2048) { setError("Recording was too short. Please try again."); return; }
+    setLoading(true);
+    try {
+      const [sur, ay] = verseKey.split(":").map(Number);
+      if (!sur || !ay) throw new Error("Enter Surah:Ayah (e.g. 1:1)");
+      const fd = new FormData();
+      fd.append("audio", blob, `recording.${blob.type.includes("mp4") ? "mp4" : "webm"}`);
+      fd.append("verseKey", verseKey);
+      const res = await fetch("/api/mistake-check-voice", { method: "POST", body: fd });
+      if (!res.ok) throw new Error(await res.text().catch(() => "Request failed"));
+      setData(await res.json());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const playCorrect = () => {
+    const [sur, ay] = verseKey.split(":").map(Number);
+    const r = RECITERS.find((x) => x.id === reciterId) ?? RECITERS[1];
+    if (!audioRef.current) audioRef.current = new Audio();
+    audioRef.current.src = ayahAudioUrl(r, sur, ay);
+    void audioRef.current.play();
+  };
+
+  const speak = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ur-PK";
+    window.speechSynthesis.speak(u);
+  };
+
+  const badge =
+    data?.overall === "correct" ? "bg-emerald-500/15 border-emerald-400/40 text-emerald-200"
+    : data?.overall === "minor" ? "bg-amber-400/15 border-amber-400/40 text-amber-200"
+    : "bg-rose-500/15 border-rose-400/40 text-rose-200";
 
   return (
     <div className="space-y-4">
-      <ToolHeader title="Mistake checker" desc="Type or transcribe what you recited. AI compares to the exact ayah and flags mistakes." />
-      <Input label="Verse (Surah:Ayah)"><input value={verseKey} onChange={(e) => setVerseKey(e.target.value)} className={inputCls} /></Input>
-      <textarea
-        value={transcript}
-        onChange={(e) => setTranscript(e.target.value)}
-        rows={4}
-        dir="rtl"
-        placeholder="Paste your recitation transcript…"
-        className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/40"
-      />
-      <SubmitBtn loading={loading} onClick={() => run({ verseKey, transcript })}>Check for mistakes</SubmitBtn>
+      <ToolHeader title="Mistake checker (voice)" desc="Record karein — jahan galti hogi wo lafz red mein highlight ho jayega, sath tajweed ka sabab bhi." />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <Input label="Verse (Surah:Ayah)"><input value={verseKey} onChange={(e) => setVerseKey(e.target.value)} className={inputCls} /></Input>
+        <Input label="Correct-ayah reciter">
+          <select value={reciterId} onChange={(e) => setReciterId(e.target.value)} className={inputCls}>
+            {RECITERS.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+          </select>
+        </Input>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {!recording ? (
+          <button type="button" onClick={start} disabled={loading}
+            className="inline-flex items-center gap-2 rounded-xl bg-rose-500 text-white px-5 py-2.5 font-bold text-sm hover:scale-[1.02] transition disabled:opacity-50">
+            <span className="size-2 rounded-full bg-white animate-pulse" /> Start recording
+          </button>
+        ) : (
+          <button type="button" onClick={stop}
+            className="inline-flex items-center gap-2 rounded-xl bg-white text-black px-5 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
+            <span className="size-2 rounded-sm bg-rose-500" /> Stop & check
+          </button>
+        )}
+        <button type="button" onClick={playCorrect}
+          className="inline-flex items-center gap-2 rounded-xl bg-teal-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
+          <Play className="size-4" /> Play correct ayah
+        </button>
+        {loading && <span className="inline-flex items-center gap-2 text-slate-300 text-sm"><Loader2 className="size-4 animate-spin" /> Transcribing & analysing…</span>}
+      </div>
       <ErrorBox error={error} />
+
       {data && (
         <div className="space-y-3">
-          <div className="rounded-xl bg-black/20 border border-white/10 p-3">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Correct</p>
-            <p className="font-uthmani text-white text-right text-2xl leading-loose mt-1" dir="rtl">{data.correct}</p>
+          <div className={`rounded-2xl border p-4 ${badge}`}>
+            <p className="font-bold">Score: {data.score}/100 · {data.overall.toUpperCase()}</p>
+            <p className="text-sm mt-1">{data.summary}</p>
           </div>
-          <AiCard title="AI feedback" md={data.feedback} />
+
+          <div className="rounded-xl bg-black/20 border border-white/10 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Word-by-word</p>
+            <div dir="rtl" className="font-uthmani text-2xl leading-loose text-right flex flex-wrap gap-x-2 gap-y-1 justify-end">
+              {data.words.map((w, i) => {
+                const cls =
+                  w.status === "ok" ? "text-white"
+                  : w.status === "wrong" ? "bg-rose-500/25 text-rose-100 border-b-2 border-rose-400 px-1 rounded"
+                  : w.status === "missing" ? "text-rose-300 line-through decoration-rose-400"
+                  : "text-amber-300 italic";
+                return (
+                  <span key={i} className={cls} title={w.issue || w.status}>
+                    {w.status === "extra" ? `+${w.heard}` : w.expected || w.heard}
+                  </span>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-slate-400 mt-3">
+              <span className="text-rose-300">Red</span> = wrong · <span className="line-through decoration-rose-400 text-rose-300">strike</span> = missing · <span className="text-amber-300">amber</span> = extra
+            </p>
+          </div>
+
+          {data.words.some((w) => w.status !== "ok") && (
+            <div className="rounded-xl bg-black/20 border border-white/10 p-4 space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Mistakes explained</p>
+              {data.words.filter((w) => w.status !== "ok").map((w, i) => (
+                <div key={i} className="flex items-start justify-between gap-3 border-b border-white/5 pb-2 last:border-0">
+                  <div className="text-sm">
+                    <span className="font-uthmani text-lg text-white mr-2" dir="rtl">{w.expected || "—"}</span>
+                    {w.heard && <span className="text-rose-300 text-xs">(aapne kaha: {w.heard})</span>}
+                    <p className="text-slate-300 mt-0.5">{w.issue}</p>
+                  </div>
+                  <button onClick={() => speak(w.issue)} className="shrink-0 text-teal-300 hover:text-teal-200 text-xs inline-flex items-center gap-1">
+                    <Ear className="size-3" /> Sunain
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="rounded-xl bg-black/20 border border-white/10 p-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">You said</p>
+            <p className="font-uthmani text-white text-right text-xl leading-loose mt-1" dir="rtl">{data.transcript}</p>
+          </div>
+
+          {data.tips.length > 0 && (
+            <div className="rounded-xl bg-emerald-500/5 border border-emerald-400/20 p-3">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-300 mb-1">Practice tips</p>
+              <ul className="list-disc list-inside text-slate-200 text-sm space-y-1">
+                {data.tips.map((t, i) => <li key={i}>{t}</li>)}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
 
 /* ---------- Shared ---------- */
 const inputCls = "w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/40";
