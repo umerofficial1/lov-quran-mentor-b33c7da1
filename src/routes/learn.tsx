@@ -397,11 +397,6 @@ function ListenTool() {
             <Square className="size-4 fill-current" /> Stop &amp; check
           </button>
         )}
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm font-bold text-amber-200">
-          <Smartphone className="size-4" /> Phone recorder
-          <input type="file" accept="audio/*" capture="user" className="sr-only"
-            onChange={(event) => { const file = event.target.files?.[0]; if (file) void checkRecording(file); event.target.value = ""; }} />
-        </label>
         {loading && <span className="inline-flex items-center gap-2 text-sm text-slate-300"><Loader2 className="size-4 animate-spin" /> Voice check ho rahi hai…</span>}
       </div>
       <ErrorBox error={error} />
@@ -563,11 +558,6 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
         {loading && <span className="inline-flex items-center gap-2 text-slate-300 text-sm"><Loader2 className="size-4 animate-spin" /> Transcribing & analysing…</span>}
       </div>
       <ErrorBox error={error} />
-      <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm font-bold text-amber-200">
-        <Smartphone className="size-4" /> Upload recording
-        <input type="file" accept="audio/*" capture="user" className="sr-only"
-          onChange={(event) => { const file = event.target.files?.[0]; if (file) void submit(file); event.target.value = ""; }} />
-      </label>
 
       {data && (
         <div className="space-y-3">
