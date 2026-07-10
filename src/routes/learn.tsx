@@ -49,7 +49,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = 
 ];
 
 function LearnPage() {
-  const { tool, start } = Route.useSearch();
+  const { tool } = Route.useSearch();
   const [tab, setTab] = useState<Tab>(tool ?? "compare");
   const { user } = useAuth();
 
