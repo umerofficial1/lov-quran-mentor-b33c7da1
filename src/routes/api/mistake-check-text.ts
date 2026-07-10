@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText, Output } from "ai";
+import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+
 
 // Text-based mistake analysis. The client accumulates a live transcript
 // during segmented recording (see /api/transcribe-chunk) and, on stop,
