@@ -13,8 +13,8 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
         if (!(audio instanceof Blob)) {
           return new Response("bad request", { status: 400 });
         }
-        if (!audio.size) {
-          return Response.json({ text: "" });
+        if (audio.size < 2048) {
+          return new Response("audio chunk is empty", { status: 400 });
         }
         if (audio.size > 5 * 1024 * 1024) {
           return new Response("chunk too large", { status: 413 });
@@ -49,9 +49,6 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
 
         if (!r.ok) {
           const errText = await r.text().catch(() => "");
-          // Swallow decode errors from silence / very short segments so the
-          // live loop keeps running instead of surfacing red errors to the user.
-          if (r.status === 400) return Response.json({ text: "" });
           return new Response(`Transcription failed: ${errText}`, { status: r.status });
         }
         const j = await r.json();

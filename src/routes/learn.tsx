@@ -15,6 +15,7 @@ import {
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
 import { diffAyah } from "@/lib/ayah-diff";
+import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -48,7 +49,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = 
 ];
 
 function LearnPage() {
-  const { tool, start } = Route.useSearch();
+  const { tool } = Route.useSearch();
   const [tab, setTab] = useState<Tab>(tool ?? "compare");
   const { user } = useAuth();
 
@@ -95,7 +96,7 @@ function LearnPage() {
           {tab === "coach" && <CoachTool />}
           {tab === "revise" && <ReviseTool />}
           {tab === "listen" && <ListenTool />}
-          {tab === "mistake" && <MistakeTool autoStart={tool === "mistake" && start === "voice"} />}
+          {tab === "mistake" && <MistakeTool />}
         </div>
       </main>
       <MobileNav />
@@ -433,7 +434,7 @@ type MistakeResult = {
   tips: string[];
 };
 
-function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
+function MistakeTool() {
   const [verseKey, setVerseKey] = useState("1:1");
   const [reciterId, setReciterId] = useState(RECITERS[1].id);
   const [expected, setExpected] = useState<string>("");
@@ -444,14 +445,9 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
   const [data, setData] = useState<MistakeResult | null>(null);
 
   const streamRef = useRef<MediaStream | null>(null);
-  const recRef = useRef<MediaRecorder | null>(null);
-  const segTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const recordingRef = useRef(false);
+  const liveRecorderRef = useRef<LiveWavRecorder | null>(null);
   const transcriptRef = useRef("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const autoStartedRef = useRef(false);
-
-  const SEG_MS = 3500;
 
   // Fetch the correct Arabic whenever verseKey changes.
   useEffect(() => {
@@ -468,43 +464,21 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
     return () => { cancelled = true; };
   }, [verseKey]);
 
-  const pickMime = () =>
-    ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
-      .find((t) => MediaRecorder.isTypeSupported(t));
-
   const sendChunk = async (blob: Blob) => {
-    if (blob.size < 1500) return;
+    if (blob.size < 2048) return;
     const fd = new FormData();
-    const ext = blob.type.includes("mp4") ? "mp4" : blob.type.includes("ogg") ? "ogg" : "webm";
-    fd.append("audio", blob, `chunk.${ext}`);
+    fd.append("audio", blob, "chunk.wav");
     try {
       const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-      if (!r.ok) return;
+      if (!r.ok) throw new Error(await r.text().catch(() => "Live transcription failed"));
       const { text } = await r.json() as { text?: string };
       const clean = (text ?? "").trim();
       if (!clean) return;
       transcriptRef.current = (transcriptRef.current + " " + clean).trim();
       setLiveTranscript(transcriptRef.current);
-    } catch { /* silent — keep looping */ }
-  };
-
-  const startSegment = () => {
-    const stream = streamRef.current;
-    if (!stream) return;
-    const mime = pickMime();
-    const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
-    const chunks: Blob[] = [];
-    rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
-    rec.onstop = () => {
-      const blob = new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" });
-      void sendChunk(blob);
-      if (recordingRef.current) startSegment();
-    };
-    recRef.current = rec;
-    rec.start();
-    segTimerRef.current = setTimeout(() => {
-      try { rec.stop(); } catch { /* ignore */ }
-    }, SEG_MS);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Live transcription ruk gayi. Dobara try karein.");
+    }
   };
 
   const startLive = async () => {
@@ -518,37 +492,33 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
       return;
     }
     try {
-      const stream = await requestMicrophoneStream();
+      const { recorder, stream } = await startLiveWavRecorder(
+        requestMicrophoneStream,
+        sendChunk,
+      );
       streamRef.current = stream;
-      recordingRef.current = true;
+      liveRecorderRef.current = recorder;
       setRecording(true);
-      startSegment();
     } catch (cause) {
       releaseMicrophoneStream(streamRef.current);
+      streamRef.current = null;
+      liveRecorderRef.current = null;
       const denied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
+      const unavailable = cause instanceof DOMException && (cause.name === "NotFoundError" || cause.name === "NotReadableError");
       setError(denied
-        ? "Browser ne microphone access deny kiya. Address bar ke lock icon se allow karke dobara Start dabayen."
-        : "Microphone start nahi hua. Kisi doosre app ki recording band karke dobara try karein.");
+        ? "Mic access allow nahi hua. Start reciting dobara dabayen aur browser ke Allow par tap karein."
+        : unavailable
+          ? "Is device par microphone available nahi mila."
+          : "Mic start nahi ho saka. Start reciting dobara dabayen.");
     }
   };
 
-  useEffect(() => {
-    if (!autoStart || autoStartedRef.current) return;
-    autoStartedRef.current = true;
-    void startLive();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoStart]);
-
   const stopLive = async () => {
-    recordingRef.current = false;
     setRecording(false);
-    if (segTimerRef.current) { clearTimeout(segTimerRef.current); segTimerRef.current = null; }
-    try { recRef.current?.stop(); } catch { /* ignore */ }
+    await liveRecorderRef.current?.stop();
+    liveRecorderRef.current = null;
     releaseMicrophoneStream(streamRef.current);
     streamRef.current = null;
-
-    // Wait briefly for the last segment's transcript to append.
-    await new Promise((r) => setTimeout(r, 1500));
 
     const finalTranscript = transcriptRef.current.trim();
     if (!finalTranscript) {
@@ -573,9 +543,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
 
   // Cleanup on unmount.
   useEffect(() => () => {
-    recordingRef.current = false;
-    if (segTimerRef.current) clearTimeout(segTimerRef.current);
-    try { recRef.current?.stop(); } catch { /* ignore */ }
+    void liveRecorderRef.current?.stop();
     releaseMicrophoneStream(streamRef.current);
   }, []);
 
@@ -676,7 +644,16 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
       {liveTranscript && (
         <div className="rounded-xl bg-black/20 border border-white/10 p-3">
           <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Aap ne parha (live)</p>
-          <p className="font-uthmani text-white text-right text-xl leading-loose mt-1" dir="rtl">{liveTranscript}</p>
+          <div className="font-uthmani text-right text-xl leading-loose mt-1 flex flex-wrap gap-x-2 justify-end" dir="rtl">
+            {liveDiff?.spokenWords.map((word, index) => (
+              <span
+                key={`${word.word}-${index}`}
+                className={word.status === "match" ? "text-emerald-300" : "text-rose-300 underline decoration-rose-400"}
+              >
+                {word.word}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

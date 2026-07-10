@@ -28,9 +28,15 @@ export interface LiveWord {
   status: LiveStatus;
 }
 
+export interface SpokenWord {
+  word: string;
+  status: "match" | "wrong";
+}
+
 export interface AyahDiff {
   words: LiveWord[]; // one entry per expected word, in reading order
   extras: string[]; // spoken words that didn't align to any expected word
+  spokenWords: SpokenWord[];
   matched: number;
   total: number;
 }
@@ -80,13 +86,17 @@ export function diffAyah(
   matchedExpected.forEach((idx) => {
     if (idx > lastMatched) lastMatched = idx;
   });
+  // A spoken word is an attempted word even when it does not match anything.
+  // Without this, the first incorrect word stayed grey until a later word was
+  // recognized, which made live feedback look stuck.
+  const lastAttempted = Math.max(lastMatched, Math.min(n - 1, m - 1));
 
   const words: LiveWord[] = expDisplay.map((w, idx) => {
     if (matchedExpected.has(idx)) return { word: w, status: "match" };
     if (opts.finished) {
-      return { word: w, status: idx <= lastMatched ? "wrong" : "missing" };
+      return { word: w, status: idx <= lastAttempted ? "wrong" : "missing" };
     }
-    return { word: w, status: idx <= lastMatched ? "wrong" : "pending" };
+    return { word: w, status: idx <= lastAttempted ? "wrong" : "pending" };
   });
 
   const extras: string[] = [];
@@ -94,5 +104,10 @@ export function diffAyah(
     if (!matchedSpoken.has(idx)) extras.push(s);
   });
 
-  return { words, extras, matched: matchedExpected.size, total: n };
+  const spokenWords = spoken.map((word, idx) => ({
+    word,
+    status: matchedSpoken.has(idx) ? ("match" as const) : ("wrong" as const),
+  }));
+
+  return { words, extras, spokenWords, matched: matchedExpected.size, total: n };
 }
