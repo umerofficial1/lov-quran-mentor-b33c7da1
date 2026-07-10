@@ -41,6 +41,7 @@ function SurahReader() {
   const [userId, setUserId] = useState<string | null>(null);
   const { prefs, update } = useQuranPrefs();
   const audio = useAudioPlayer();
+  const [reciteOpen, setReciteOpen] = useState(false);
 
   const verses = useQuery({
     queryKey: ["surah-v2", id, translation],
