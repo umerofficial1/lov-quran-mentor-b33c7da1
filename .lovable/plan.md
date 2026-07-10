@@ -1,69 +1,64 @@
+# Premium AI Live Recitation — integrated into the Quran Reader
 
-# Live Recitation Coach
+Goal: add a first-class live recitation experience on the Surah reader page (`/quran/$surahId`) without removing any existing features. Reuse the working live-WAV recorder + transcription pipeline already shipped on `/learn`; upgrade the UI to premium glass, add per-word states (green/blue-glow current/red), auto-scroll, live accuracy, and a full end-of-session report.
 
-Abhi mistake checker record karta hai, phir stop pe pura result deta hai. User chahta hai:
-- Recording ke dauran hi text likha aata jaye
-- Sath sath ghalatiyan (missing / wrong / extra words) highlight hoti rahen
-- Expected ayah upar, live transcript neeche, dono me color-coded diff
+## Scope
 
-## User Flow
+- No changes to routing, auth, audio player, bookmarks, translations, settings, or the `/learn` Mistake tool.
+- Additive-only: a new floating "Live Recitation" panel on the Surah reader.
 
-1. Ayah screen pe dikhti hai (Arabic + translation).
-2. "Start reciting" dabao → mic on.
-3. Har ~3 sec ka audio chunk backend ko jata hai, transcribe hota hai, transcript grow karta hai (append).
-4. Har update pe expected vs spoken ka word-diff chalta hai:
-   - ✅ green = sahi bola
-   - 🟡 amber = pronunciation ya minor farq (tashkeel level)
-   - 🔴 red = ghalat ya missing
-5. Live "progress" bar dikhata hai kitni ayah cover ho gayi.
-6. "Stop" pe final AI review (jo pehle se hai) chalta hai — overall score + summary.
+## UX
 
-## Implementation
+1. On `/quran/$surahId`, add a large mic FAB (bottom-right, above `MobileNav`).
+2. Tap → opens a full-height glass drawer showing the surah's Arabic (Uthmani) split word-by-word.
+3. Big central mic button with pulse animation. States: idle / listening / analyzing.
+4. Live states per word:
+   - `pending` — muted pearl
+   - `current` — glowing blue ring + subtle scale
+   - `match` — green with soft glow, confidence dot
+   - `wrong` / `missing` — red underline + tooltip on hover
+5. Header chips: **Accuracy %**, **Words X/Y**, **Ayah N**. Updates live as transcript grows.
+6. Auto-scroll: the current word is kept centered using `scrollIntoView({ block: 'center', behavior: 'smooth' })`, throttled.
+7. Stop → analyzing spinner → **Report card** with: correct/incorrect/missed counts, overall accuracy, Urdu tajweed feedback, pronunciation notes, per-word list, and a **Retry mistakes only** button that restarts the session filtered to only the wrong/missed ayah segments.
 
-### 1. Chunked streaming recorder (client)
-- `MediaRecorder` with `timeslice = 3000ms` → har 3 sec `ondataavailable` fires with a Blob.
-- Har chunk ko cumulative buffer me add karke `/api/transcribe-chunk` bhejo (poora audio abhi tak ka, so context stays intact for Arabic STT).
-- Optimization: sirf last 15 sec ka rolling window bhejein taake payload chhota rahe; ayah short hoti hai.
+## Technical
 
-### 2. Transcribe endpoint
-New: `src/routes/api/transcribe-chunk.ts` — public API route.
-- Accepts multipart `audio` blob.
-- Forwards to Lovable AI Gateway `/v1/audio/transcriptions` with `openai/gpt-4o-transcribe`, `language=ar`.
-- Returns `{ text }`.
+New file: `src/components/LiveRecitationDrawer.tsx`
+- Props: `surahId`, `verses` (already loaded by the reader), `open`, `onOpenChange`.
+- Uses existing `startLiveWavRecorder` (`src/lib/live-wav-recorder.ts`), `diffAyah` (`src/lib/ayah-diff.ts`), `/api/transcribe-chunk`, `/api/mistake-check-text`.
+- Flattens all verses' words into one sequence with `{ verseKey, wordIndex, text }` so live diffing spans the whole surah, not one ayah at a time.
+- Maintains `currentIndex` (last matched word + 1) → drives blue glow + autoscroll.
+- Accuracy = `matched / attempted` computed from `diffAyah` results merged across ayat.
+- Confidence per word: derived from transcription — the transcribe endpoint already returns `text`; extend it to also return the segment `logprobs`/`avg_logprob` when available, mapped to 0–100. (Fallback: 100 for matched, 40 for wrong.)
 
-### 3. Live diff (client, pure JS)
-Utility `src/lib/ayah-diff.ts`:
-- Normalize Arabic: strip tashkeel, tatweel, punctuation, unify alef/hamza forms.
-- Tokenize expected + spoken into word arrays.
-- Run LCS-based alignment → per expected word status: `match | minor | wrong | pending`.
-- Extra spoken words flagged separately.
+New: `src/components/RecitationReport.tsx`
+- Renders the final report with tabs: **Summary**, **Word-by-word**, **Tajweed tips**.
+- "Retry mistakes only" builds a filtered word list of just the wrong/missed spans and re-opens the drawer in retry mode.
 
-### 4. UI
-New component `LiveReciter` in `learn.tsx` (replaces current MistakeTool auto-start voice mode; upload/one-shot record removed as per last turn):
-- Expected ayah rendered word-by-word, each `<span>` colored by status.
-- Live transcript box (RTL, Arabic font) shows raw spoken text.
-- Status pills: "Sunaya jaa raha hai…", word count matched X/Y.
-- Stop button → runs existing `/api/mistake-check-voice` for final graded feedback.
+Reader integration: `src/routes/quran.$surahId.tsx`
+- Import + mount `<LiveRecitationDrawer />` behind a floating mic button. No other changes.
 
-### 5. Backend limits
-- Chunk size cap 2 MB, MIME whitelist (webm/mp4/ogg), same as existing endpoint.
-- Debounce: agar previous transcribe abhi tak pending hai, skip next tick.
+Backend (small tweak, no breaking changes):
+- `src/routes/api/transcribe-chunk.ts` — pass `response_format=json` (default) and forward `avg_logprob` when the model returns it. If absent, omit — client falls back gracefully.
+- `src/routes/api/mistake-check-text.ts` — accept an optional `words: {expected, heard, status}[]` payload from client-side diff to seed the AI (already handles missing gracefully). No schema change to response.
 
-## Technical Notes
+## Styling
 
-- STT model: `openai/gpt-4o-transcribe` (Arabic accuracy zyada).
-- No websocket needed — 3-sec polling transcribe kaafi feel karega "live".
-- Arabic normalization regex: `/[\u064B-\u0652\u0670\u0640]/g` (harakat + tatweel).
-- Alef unification: `[\u0622\u0623\u0625] → \u0627`, ya-hamza `\u0649 → \u064A`.
-- Diff: standard Myers/LCS on token arrays — small enough (ayah usually <30 words).
+- Uses existing Madinah Blue tokens (bg #070C1F, surface #0F1E3D, teal #1FB6B0, gold #C9A24C, pearl #EEF2FB).
+- Glass: `bg-white/5 backdrop-blur-xl border border-white/10`.
+- Animations: `animate-fade-in`, `animate-scale-in`, custom `pulse-mic` keyframe added to `src/styles.css`.
+- Mobile-first: drawer is full-screen on <md, right-side sheet on md+.
+- Respects existing dark theme (only theme in project).
+
+## Non-goals for this pass
+
+- No changes to `/learn`'s Mistake tool.
+- No new DB tables (report is session-only). Persisting reports can be a follow-up.
 
 ## Files
 
-- new: `src/routes/api/transcribe-chunk.ts`
-- new: `src/lib/ayah-diff.ts`
-- edit: `src/routes/learn.tsx` — replace MistakeTool recording UI with LiveReciter; keep final scoring call to `/api/mistake-check-voice`.
-
-## Out of scope
-
-- Tajweed rules (madd, ghunna) — sirf word-level matching, not qira'at grading.
-- Multi-ayah continuous mode — one ayah at a time.
+- create `src/components/LiveRecitationDrawer.tsx`
+- create `src/components/RecitationReport.tsx`
+- edit `src/routes/quran.$surahId.tsx` (mount drawer + FAB)
+- edit `src/styles.css` (pulse-mic + word-glow keyframes)
+- edit `src/routes/api/transcribe-chunk.ts` (optional confidence passthrough)
