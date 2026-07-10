@@ -14,6 +14,7 @@ import {
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
+import { diffAyah } from "@/lib/ayah-diff";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
