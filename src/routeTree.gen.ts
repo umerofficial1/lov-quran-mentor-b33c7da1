@@ -23,7 +23,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
+import { Route as ApiTranscribeChunkRouteImport } from './routes/api/transcribe-chunk'
 import { Route as ApiMistakeCheckVoiceRouteImport } from './routes/api/mistake-check-voice'
+import { Route as ApiMistakeCheckTextRouteImport } from './routes/api/mistake-check-text'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -104,9 +106,19 @@ const CoursesLevelRoute = CoursesLevelRouteImport.update({
   path: '/courses/$level',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTranscribeChunkRoute = ApiTranscribeChunkRouteImport.update({
+  id: '/api/transcribe-chunk',
+  path: '/api/transcribe-chunk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMistakeCheckVoiceRoute = ApiMistakeCheckVoiceRouteImport.update({
   id: '/api/mistake-check-voice',
   path: '/api/mistake-check-voice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMistakeCheckTextRoute = ApiMistakeCheckTextRouteImport.update({
+  id: '/api/mistake-check-text',
+  path: '/api/mistake-check-text',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -179,7 +191,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
@@ -205,7 +219,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran': typeof QuranIndexRoute
@@ -233,7 +249,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
@@ -261,7 +279,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
@@ -287,7 +307,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran'
@@ -314,7 +336,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/hifz'
     | '/api/chat'
+    | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
@@ -340,7 +364,9 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiMistakeCheckTextRoute: typeof ApiMistakeCheckTextRoute
   ApiMistakeCheckVoiceRoute: typeof ApiMistakeCheckVoiceRoute
+  ApiTranscribeChunkRoute: typeof ApiTranscribeChunkRoute
   CoursesLevelRoute: typeof CoursesLevelRoute
   QuranSurahIdRoute: typeof QuranSurahIdRoute
   QuranIndexRoute: typeof QuranIndexRoute
@@ -451,11 +477,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesLevelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/transcribe-chunk': {
+      id: '/api/transcribe-chunk'
+      path: '/api/transcribe-chunk'
+      fullPath: '/api/transcribe-chunk'
+      preLoaderRoute: typeof ApiTranscribeChunkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/mistake-check-voice': {
       id: '/api/mistake-check-voice'
       path: '/api/mistake-check-voice'
       fullPath: '/api/mistake-check-voice'
       preLoaderRoute: typeof ApiMistakeCheckVoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mistake-check-text': {
+      id: '/api/mistake-check-text'
+      path: '/api/mistake-check-text'
+      fullPath: '/api/mistake-check-text'
+      preLoaderRoute: typeof ApiMistakeCheckTextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -560,7 +600,9 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiMistakeCheckTextRoute: ApiMistakeCheckTextRoute,
   ApiMistakeCheckVoiceRoute: ApiMistakeCheckVoiceRoute,
+  ApiTranscribeChunkRoute: ApiTranscribeChunkRoute,
   CoursesLevelRoute: CoursesLevelRoute,
   QuranSurahIdRoute: QuranSurahIdRoute,
   QuranIndexRoute: QuranIndexRoute,

@@ -14,6 +14,7 @@ import {
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
+import { diffAyah } from "@/lib/ayah-diff";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -435,42 +436,98 @@ type MistakeResult = {
 function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
   const [verseKey, setVerseKey] = useState("1:1");
   const [reciterId, setReciterId] = useState(RECITERS[1].id);
+  const [expected, setExpected] = useState<string>("");
+  const [liveTranscript, setLiveTranscript] = useState<string>("");
   const [recording, setRecording] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MistakeResult | null>(null);
-  const recRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+
   const streamRef = useRef<MediaStream | null>(null);
+  const recRef = useRef<MediaRecorder | null>(null);
+  const segTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recordingRef = useRef(false);
+  const transcriptRef = useRef("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const autoStartedRef = useRef(false);
 
-  const start = async () => {
+  const SEG_MS = 3500;
+
+  // Fetch the correct Arabic whenever verseKey changes.
+  useEffect(() => {
+    if (!/^\d+:\d+$/.test(verseKey)) { setExpected(""); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${verseKey}`);
+        const j = r.ok ? await r.json() : { verses: [] };
+        const text = j.verses?.[0]?.text_uthmani ?? "";
+        if (!cancelled) setExpected(text);
+      } catch { if (!cancelled) setExpected(""); }
+    })();
+    return () => { cancelled = true; };
+  }, [verseKey]);
+
+  const pickMime = () =>
+    ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
+      .find((t) => MediaRecorder.isTypeSupported(t));
+
+  const sendChunk = async (blob: Blob) => {
+    if (blob.size < 1500) return;
+    const fd = new FormData();
+    const ext = blob.type.includes("mp4") ? "mp4" : blob.type.includes("ogg") ? "ogg" : "webm";
+    fd.append("audio", blob, `chunk.${ext}`);
+    try {
+      const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+      if (!r.ok) return;
+      const { text } = await r.json() as { text?: string };
+      const clean = (text ?? "").trim();
+      if (!clean) return;
+      transcriptRef.current = (transcriptRef.current + " " + clean).trim();
+      setLiveTranscript(transcriptRef.current);
+    } catch { /* silent — keep looping */ }
+  };
+
+  const startSegment = () => {
+    const stream = streamRef.current;
+    if (!stream) return;
+    const mime = pickMime();
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    const chunks: Blob[] = [];
+    rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    rec.onstop = () => {
+      const blob = new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" });
+      void sendChunk(blob);
+      if (recordingRef.current) startSegment();
+    };
+    recRef.current = rec;
+    rec.start();
+    segTimerRef.current = setTimeout(() => {
+      try { rec.stop(); } catch { /* ignore */ }
+    }, SEG_MS);
+  };
+
+  const startLive = async () => {
     setError(null);
     setData(null);
+    setLiveTranscript("");
+    transcriptRef.current = "";
 
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       setError("Is browser mein microphone recording available nahi. App ko HTTPS par Chrome ya Safari mein kholen.");
       return;
     }
-
     try {
       const stream = await requestMicrophoneStream();
       streamRef.current = stream;
-      const mime = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
-        .find((type) => MediaRecorder.isTypeSupported(type));
-      const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
-      chunksRef.current = [];
-      rec.ondataavailable = (e) => { if (e.data.size) chunksRef.current.push(e.data); };
-      rec.onstop = () => void submit(new Blob(chunksRef.current, { type: rec.mimeType || mime || "audio/webm" }));
-      recRef.current = rec;
-      rec.start(250);
+      recordingRef.current = true;
       setRecording(true);
+      startSegment();
     } catch (cause) {
       releaseMicrophoneStream(streamRef.current);
-      const permissionDenied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
-      setError(permissionDenied
-        ? "Browser ne microphone access deny kiya. Start recording dobara dabayen aur saamne aane wale Allow button ko select karein."
+      const denied = cause instanceof DOMException && (cause.name === "NotAllowedError" || cause.name === "SecurityError");
+      setError(denied
+        ? "Browser ne microphone access deny kiya. Address bar ke lock icon se allow karke dobara Start dabayen."
         : "Microphone start nahi hua. Kisi doosre app ki recording band karke dobara try karein.");
     }
   };
@@ -478,33 +535,51 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
   useEffect(() => {
     if (!autoStart || autoStartedRef.current) return;
     autoStartedRef.current = true;
-    void start();
+    void startLive();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart]);
 
-  const stop = () => {
+  const stopLive = async () => {
+    recordingRef.current = false;
     setRecording(false);
-    recRef.current?.stop();
+    if (segTimerRef.current) { clearTimeout(segTimerRef.current); segTimerRef.current = null; }
+    try { recRef.current?.stop(); } catch { /* ignore */ }
     releaseMicrophoneStream(streamRef.current);
-  };
+    streamRef.current = null;
 
-  const submit = async (blob: Blob) => {
-    if (blob.size < 2048) { setError("Recording was too short. Please try again."); return; }
-    setLoading(true);
+    // Wait briefly for the last segment's transcript to append.
+    await new Promise((r) => setTimeout(r, 1500));
+
+    const finalTranscript = transcriptRef.current.trim();
+    if (!finalTranscript) {
+      setError("Koi awaaz sunai nahi di. Mic check karke dobara Start dabayen.");
+      return;
+    }
+    setAnalyzing(true);
     try {
-      const [sur, ay] = verseKey.split(":").map(Number);
-      if (!sur || !ay) throw new Error("Enter Surah:Ayah (e.g. 1:1)");
-      const fd = new FormData();
-      fd.append("audio", blob, `recording.${blob.type.includes("mp4") ? "mp4" : "webm"}`);
-      fd.append("verseKey", verseKey);
-      const res = await fetch("/api/mistake-check-voice", { method: "POST", body: fd });
+      const res = await fetch("/api/mistake-check-text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript: finalTranscript, verseKey }),
+      });
       if (!res.ok) throw new Error(await res.text().catch(() => "Request failed"));
       setData(await res.json());
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed");
+      setError(e instanceof Error ? e.message : "Analysis failed");
     } finally {
-      setLoading(false);
+      setAnalyzing(false);
     }
   };
+
+  // Cleanup on unmount.
+  useEffect(() => () => {
+    recordingRef.current = false;
+    if (segTimerRef.current) clearTimeout(segTimerRef.current);
+    try { recRef.current?.stop(); } catch { /* ignore */ }
+    releaseMicrophoneStream(streamRef.current);
+  }, []);
+
+  const liveDiff = expected ? diffAyah(expected, liveTranscript, { finished: false }) : null;
 
   const playCorrect = () => {
     const [sur, ay] = verseKey.split(":").map(Number);
@@ -529,7 +604,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
 
   return (
     <div className="space-y-4">
-      <ToolHeader title="Mistake checker (voice)" desc="Record karein — jahan galti hogi wo lafz red mein highlight ho jayega, sath tajweed ka sabab bhi." />
+      <ToolHeader title="Live recitation coach" desc="Ayah parhna shuru karein — lafz sath sath likhy jayenge aur galtiyan wahi highlight ho jayengi." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <Input label="Verse (Surah:Ayah)"><input value={verseKey} onChange={(e) => setVerseKey(e.target.value)} className={inputCls} /></Input>
         <Input label="Correct-ayah reciter">
@@ -539,25 +614,71 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
         </Input>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 items-center">
         {!recording ? (
-          <button type="button" onClick={start} disabled={loading}
+          <button type="button" onClick={startLive} disabled={analyzing}
             className="inline-flex items-center gap-2 rounded-xl bg-rose-500 text-white px-5 py-2.5 font-bold text-sm hover:scale-[1.02] transition disabled:opacity-50">
-            <span className="size-2 rounded-full bg-white animate-pulse" /> Start recording
+            <Mic className="size-4" /> Start reciting
           </button>
         ) : (
-          <button type="button" onClick={stop}
+          <button type="button" onClick={stopLive}
             className="inline-flex items-center gap-2 rounded-xl bg-white text-black px-5 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
-            <span className="size-2 rounded-sm bg-rose-500" /> Stop & check
+            <Square className="size-4 fill-current" /> Stop & analyse
           </button>
         )}
         <button type="button" onClick={playCorrect}
           className="inline-flex items-center gap-2 rounded-xl bg-teal-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
           <Play className="size-4" /> Play correct ayah
         </button>
-        {loading && <span className="inline-flex items-center gap-2 text-slate-300 text-sm"><Loader2 className="size-4 animate-spin" /> Transcribing & analysing…</span>}
+        {recording && (
+          <span className="inline-flex items-center gap-2 text-rose-300 text-sm">
+            <span className="size-2 rounded-full bg-rose-400 animate-pulse" /> Sun raha hoon…
+          </span>
+        )}
+        {analyzing && (
+          <span className="inline-flex items-center gap-2 text-slate-300 text-sm">
+            <Loader2 className="size-4 animate-spin" /> Full analysis…
+          </span>
+        )}
+        {liveDiff && (
+          <span className="text-xs text-slate-400 ml-auto">{liveDiff.matched}/{liveDiff.total} words matched</span>
+        )}
       </div>
+
       <ErrorBox error={error} />
+
+      {expected && (
+        <div className="rounded-2xl bg-black/25 border border-white/10 p-4">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Expected ayah (live)</p>
+          <div dir="rtl" className="font-uthmani text-3xl leading-loose text-right flex flex-wrap gap-x-3 gap-y-1 justify-end">
+            {liveDiff?.words.map((w, i) => {
+              const cls =
+                w.status === "match" ? "text-emerald-300"
+                : w.status === "wrong" ? "text-rose-300 underline decoration-rose-400 decoration-2"
+                : w.status === "missing" ? "text-rose-400 line-through decoration-rose-400"
+                : "text-slate-500";
+              return <span key={i} className={cls}>{w.word}</span>;
+            })}
+          </div>
+          <p className="text-[11px] text-slate-400 mt-3">
+            <span className="text-emerald-300">Green</span> = sahi ·{" "}
+            <span className="text-rose-300">Red</span> = galat ·{" "}
+            <span className="text-slate-500">Grey</span> = abhi tak nahi parha
+          </p>
+          {liveDiff && liveDiff.extras.length > 0 && (
+            <p className="text-[11px] text-amber-300 mt-2">
+              Extra bola: {liveDiff.extras.slice(-6).join(" ")}
+            </p>
+          )}
+        </div>
+      )}
+
+      {liveTranscript && (
+        <div className="rounded-xl bg-black/20 border border-white/10 p-3">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Aap ne parha (live)</p>
+          <p className="font-uthmani text-white text-right text-xl leading-loose mt-1" dir="rtl">{liveTranscript}</p>
+        </div>
+      )}
 
       {data && (
         <div className="space-y-3">
@@ -567,7 +688,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
           </div>
 
           <div className="rounded-xl bg-black/20 border border-white/10 p-4">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Word-by-word</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Word-by-word (AI)</p>
             <div dir="rtl" className="font-uthmani text-2xl leading-loose text-right flex flex-wrap gap-x-2 gap-y-1 justify-end">
               {data.words.map((w, i) => {
                 const cls =
@@ -582,9 +703,6 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
                 );
               })}
             </div>
-            <p className="text-[11px] text-slate-400 mt-3">
-              <span className="text-rose-300">Red</span> = wrong · <span className="line-through decoration-rose-400 text-rose-300">strike</span> = missing · <span className="text-amber-300">amber</span> = extra
-            </p>
           </div>
 
           {data.words.some((w) => w.status !== "ok") && (
@@ -605,11 +723,6 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
             </div>
           )}
 
-          <div className="rounded-xl bg-black/20 border border-white/10 p-3">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">You said</p>
-            <p className="font-uthmani text-white text-right text-xl leading-loose mt-1" dir="rtl">{data.transcript}</p>
-          </div>
-
           {data.tips.length > 0 && (
             <div className="rounded-xl bg-emerald-500/5 border border-emerald-400/20 p-3">
               <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-300 mb-1">Practice tips</p>
@@ -623,6 +736,7 @@ function MistakeTool({ autoStart = false }: { autoStart?: boolean }) {
     </div>
   );
 }
+
 
 
 /* ---------- Shared ---------- */

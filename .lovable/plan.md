@@ -1,43 +1,69 @@
-# Deep Audit + Fix Pass — Verse Wise Mentor
 
-The full request lists 30+ new features (student/teacher/parent/admin dashboards, live classes, community, prayer times, qibla, tafsir, hadith library, seerah, articles, PWA, offline, i18n, etc.). Building all of that in one pass would take many turns and burn significant credits. I'll split the work into phases and start with Phase 1 — the audit + polish of what already exists — then check in before we build new surfaces.
+# Live Recitation Coach
 
-## Current surface inventory
-Existing routes: `/`, `/auth`, `/chat` (AI teacher), `/quran`, `/quran/$surahId`, `/dashboard`, `/hifz`, `/tools`, plus MCP endpoints.
-Missing surfaces mentioned in the brief: teacher/parent/admin dashboards, courses, live classes, community, notes, reminders, prayer times, qibla, calendar, tafsir, hadith, seerah, articles, global search, i18n, PWA/offline.
+Abhi mistake checker record karta hai, phir stop pe pura result deta hai. User chahta hai:
+- Recording ke dauran hi text likha aata jaye
+- Sath sath ghalatiyan (missing / wrong / extra words) highlight hoti rahen
+- Expected ayah upar, live transcript neeche, dono me color-coded diff
 
-## Phase 1 — Audit + fix pass (this turn + next 1-2)
-Goal: everything currently in the app is polished, accessible, secure, on-brand, and free of dead ends.
+## User Flow
 
-1. **Design consistency sweep** — apply Madinah Blue tokens across `/auth`, `/chat`, `/quran`, `/quran/$surahId`, `/dashboard`, `/hifz`, `/tools`. Kill leftover emerald/amber/slate arbitrary classes in favor of semantic tokens. Ensure trilingual (AR/EN/UR) copy on hero surfaces.
-2. **Nav + footer** — audit `SiteNav`/`MobileNav`, ensure every link resolves, add a real footer with legal/about/contact links.
-3. **Accessibility** — button `aria-label`s on icon-only buttons, single `<main>` per route, contrast tokens, focus rings, tap targets ≥44px on mobile.
-4. **SEO** — per-route `head()` with unique title/description/og tags (currently many routes reuse "Love Qran" branding — rename to Verse Wise Mentor, add og:image on leaf routes with hero art).
-5. **Broken/empty states** — every list handles empty, loading, and error; every form shows validation; every "coming soon" link is either wired or clearly marked.
-6. **Auth flow** — audit `/auth` (Google via `lovable.auth`, email/password), reset-password page, session listener in `__root.tsx`, sign-out hygiene.
-7. **Data layer** — verify RLS + GRANTs on `bookmarks`, `hifz_progress`, `last_read`, `profiles`; migrate `dashboard`/`hifz` fetches from `useEffect` to loader + `useSuspenseQuery` where the route is under `_authenticated`.
-8. **Move protected routes** — `/dashboard`, `/hifz`, `/tools` under `src/routes/_authenticated/` so the managed gate protects them (today they hand-roll `useEffect` redirects).
-9. **Security scan** — run the Supabase linter + security scan and fix any HIGH/CRITICAL findings.
-10. **PWA basics** — verify `manifest.webmanifest`, add a real favicon set, theme color, apple-touch-icon.
+1. Ayah screen pe dikhti hai (Arabic + translation).
+2. "Start reciting" dabao → mic on.
+3. Har ~3 sec ka audio chunk backend ko jata hai, transcribe hota hai, transcript grow karta hai (append).
+4. Har update pe expected vs spoken ka word-diff chalta hai:
+   - ✅ green = sahi bola
+   - 🟡 amber = pronunciation ya minor farq (tashkeel level)
+   - 🔴 red = ghalat ya missing
+5. Live "progress" bar dikhata hai kitni ayah cover ho gayi.
+6. "Stop" pe final AI review (jo pehle se hai) chalta hai — overall score + summary.
 
-## Phase 2 — Foundation for the new ecosystem (later turns, on approval)
-- User-roles system (`app_role` enum + `user_roles` table + `has_role`) for student/teacher/parent/admin.
-- Role-scoped dashboard routes.
-- Prayer times, qibla, Islamic calendar (all client-side, no new tables).
-- Global search (client-side over surahs + static content first).
+## Implementation
 
-## Phase 3 — Content + community (later, on approval)
-- Tafsir viewer wired into the Quran reader (server fn against a public tafsir API).
-- Hadith library + Seerah + articles (content tables + reader routes).
-- Community discussions (threads + posts + moderation, RLS-gated).
-- Courses + live classes (courses/lessons/enrollments schema, video embed; real live-video requires a 3rd-party provider — I'll flag the trade-off before we commit).
+### 1. Chunked streaming recorder (client)
+- `MediaRecorder` with `timeslice = 3000ms` → har 3 sec `ondataavailable` fires with a Blob.
+- Har chunk ko cumulative buffer me add karke `/api/transcribe-chunk` bhejo (poora audio abhi tak ka, so context stays intact for Arabic STT).
+- Optimization: sirf last 15 sec ka rolling window bhejein taake payload chhota rahe; ayah short hoti hai.
 
-## Phase 4 — Polish (later, on approval)
-- i18n scaffolding (react-i18next) with AR/EN/UR bundles across the UI (currently only content is trilingual).
-- Full offline/PWA (service worker + cached Quran text).
-- Learning reminders (web push + email via Supabase).
+### 2. Transcribe endpoint
+New: `src/routes/api/transcribe-chunk.ts` — public API route.
+- Accepts multipart `audio` blob.
+- Forwards to Lovable AI Gateway `/v1/audio/transcriptions` with `openai/gpt-4o-transcribe`, `language=ar`.
+- Returns `{ text }`.
 
-## Starting now
-On approval I'll execute **Phase 1** — audit fixes only, no schema changes beyond RLS/GRANT gaps and moving 3 routes under `_authenticated/`. I'll report per-route diffs so you can see what changed.
+### 3. Live diff (client, pure JS)
+Utility `src/lib/ayah-diff.ts`:
+- Normalize Arabic: strip tashkeel, tatweel, punctuation, unify alef/hamza forms.
+- Tokenize expected + spoken into word arrays.
+- Run LCS-based alignment → per expected word status: `match | minor | wrong | pending`.
+- Extra spoken words flagged separately.
 
-Reply "go" to start Phase 1, or tell me which phase/items to reorder.
+### 4. UI
+New component `LiveReciter` in `learn.tsx` (replaces current MistakeTool auto-start voice mode; upload/one-shot record removed as per last turn):
+- Expected ayah rendered word-by-word, each `<span>` colored by status.
+- Live transcript box (RTL, Arabic font) shows raw spoken text.
+- Status pills: "Sunaya jaa raha hai…", word count matched X/Y.
+- Stop button → runs existing `/api/mistake-check-voice` for final graded feedback.
+
+### 5. Backend limits
+- Chunk size cap 2 MB, MIME whitelist (webm/mp4/ogg), same as existing endpoint.
+- Debounce: agar previous transcribe abhi tak pending hai, skip next tick.
+
+## Technical Notes
+
+- STT model: `openai/gpt-4o-transcribe` (Arabic accuracy zyada).
+- No websocket needed — 3-sec polling transcribe kaafi feel karega "live".
+- Arabic normalization regex: `/[\u064B-\u0652\u0670\u0640]/g` (harakat + tatweel).
+- Alef unification: `[\u0622\u0623\u0625] → \u0627`, ya-hamza `\u0649 → \u064A`.
+- Diff: standard Myers/LCS on token arrays — small enough (ayah usually <30 words).
+
+## Files
+
+- new: `src/routes/api/transcribe-chunk.ts`
+- new: `src/lib/ayah-diff.ts`
+- edit: `src/routes/learn.tsx` — replace MistakeTool recording UI with LiveReciter; keep final scoring call to `/api/mistake-check-voice`.
+
+## Out of scope
+
+- Tajweed rules (madd, ghunna) — sirf word-level matching, not qira'at grading.
+- Multi-ayah continuous mode — one ayah at a time.
