@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
+import { Route as ApiTranscribeChunkRouteImport } from './routes/api/transcribe-chunk'
 import { Route as ApiMistakeCheckVoiceRouteImport } from './routes/api/mistake-check-voice'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
@@ -104,6 +105,11 @@ const CoursesLevelRoute = CoursesLevelRouteImport.update({
   path: '/courses/$level',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTranscribeChunkRoute = ApiTranscribeChunkRouteImport.update({
+  id: '/api/transcribe-chunk',
+  path: '/api/transcribe-chunk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMistakeCheckVoiceRoute = ApiMistakeCheckVoiceRouteImport.update({
   id: '/api/mistake-check-voice',
   path: '/api/mistake-check-voice',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran': typeof QuranIndexRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/_authenticated/hifz': typeof AuthenticatedHifzRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
+  '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/': typeof QuranIndexRoute
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/hifz'
     | '/api/chat'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/hifz'
     | '/api/chat'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hifz'
     | '/api/chat'
     | '/api/mistake-check-voice'
+    | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
     | '/quran/'
@@ -341,6 +353,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiMistakeCheckVoiceRoute: typeof ApiMistakeCheckVoiceRoute
+  ApiTranscribeChunkRoute: typeof ApiTranscribeChunkRoute
   CoursesLevelRoute: typeof CoursesLevelRoute
   QuranSurahIdRoute: typeof QuranSurahIdRoute
   QuranIndexRoute: typeof QuranIndexRoute
@@ -449,6 +462,13 @@ declare module '@tanstack/react-router' {
       path: '/courses/$level'
       fullPath: '/courses/$level'
       preLoaderRoute: typeof CoursesLevelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/transcribe-chunk': {
+      id: '/api/transcribe-chunk'
+      path: '/api/transcribe-chunk'
+      fullPath: '/api/transcribe-chunk'
+      preLoaderRoute: typeof ApiTranscribeChunkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/mistake-check-voice': {
@@ -561,6 +581,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
   ApiMistakeCheckVoiceRoute: ApiMistakeCheckVoiceRoute,
+  ApiTranscribeChunkRoute: ApiTranscribeChunkRoute,
   CoursesLevelRoute: CoursesLevelRoute,
   QuranSurahIdRoute: QuranSurahIdRoute,
   QuranIndexRoute: QuranIndexRoute,
