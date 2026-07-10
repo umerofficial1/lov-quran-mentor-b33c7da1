@@ -235,7 +235,7 @@ function Home() {
             <p className="text-white/60 leading-relaxed mb-6">
               Real-time tajweed feedback: recite any ayah into your microphone and the AI compares your pronunciation, elongation, and articulation points to a master reciter — ayah by ayah.
             </p>
-            <Link to="/chat" className="inline-flex items-center gap-3 px-6 py-3 bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] font-semibold text-sm uppercase tracking-widest transition-colors">
+            <Link to="/learn" search={{ tool: "mistake" }} className="inline-flex items-center gap-3 px-6 py-3 bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] font-semibold text-sm uppercase tracking-widest transition-colors">
               <Mic className="size-4" /> Start Voice Session
             </Link>
           </div>
