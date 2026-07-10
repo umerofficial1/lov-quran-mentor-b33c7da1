@@ -10,7 +10,7 @@ import {
   Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle,
 } from "lucide-react";
 import {
-  translationCompare, generateQuiz, memorizationCoach, revisionPlanner, mistakeChecker, listeningTest,
+  translationCompare, generateQuiz, memorizationCoach, revisionPlanner, listeningTest,
 } from "@/lib/ai.functions";
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 
