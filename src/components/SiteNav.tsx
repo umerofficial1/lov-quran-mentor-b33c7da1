@@ -86,8 +86,8 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
   return (
     <Link
       to={to}
-      className="px-3 py-2 rounded-full text-white/70 hover:text-[#C9A24C] hover:bg-white/5 transition-all inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium"
-      activeProps={{ className: "px-3 py-2 rounded-full text-[#C9A24C] bg-white/5 inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium" }}
+      className="shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-white/70 hover:text-[#C9A24C] hover:bg-white/5 transition-all inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium"
+      activeProps={{ className: "shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-[#C9A24C] bg-white/5 inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium" }}
       activeOptions={{ exact: to === "/" }}
     >
       {icon} {label}
