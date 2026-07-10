@@ -15,6 +15,9 @@ import {
 import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 
 export const Route = createFileRoute("/learn")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tool: search.tool === "mistake" ? ("mistake" as const) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "AI Learn — Quiz, Memorization Coach & Translation Compare · Verse Wise Mentor" },
@@ -42,7 +45,8 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = 
 ];
 
 function LearnPage() {
-  const [tab, setTab] = useState<Tab>("compare");
+  const { tool } = Route.useSearch();
+  const [tab, setTab] = useState<Tab>(tool ?? "compare");
   const { user } = useAuth();
 
   return (

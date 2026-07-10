@@ -11,6 +11,7 @@ type Lesson = {
   desc: string;
   to: string;
   params?: Record<string, string>;
+  search?: Record<string, string>;
   icon: React.ReactNode;
   cta: string;
 };
@@ -62,7 +63,8 @@ const COURSES: Record<LevelKey, Course> = {
       {
         title: "AI voice coach — recite an ayah",
         desc: "Record any ayah and get real-time feedback on your pronunciation and flow.",
-        to: "/chat",
+        to: "/learn",
+        search: { tool: "mistake" },
         icon: <Mic className="size-4" />,
         cta: "Start voice session",
       },
@@ -246,6 +248,7 @@ function CoursePage() {
                 <Link
                   to={l.to}
                   params={l.params as never}
+                  search={l.search as never}
                   className="group grid grid-cols-[auto_1fr_auto] gap-5 items-center p-5 md:p-6 bg-[#0F1E3D]/60 border border-white/10 hover:border-[#C9A24C]/40 hover:bg-[#0F1E3D] transition-all"
                 >
                   <span className="font-display text-2xl text-white/40 group-hover:text-[#C9A24C] w-10 text-center transition-colors">
