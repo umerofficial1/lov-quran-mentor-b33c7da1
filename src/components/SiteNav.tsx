@@ -53,17 +53,8 @@ export function SiteNav() {
             </span>
           </span>
         </Link>
-        <div className="hidden md:flex items-center gap-1 text-sm">
-          <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
-          <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
-          <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
-          <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
-          <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
-          <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
-          <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
-          {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
-        </div>
-        <div className="flex items-center gap-2">
+        <ScrollableNav user={!!user} />
+        <div className="flex items-center gap-2 shrink-0">
           {user ? (
             <>
               <span className="hidden sm:inline text-xs text-white/50 truncate max-w-[140px]">
