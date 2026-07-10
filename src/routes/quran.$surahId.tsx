@@ -201,6 +201,29 @@ function SurahReader() {
       </ReadingChrome>
 
       <QuranSettings prefs={prefs} update={update} />
+
+      {/* Live Recitation FAB */}
+      <button
+        onClick={() => setReciteOpen(true)}
+        disabled={!versesData.length}
+        className="fixed bottom-24 md:bottom-8 right-5 z-40 group inline-flex items-center gap-2 pl-4 pr-5 py-3 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold shadow-[0_0_30px_rgba(31,182,176,0.5)] hover:scale-105 active:scale-95 transition disabled:opacity-40"
+        aria-label="Start live recitation"
+      >
+        <span className="relative flex size-8 items-center justify-center rounded-full bg-white/15">
+          <span className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
+          <Mic className="size-5 relative" />
+        </span>
+        <span className="hidden md:inline text-sm">Live Recite</span>
+      </button>
+
+      <LiveRecitationDrawer
+        open={reciteOpen}
+        onClose={() => setReciteOpen(false)}
+        surahId={id}
+        surahName={surah.nameAr}
+        verses={versesData}
+      />
+
       <MobileNav />
     </div>
   );
