@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import DOMPurify from "dompurify";
 import { BookOpen, X } from "lucide-react";
 import { TAFSIRS, fetchTafsir } from "@/lib/tafsir";
+import { toCleanHtml } from "@/lib/clean-html";
 
 export function TafsirButton({ verseKey }: { verseKey: string }) {
   const [open, setOpen] = useState(false);
