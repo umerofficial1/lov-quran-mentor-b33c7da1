@@ -91,7 +91,7 @@ function PageReader() {
 
         <div className="space-y-4">
           {verses.data?.map((v) => (
-            <VerseCard key={v.id} v={v} prefs={prefs} isBookmarked={false} onToggleBookmark={() => {}} showSurahInHeader onVisible={markRead} />
+            <VerseCard key={v.id} v={v} prefs={prefs} isBookmarked={false} onToggleBookmark={() => {}} showSurahInHeader onVisible={markRead} onPlayFrom={playFromKey} />
           ))}
         </div>
       </main>
