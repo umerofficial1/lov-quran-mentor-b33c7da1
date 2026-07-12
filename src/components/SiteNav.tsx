@@ -2,7 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useUserRoles } from "@/hooks/use-user-roles";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function SiteNav() {
