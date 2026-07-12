@@ -75,11 +75,13 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   useEffect(() => {
     if (open) {
       setStatuses(new Array(flat.length).fill("pending"));
+      prevStatusesRef.current = new Array(flat.length).fill("pending");
       setCurrentIdx(0);
       setTranscript("");
       setFeedback(null);
       setFinished(false);
       setError(null);
+      setLiveMistake(null);
     }
   }, [open, flat.length]);
 
