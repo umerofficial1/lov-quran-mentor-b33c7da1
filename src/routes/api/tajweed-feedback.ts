@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText, Output, NoObjectGeneratedError } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
@@ -32,6 +32,46 @@ const InputSchema = z.object({
     .max(60),
 });
 
+function stripCodeFence(s: string): string {
+  const t = s.trim();
+  if (t.startsWith("```")) {
+    return t.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+  }
+  return t;
+}
+
+function extractJson(s: string): string {
+  const clean = stripCodeFence(s);
+  const first = clean.indexOf("{");
+  const last = clean.lastIndexOf("}");
+  if (first >= 0 && last > first) return clean.slice(first, last + 1);
+  return clean;
+}
+
+function heuristicFallback(accuracy: number, mistakes: number) {
+  const overall = accuracy >= 90 ? "excellent" : accuracy >= 70 ? "good" : "needs_work";
+  const summary_urdu =
+    accuracy >= 90
+      ? "ماشاءاللہ! آپ کی تلاوت بہت اچھی رہی۔ روزانہ مشق جاری رکھیں۔"
+      : accuracy >= 70
+      ? "اچھی کوشش! تھوڑی اور مشق سے آپ ماہر ہو جائیں گے۔"
+      : "کوئی بات نہیں، ہر مشق آپ کو بہتر بناتی ہے۔ آہستہ اور توجہ سے پڑھیں۔";
+  return {
+    overall,
+    summary_urdu,
+    tajweed_tips: [
+      "مدّ والے حروف پر مکمل حرکت دیں (کم از کم دو ہرکات)۔",
+      "غنّہ (ن اور م پر شدّہ) والے مقامات پر آواز کو ناک سے نکالیں۔",
+    ],
+    pronunciation_tips: [
+      mistakes > 0
+        ? "جو الفاظ چھوٹے، ان کو الگ سے تین بار دہرائیں۔"
+        : "ہر آیت کے بعد ایک لمحے کا وقفہ لیں۔",
+      "قاری کی ریکارڈنگ کے ساتھ ساتھ آہستہ آواز میں پڑھیں۔",
+    ],
+  };
+}
+
 export const Route = createFileRoute("/api/tajweed-feedback")({
   server: {
     handlers: {
@@ -47,7 +87,9 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
         const data = parsed.data;
 
         const key = process.env.LOVABLE_API_KEY;
-        if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+        if (!key) {
+          return Response.json(heuristicFallback(data.accuracy, data.mistakes.length), { status: 200 });
+        }
 
         const gateway = createLovableAiGatewayProvider(key);
         const mistakeList = data.mistakes
@@ -55,33 +97,57 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
           .join("\n");
 
         try {
-          const { output } = await generateText({
+          const { text } = await generateText({
             model: gateway("google/gemini-2.5-flash"),
-            output: Output.object({ schema: FeedbackSchema }),
             system:
-              "You are a kind Qur'an tajweed coach writing in simple Urdu. " +
-              "Given a session's stats and specific mistaken words, produce short, actionable Urdu feedback. " +
-              "Return JSON with EXACTLY: overall, summary_urdu, tajweed_tips (2-4 items), pronunciation_tips (2-4 items).",
+              "You are a kind Qur'an tajweed coach. Reply ONLY with a single JSON object (no prose, no markdown fences). " +
+              "Schema: { \"overall\": \"excellent\" | \"good\" | \"needs_work\", \"summary_urdu\": string, \"tajweed_tips\": string[2..4], \"pronunciation_tips\": string[2..4] }. " +
+              "All text values MUST be in simple Urdu (Nastaliq). Keep each tip short, actionable, and specific to the mistakes provided.",
             prompt:
               `Surah: ${data.surahId}\n` +
               `Accuracy: ${data.accuracy}% (correct ${data.correct}, wrong ${data.wrong}, missed ${data.missed}).\n` +
               `Mistakes:\n${mistakeList || "(none)"}\n\n` +
-              `Full transcript: ${data.transcript}`,
+              `Transcript (Arabic, may be partial): ${data.transcript.slice(0, 2000)}\n\n` +
+              `Return JSON only.`,
           });
-          return Response.json(output);
-        } catch (err) {
-          if (NoObjectGeneratedError.isInstance(err)) {
-            return Response.json(
-              {
-                overall: data.accuracy >= 90 ? "excellent" : data.accuracy >= 70 ? "good" : "needs_work",
-                summary_urdu: "AI فیڈبیک دستیاب نہیں، لیکن آپ کی کارکردگی محفوظ ہے۔",
-                tajweed_tips: [],
-                pronunciation_tips: [],
-              },
-              { status: 200 },
-            );
+
+          const jsonStr = extractJson(text);
+          let obj: unknown;
+          try {
+            obj = JSON.parse(jsonStr);
+          } catch {
+            return Response.json(heuristicFallback(data.accuracy, data.mistakes.length), { status: 200 });
           }
-          throw err;
+          const check = FeedbackSchema.safeParse(obj);
+          if (check.success) {
+            return Response.json(check.data);
+          }
+          // Partial coerce
+          const anyObj = obj as Record<string, unknown>;
+          const coerced = {
+            overall:
+              typeof anyObj.overall === "string" && ["excellent", "good", "needs_work"].includes(anyObj.overall)
+                ? (anyObj.overall as "excellent" | "good" | "needs_work")
+                : data.accuracy >= 90
+                ? "excellent"
+                : data.accuracy >= 70
+                ? "good"
+                : "needs_work",
+            summary_urdu:
+              typeof anyObj.summary_urdu === "string" && anyObj.summary_urdu.trim()
+                ? anyObj.summary_urdu
+                : heuristicFallback(data.accuracy, data.mistakes.length).summary_urdu,
+            tajweed_tips: Array.isArray(anyObj.tajweed_tips)
+              ? (anyObj.tajweed_tips.filter((x) => typeof x === "string") as string[])
+              : heuristicFallback(data.accuracy, data.mistakes.length).tajweed_tips,
+            pronunciation_tips: Array.isArray(anyObj.pronunciation_tips)
+              ? (anyObj.pronunciation_tips.filter((x) => typeof x === "string") as string[])
+              : heuristicFallback(data.accuracy, data.mistakes.length).pronunciation_tips,
+          };
+          return Response.json(coerced);
+        } catch (err) {
+          console.error("tajweed-feedback AI error", err);
+          return Response.json(heuristicFallback(data.accuracy, data.mistakes.length), { status: 200 });
         }
       },
     },
