@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Bookmark } from "lucide-react";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 
 export const Route = createFileRoute("/quran/")({
