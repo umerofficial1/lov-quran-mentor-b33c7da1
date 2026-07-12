@@ -118,12 +118,12 @@ function SurahReader() {
           <div className="flex items-center gap-2">
             {prev && (
               <Link to="/quran/$surahId" params={{ surahId: String(prev) }} aria-label="Previous surah" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
-                <ChevronRight className="size-4" />
+                <ChevronLeft className="size-4" />
               </Link>
             )}
             {next && (
               <Link to="/quran/$surahId" params={{ surahId: String(next) }} aria-label="Next surah" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300">
-                <ChevronLeft className="size-4" />
+                <ChevronRight className="size-4" />
               </Link>
             )}
           </div>
