@@ -17,7 +17,7 @@ export function SiteNav() {
   };
 
   return (
-    <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-full bg-[#0F1E3D]/70 backdrop-blur-xl border border-white/10 shadow-2xl">
+    <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-full glass-panel !rounded-full transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-5 md:px-6 h-14 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label="Ayatica — Read, Reflect, Live">
           <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0B1730] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
