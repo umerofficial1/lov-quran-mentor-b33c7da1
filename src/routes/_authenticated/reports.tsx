@@ -1,0 +1,330 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { SiteNav } from "@/components/SiteNav";
+import { MobileNav } from "@/components/MobileNav";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { SURAHS } from "@/lib/surahs";
+import { Award, Clock, Target, Zap, TrendingUp, BookOpen, Mic2, Sparkles } from "lucide-react";
+
+export const Route = createFileRoute("/_authenticated/reports")({
+  head: () => ({
+    meta: [
+      { title: "Recitation Reports — Ayatica" },
+      { name: "description", content: "Your personal recitation history, accuracy trends, achievements and AI feedback." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  component: ReportsPage,
+});
+
+type SessionRow = {
+  id: string;
+  surah_id: number;
+  start_ayah: number;
+  end_ayah: number;
+  words_total: number;
+  words_matched: number;
+  words_wrong: number;
+  words_missing: number;
+  accuracy: number;
+  pronunciation_score: number;
+  wpm: number;
+  duration_ms: number;
+  completed: boolean;
+  ai_advice: string | null;
+  created_at: string;
+};
+
+type AchievementRow = {
+  id: string;
+  unlocked_at: string;
+  progress: number;
+  achievement: {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    category: string;
+  } | null;
+};
+
+function fmtDuration(ms: number) {
+  const s = Math.max(0, Math.round(ms / 1000));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return m > 0 ? `${m}m ${r}s` : `${r}s`;
+}
+
+function fmtDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+}
+
+function surahName(id: number) {
+  return SURAHS.find((s) => s.n === id)?.nameAr ?? `Surah ${id}`;
+}
+
+function ReportsPage() {
+  const { user } = useAuth();
+
+  const sessionsQ = useQuery({
+    queryKey: ["recitation-sessions", user?.id],
+    enabled: !!user,
+    queryFn: async (): Promise<SessionRow[]> => {
+      const { data, error } = await supabase
+        .from("recitation_sessions")
+        .select(
+          "id, surah_id, start_ayah, end_ayah, words_total, words_matched, words_wrong, words_missing, accuracy, pronunciation_score, wpm, duration_ms, completed, ai_advice, created_at",
+        )
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return (data ?? []) as SessionRow[];
+    },
+  });
+
+  const achievementsQ = useQuery({
+    queryKey: ["user-achievements", user?.id],
+    enabled: !!user,
+    queryFn: async (): Promise<AchievementRow[]> => {
+      const { data, error } = await supabase
+        .from("user_achievements")
+        .select("id, unlocked_at, progress, achievement:achievements(id,title,description,icon,category)")
+        .eq("user_id", user!.id)
+        .order("unlocked_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as AchievementRow[];
+    },
+  });
+
+  const sessions = sessionsQ.data ?? [];
+  const achievements = achievementsQ.data ?? [];
+
+  const totals = useMemo(() => {
+    if (!sessions.length) {
+      return { count: 0, wordsRead: 0, timeMs: 0, avgAccuracy: 0, avgPron: 0, best: 0 };
+    }
+    const wordsRead = sessions.reduce((a, s) => a + (s.words_matched || 0), 0);
+    const timeMs = sessions.reduce((a, s) => a + (s.duration_ms || 0), 0);
+    const avgAccuracy = sessions.reduce((a, s) => a + (s.accuracy || 0), 0) / sessions.length;
+    const avgPron = sessions.reduce((a, s) => a + (s.pronunciation_score || 0), 0) / sessions.length;
+    const best = Math.max(...sessions.map((s) => s.accuracy || 0));
+    return { count: sessions.length, wordsRead, timeMs, avgAccuracy, avgPron, best };
+  }, [sessions]);
+
+  return (
+    <div className="min-h-screen pb-32 md:pb-16">
+      <SiteNav />
+
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-8">
+        <header className="mb-8">
+          <p className="text-[11px] uppercase tracking-[0.32em] text-[#C9A24C] font-bold">Your Journey</p>
+          <h1 className="text-3xl md:text-4xl font-display text-white mt-1">Recitation Reports</h1>
+          <p className="text-sm text-white/60 mt-2 max-w-2xl">
+            Track every live recitation session, watch your accuracy and pronunciation improve, and unlock
+            achievements as you continue your Qur'an journey.
+          </p>
+        </header>
+
+        {/* Summary tiles */}
+        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+          <StatTile icon={<Mic2 className="size-4" />} label="Sessions" value={totals.count.toString()} tone="teal" />
+          <StatTile icon={<BookOpen className="size-4" />} label="Words read" value={totals.wordsRead.toLocaleString()} tone="pearl" />
+          <StatTile icon={<Clock className="size-4" />} label="Time recited" value={fmtDuration(totals.timeMs)} tone="pearl" />
+          <StatTile icon={<Target className="size-4" />} label="Avg accuracy" value={`${Math.round(totals.avgAccuracy)}%`} tone={totals.avgAccuracy >= 80 ? "teal" : totals.avgAccuracy >= 50 ? "gold" : "red"} />
+          <StatTile icon={<Sparkles className="size-4" />} label="Avg pronunciation" value={`${Math.round(totals.avgPron)}%`} tone="gold" />
+          <StatTile icon={<TrendingUp className="size-4" />} label="Best session" value={`${Math.round(totals.best)}%`} tone="teal" />
+        </section>
+
+        {/* Achievements */}
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-display text-white flex items-center gap-2">
+              <Award className="size-5 text-[#C9A24C]" /> Achievements
+            </h2>
+            <span className="text-xs text-white/50">{achievements.length} unlocked</span>
+          </div>
+
+          {achievementsQ.isLoading ? (
+            <div className="h-24 rounded-2xl bg-white/5 animate-pulse" />
+          ) : achievements.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center">
+              <p className="text-sm text-white/60">
+                Complete a Live Recitation to start unlocking achievements.
+              </p>
+              <Link
+                to="/quran"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition"
+              >
+                <Mic2 className="size-4" /> Start reciting
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {achievements.map((row) => (
+                <div
+                  key={row.id}
+                  className="rounded-2xl border border-[#C9A24C]/30 bg-gradient-to-br from-[#C9A24C]/[0.08] to-transparent p-4 flex items-start gap-3"
+                >
+                  <div className="text-2xl" aria-hidden>{row.achievement?.icon ?? "🏅"}</div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-white truncate">{row.achievement?.title ?? "Achievement"}</p>
+                    <p className="text-xs text-white/60 mt-0.5 line-clamp-2">{row.achievement?.description}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-[#C9A24C]/80 mt-2">
+                      Unlocked {fmtDate(row.unlocked_at)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Session history */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-display text-white flex items-center gap-2">
+              <Zap className="size-5 text-[#1FB6B0]" /> Session history
+            </h2>
+            <span className="text-xs text-white/50">Last {Math.min(50, sessions.length)}</span>
+          </div>
+
+          {sessionsQ.isLoading ? (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-24 rounded-2xl bg-white/5 animate-pulse" />
+              ))}
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center">
+              <p className="text-white/70">No recitation sessions yet.</p>
+              <p className="text-xs text-white/50 mt-1">
+                Open any Surah and tap the Live Recite button to record your first session.
+              </p>
+              <Link
+                to="/quran"
+                className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition"
+              >
+                <Mic2 className="size-4" /> Go to Quran
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {sessions.map((s) => (
+                <SessionCard key={s.id} s={s} />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+
+      <MobileNav />
+    </div>
+  );
+}
+
+function StatTile({
+  icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  tone: "teal" | "gold" | "red" | "pearl";
+}) {
+  const toneClass =
+    tone === "teal"
+      ? "text-[#1FB6B0]"
+      : tone === "gold"
+        ? "text-[#C9A24C]"
+        : tone === "red"
+          ? "text-red-400"
+          : "text-white";
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+        <span className={toneClass}>{icon}</span>
+        {label}
+      </div>
+      <p className={`mt-1.5 font-bold text-lg ${toneClass}`}>{value}</p>
+    </div>
+  );
+}
+
+function SessionCard({ s }: { s: SessionRow }) {
+  const acc = Math.round(s.accuracy || 0);
+  const pron = Math.round(s.pronunciation_score || 0);
+  const accTone = acc >= 80 ? "text-[#1FB6B0]" : acc >= 50 ? "text-[#C9A24C]" : "text-red-400";
+  return (
+    <article className="rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#C9A24C]/30 transition p-4 md:p-5">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-white font-display text-xl" dir="rtl">
+              {surahName(s.surah_id)}
+            </h3>
+            <span className="text-xs text-white/50">
+              Ayah {s.start_ayah}
+              {s.end_ayah !== s.start_ayah ? `–${s.end_ayah}` : ""}
+            </span>
+            {s.completed && (
+              <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#1FB6B0]/15 text-[#1FB6B0] border border-[#1FB6B0]/30">
+                Completed
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-white/40 mt-1">{fmtDate(s.created_at)}</p>
+        </div>
+        <div className={`text-2xl font-bold ${accTone}`}>{acc}%</div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mt-4 text-center">
+        <MiniStat label="Words" value={`${s.words_matched}/${s.words_total}`} />
+        <MiniStat label="Wrong" value={s.words_wrong.toString()} tone={s.words_wrong > 0 ? "red" : "pearl"} />
+        <MiniStat label="Missed" value={s.words_missing.toString()} tone={s.words_missing > 0 ? "red" : "pearl"} />
+        <MiniStat label="Pron." value={`${pron}%`} tone="gold" />
+        <MiniStat label="Speed" value={`${Math.round(s.wpm || 0)} wpm`} />
+        <MiniStat label="Time" value={fmtDuration(s.duration_ms)} />
+      </div>
+
+      {s.ai_advice && (
+        <div className="mt-4 rounded-xl bg-[#0F1E3D]/60 border border-white/10 p-3">
+          <p className="text-[10px] uppercase tracking-[0.24em] text-[#C9A24C] font-bold mb-1 flex items-center gap-1">
+            <Sparkles className="size-3" /> AI Feedback
+          </p>
+          <p className="text-sm text-white/80 whitespace-pre-wrap">{s.ai_advice}</p>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function MiniStat({
+  label,
+  value,
+  tone = "pearl",
+}: {
+  label: string;
+  value: string;
+  tone?: "teal" | "gold" | "red" | "pearl";
+}) {
+  const toneClass =
+    tone === "teal"
+      ? "text-[#1FB6B0]"
+      : tone === "gold"
+        ? "text-[#C9A24C]"
+        : tone === "red"
+          ? "text-red-400"
+          : "text-white/90";
+  return (
+    <div className="rounded-lg bg-white/[0.04] px-2 py-1.5">
+      <p className="text-[9px] uppercase tracking-widest text-white/40">{label}</p>
+      <p className={`text-sm font-bold ${toneClass}`}>{value}</p>
+    </div>
+  );
+}
