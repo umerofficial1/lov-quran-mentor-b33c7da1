@@ -32,6 +32,7 @@ function PageReader() {
   const id = Math.max(1, Math.min(PAGE_COUNT, Number(pageId) || 1));
   const { prefs, update } = useQuranPrefs();
   const audio = useAudioPlayer();
+  const [reciteOpen, setReciteOpen] = useState(false);
   const verses = useQuery({
     queryKey: ["page", id, 131],
     queryFn: () => fetchPageVerses(id, 131),
