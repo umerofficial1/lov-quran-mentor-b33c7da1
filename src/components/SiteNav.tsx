@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 export function SiteNav() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { theme, toggle } = useTheme();
 
   const signOut = async () => {
     await supabase.auth.signOut();
