@@ -32,9 +32,9 @@ export function AudioPlayerBar() {
           onClick={() => { setOpen(false); p.stop(); }}
           aria-label="Close player"
           title="Close player"
-          className="absolute top-1.5 right-1.5 z-20 size-7 grid place-items-center rounded-full bg-white/10 hover:bg-red-500 text-white/80 hover:text-white border border-white/15 transition-colors shadow"
+          className="absolute -top-2.5 -right-2.5 z-30 size-7 grid place-items-center rounded-full bg-[#0B1730] hover:bg-red-500 text-white/90 hover:text-white border border-amber-400/30 hover:border-red-400 shadow-[0_4px_14px_rgba(0,0,0,0.6)] transition-colors"
         >
-          <X className="size-4" />
+          <X className="size-3.5" />
         </button>
         {/* Main bar */}
         <div className="flex items-center gap-3 p-3">
