@@ -60,7 +60,11 @@ export function QuranJumpBar({ current }: { current?: { mode: Mode; id: number }
       <div className="flex gap-2">
         <select
           value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            setValue(v);
+            go(mode, v);
+          }}
           className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400/50"
         >
           {options().map((o) => (
