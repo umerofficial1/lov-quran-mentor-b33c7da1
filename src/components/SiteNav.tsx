@@ -3,7 +3,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
 import { useUserRoles } from "@/hooks/use-user-roles";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield } from "lucide-react";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useRef, useState } from "react";
 
 export function SiteNav() {
