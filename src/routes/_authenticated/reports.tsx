@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState, useEffect } from "react";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SURAHS } from "@/lib/surahs";
-import { Award, Clock, Target, Zap, TrendingUp, BookOpen, Mic2, Sparkles } from "lucide-react";
+import { Award, Clock, Target, Zap, TrendingUp, BookOpen, Mic2, Sparkles, Flame, Calendar, Lightbulb, Check } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({
