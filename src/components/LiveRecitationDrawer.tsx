@@ -479,6 +479,17 @@ function toArabicNumeral(n: number): string {
   return String(n).split("").map((d) => digits[Number(d)] ?? d).join("");
 }
 
+function LiveStat({ label, value, tone }: { label: string; value: string; tone: "teal" | "gold" | "red" | "pearl" }) {
+  const toneCls =
+    tone === "teal" ? "text-teal" : tone === "gold" ? "text-gold" : tone === "red" ? "text-red-400" : "text-pearl";
+  return (
+    <div className="rounded-xl bg-white/[0.04] border border-white/10 px-2 py-2 text-center">
+      <div className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">{label}</div>
+      <div className={`text-sm font-bold font-mono mt-0.5 ${toneCls}`}>{value}</div>
+    </div>
+  );
+}
+
 function Chip({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
