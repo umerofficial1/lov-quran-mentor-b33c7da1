@@ -72,7 +72,7 @@ function encodeMonoWav(chunks: Float32Array[], inputRate: number): Blob | null {
 export async function startLiveWavRecorder(
   getStream: () => Promise<MediaStream>,
   onChunk: (blob: Blob) => void | Promise<void>,
-  chunkDurationMs = 2500,
+  chunkDurationMs = 1000,
 ): Promise<{ recorder: LiveWavRecorder; stream: MediaStream }> {
   const AudioContextClass = getAudioContextConstructor();
   if (!AudioContextClass) throw new DOMException("Web Audio is unavailable", "NotSupportedError");
