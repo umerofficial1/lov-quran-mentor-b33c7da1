@@ -103,7 +103,7 @@ export const adminActivityLogs = createServerFn({ method: "GET" })
     const [sessions, feedback, announcements, roles, users] = await Promise.all([
       supabaseAdmin
         .from("recitation_sessions")
-        .select("id, user_id, created_at, accuracy, duration_seconds")
+        .select("id, user_id, created_at, accuracy, duration_ms")
         .order("created_at", { ascending: false })
         .limit(data.limit),
       supabaseAdmin
