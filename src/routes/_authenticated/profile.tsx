@@ -256,7 +256,7 @@ function ProfilePage() {
   );
 
   return (
-    <div className="min-h-screen pb-32 md:pb-16">
+    <div className="min-h-dvh pb-32 md:pb-16">
       <SiteNav />
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-8 space-y-8">
         {/* Header card */}

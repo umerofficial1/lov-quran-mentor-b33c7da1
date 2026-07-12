@@ -46,7 +46,7 @@ function QuranIndex() {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <SiteNav />
       <main className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-8 flex-wrap gap-4">

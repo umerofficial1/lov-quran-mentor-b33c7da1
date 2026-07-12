@@ -97,7 +97,7 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <SiteNav />
       <main className="max-w-md mx-auto px-6 py-16">
         <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl">

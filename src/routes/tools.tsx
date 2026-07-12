@@ -93,7 +93,7 @@ function ToolsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen pb-28 md:pb-12">
+    <div className="min-h-dvh pb-28 md:pb-12">
       <SiteNav />
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-8 space-y-6">
         <header className="text-center mb-2">

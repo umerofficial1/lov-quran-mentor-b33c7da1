@@ -108,7 +108,7 @@ function SurahReader() {
   const next = useMemo(() => (id < 114 ? id + 1 : null), [id]);
 
   return (
-    <div className="min-h-screen pb-40 md:pb-24">
+    <div className="min-h-dvh pb-40 md:pb-24">
       <SiteNav />
       <ReadingChrome prefs={prefs}>
         {({ markRead, containerClass }) => (
