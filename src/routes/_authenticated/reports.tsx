@@ -205,6 +205,42 @@ function ReportsPage() {
           <StatTile icon={<TrendingUp className="size-4" />} label="Best session" value={`${Math.round(totals.best)}%`} tone="teal" />
         </section>
 
+        {/* Goals */}
+        <GoalsSection
+          userId={user?.id}
+          daily={goals.daily_minutes_target}
+          weekly={goals.weekly_sessions_target}
+          todayMinutes={progress.todayMinutes}
+          weekSessions={progress.weekSessions}
+          streak={progress.streak}
+          activeDaysThisWeek={progress.activeDaysThisWeek}
+        />
+
+        {/* Recommendations */}
+        <section className="mb-10">
+          <h2 className="text-lg font-display text-white flex items-center gap-2 mb-3">
+            <Lightbulb className="size-5 text-[#C9A24C]" /> Learning recommendations
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {recommendations.map((r, i) => (
+              <div
+                key={i}
+                className={`rounded-2xl border p-4 ${
+                  r.tone === "teal"
+                    ? "border-[#1FB6B0]/30 bg-[#1FB6B0]/[0.06]"
+                    : r.tone === "red"
+                      ? "border-red-400/30 bg-red-400/[0.06]"
+                      : "border-[#C9A24C]/30 bg-[#C9A24C]/[0.06]"
+                }`}
+              >
+                <p className="text-sm font-bold text-white">{r.title}</p>
+                <p className="text-xs text-white/70 mt-1 leading-relaxed">{r.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+
         {/* Achievements */}
         <section className="mb-10">
           <div className="flex items-center justify-between mb-3">
