@@ -221,6 +221,23 @@
   .hover\:bg-gold-leaf:hover { background-color: #C9A24C !important; color: #070C1F !important; }
   .hover\:border-gold-leaf\/40:hover { border-color: rgba(201, 162, 76, 0.45) !important; }
 
+  /* ---- Light-mode overrides for legacy remap ---- */
+  .light .bg-white { background-color: rgba(255,255,255,0.55) !important; backdrop-filter: blur(20px) saturate(140%); }
+  .light .bg-white\/90, .light .bg-white\/80 {
+    background-color: rgba(255,255,255,0.75) !important;
+    backdrop-filter: blur(24px) saturate(140%);
+  }
+  .light .text-emerald-deep { color: #14213D !important; }
+  .light .text-emerald-deep\/80 { color: rgba(20,33,61,0.82) !important; }
+  .light .text-emerald-deep\/70 { color: rgba(20,33,61,0.7) !important; }
+  .light .text-emerald-deep\/60 { color: rgba(20,33,61,0.6) !important; }
+  .light .text-emerald-deep\/50 { color: rgba(20,33,61,0.5) !important; }
+  .light .bg-emerald-deep\/5 { background-color: rgba(20,33,61,0.04) !important; }
+  .light .border-emerald-deep\/10 { border-color: rgba(20,33,61,0.10) !important; }
+  .light .border-emerald-deep\/5 { border-color: rgba(20,33,61,0.06) !important; }
+  .light .hover\:bg-emerald-deep\/5:hover { background-color: rgba(20,33,61,0.06) !important; }
+
+
   .glass {
     background-color: var(--glass-bg);
     backdrop-filter: blur(20px) saturate(135%);
