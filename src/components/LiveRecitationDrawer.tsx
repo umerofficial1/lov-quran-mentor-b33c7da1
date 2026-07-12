@@ -150,7 +150,33 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     if (!finished && ei < n) next[cur] = next[cur] === "pending" ? "current" : next[cur];
     setStatuses(next);
     setCurrentIdx(ei);
+
+    // Detect NEW mistakes (transition from pending/current → wrong) and fire live feedback.
+    const prev = prevStatusesRef.current;
+    let newestWrong = -1;
+    for (let i = 0; i < next.length; i++) {
+      if (next[i] === "wrong" && prev[i] !== "wrong") newestWrong = i;
+    }
+    if (newestWrong >= 0 && flat[newestWrong]) {
+      setLiveMistake({
+        expected: flat[newestWrong].display,
+        verseNumber: flat[newestWrong].verseNumber,
+        at: Date.now(),
+      });
+      // Gentle haptic buzz on mobile
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        try { navigator.vibrate?.([40, 60, 40]); } catch { /* ignore */ }
+      }
+    }
+    prevStatusesRef.current = next;
   }, [transcript, flat, finished]);
+
+  // Auto-hide the mistake banner after 3.5s.
+  useEffect(() => {
+    if (!liveMistake) return;
+    const id = window.setTimeout(() => setLiveMistake(null), 3500);
+    return () => window.clearTimeout(id);
+  }, [liveMistake]);
 
   // Autoscroll current word into view.
   useEffect(() => {
