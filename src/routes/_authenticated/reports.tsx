@@ -430,3 +430,152 @@ function MiniStat({
     </div>
   );
 }
+
+function GoalsSection({
+  userId,
+  daily,
+  weekly,
+  todayMinutes,
+  weekSessions,
+  streak,
+  activeDaysThisWeek,
+}: {
+  userId: string | undefined;
+  daily: number;
+  weekly: number;
+  todayMinutes: number;
+  weekSessions: number;
+  streak: number;
+  activeDaysThisWeek: number;
+}) {
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [dailyDraft, setDailyDraft] = useState(daily);
+  const [weeklyDraft, setWeeklyDraft] = useState(weekly);
+
+  useEffect(() => {
+    setDailyDraft(daily);
+    setWeeklyDraft(weekly);
+  }, [daily, weekly]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!userId) return;
+      const { error } = await supabase
+        .from("user_goals")
+        .upsert(
+          { user_id: userId, daily_minutes_target: dailyDraft, weekly_sessions_target: weeklyDraft },
+          { onConflict: "user_id" },
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["user-goals", userId] });
+      setEditing(false);
+    },
+  });
+
+  const dailyPct = Math.min(100, Math.round((todayMinutes / Math.max(1, daily)) * 100));
+  const weeklyPct = Math.min(100, Math.round((weekSessions / Math.max(1, weekly)) * 100));
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-display text-white flex items-center gap-2">
+          <Target className="size-5 text-[#1FB6B0]" /> Goals
+        </h2>
+        <button
+          onClick={() => setEditing((v) => !v)}
+          className="text-xs text-[#C9A24C] hover:text-[#C9A24C]/80"
+        >
+          {editing ? "Cancel" : "Edit goals"}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <GoalCard
+          icon={<Calendar className="size-4" />}
+          label="Daily practice"
+          value={`${todayMinutes} / ${daily} min`}
+          pct={dailyPct}
+          done={dailyPct >= 100}
+        />
+        <GoalCard
+          icon={<Mic2 className="size-4" />}
+          label="Weekly sessions"
+          value={`${weekSessions} / ${weekly}`}
+          pct={weeklyPct}
+          done={weeklyPct >= 100}
+        />
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+            <Flame className="size-4 text-[#C9A24C]" /> Streak
+          </div>
+          <p className="mt-1 text-2xl font-bold text-[#C9A24C]">{streak} day{streak === 1 ? "" : "s"}</p>
+          <p className="text-[11px] text-white/50 mt-1">
+            {activeDaysThisWeek}/7 active days this week
+          </p>
+        </div>
+      </div>
+
+      {editing && (
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-4">
+          <div>
+            <label className="text-xs text-white/70 flex justify-between">
+              <span>Daily practice target</span>
+              <span className="text-[#1FB6B0] font-bold">{dailyDraft} min</span>
+            </label>
+            <input
+              type="range" min={1} max={120} step={1}
+              value={dailyDraft}
+              onChange={(e) => setDailyDraft(Number(e.target.value))}
+              className="w-full mt-2 accent-[#1FB6B0]"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-white/70 flex justify-between">
+              <span>Weekly sessions target</span>
+              <span className="text-[#1FB6B0] font-bold">{weeklyDraft}</span>
+            </label>
+            <input
+              type="range" min={1} max={30} step={1}
+              value={weeklyDraft}
+              onChange={(e) => setWeeklyDraft(Number(e.target.value))}
+              className="w-full mt-2 accent-[#1FB6B0]"
+            />
+          </div>
+          <button
+            onClick={() => save.mutate()}
+            disabled={save.isPending}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
+          >
+            <Check className="size-4" /> {save.isPending ? "Saving…" : "Save goals"}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function GoalCard({
+  icon, label, value, pct, done,
+}: { icon: React.ReactNode; label: string; value: string; pct: number; done: boolean }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+        <span className={done ? "text-[#1FB6B0]" : "text-white/70"}>{icon}</span>
+        {label}
+      </div>
+      <div className="flex items-baseline justify-between mt-1">
+        <p className={`text-lg font-bold ${done ? "text-[#1FB6B0]" : "text-white"}`}>{value}</p>
+        <p className="text-xs text-white/50">{pct}%</p>
+      </div>
+      <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${done ? "bg-[#1FB6B0]" : "bg-[#C9A24C]"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
