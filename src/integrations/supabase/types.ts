@@ -101,6 +101,66 @@ export type Database = {
         }
         Relationships: []
       }
+      certificates: {
+        Row: {
+          description: string | null
+          id: string
+          issued_at: string
+          issuer: string
+          surah_from: number | null
+          surah_to: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          issued_at?: string
+          issuer?: string
+          surah_from?: number | null
+          surah_to?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          issued_at?: string
+          issuer?: string
+          surah_from?: number | null
+          surah_to?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          ayah: number | null
+          created_at: string
+          id: string
+          note: string | null
+          surah: number
+          user_id: string
+        }
+        Insert: {
+          ayah?: number | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          surah: number
+          user_id: string
+        }
+        Update: {
+          ayah?: number | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          surah?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           category: string
@@ -209,24 +269,39 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          language: string
+          notification_prefs: Json
+          theme: string
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          language?: string
+          notification_prefs?: Json
+          theme?: string
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          language?: string
+          notification_prefs?: Json
+          theme?: string
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
