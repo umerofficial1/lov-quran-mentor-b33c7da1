@@ -28,6 +28,7 @@ import { Route as ApiTajweedFeedbackRouteImport } from './routes/api/tajweed-fee
 import { Route as ApiMistakeCheckVoiceRouteImport } from './routes/api/mistake-check-voice'
 import { Route as ApiMistakeCheckTextRouteImport } from './routes/api/mistake-check-text'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedHifzRouteImport } from './routes/_authenticated/hifz'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -132,6 +133,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHifzRoute = AuthenticatedHifzRouteImport.update({
   id: '/hifz',
   path: '/hifz',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hifz': typeof AuthenticatedHifzRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hifz': typeof AuthenticatedHifzRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/mistake-check-text': typeof ApiMistakeCheckTextRoute
   '/api/mistake-check-voice': typeof ApiMistakeCheckVoiceRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/hifz'
+    | '/reports'
     | '/api/chat'
     | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/hifz'
+    | '/reports'
     | '/api/chat'
     | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
     | '/_authenticated/hifz'
+    | '/_authenticated/reports'
     | '/api/chat'
     | '/api/mistake-check-text'
     | '/api/mistake-check-voice'
@@ -525,6 +537,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/hifz': {
       id: '/_authenticated/hifz'
       path: '/hifz'
@@ -594,11 +613,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHifzRoute: typeof AuthenticatedHifzRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHifzRoute: AuthenticatedHifzRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
