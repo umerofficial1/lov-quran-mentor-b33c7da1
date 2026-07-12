@@ -142,7 +142,7 @@ export const adminActivityLogs = createServerFn({ method: "GET" })
         ts: s.created_at ?? "",
         kind: "session",
         title: "Recitation session",
-        subtitle: `${Math.round((s.duration_seconds ?? 0) / 60)}m · ${s.accuracy ?? 0}% accuracy`,
+        subtitle: `${Math.round((s.duration_ms ?? 0) / 60000)}m · ${s.accuracy ?? 0}% accuracy`,
         email: emailById.get(s.user_id ?? "") ?? "—",
       });
     }
