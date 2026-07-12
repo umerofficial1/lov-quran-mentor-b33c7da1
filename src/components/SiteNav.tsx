@@ -58,6 +58,14 @@ export function SiteNav() {
         </Link>
         <ScrollableNav user={!!user} />
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={toggle}
+            className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-foreground/70 hover:text-foreground transition-all hover:scale-105"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            title={theme === "dark" ? "Light mode" : "Dark mode"}
+          >
+            {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </button>
           {user ? (
             <>
               <span className="hidden sm:inline text-xs text-white/50 truncate max-w-[140px]">
