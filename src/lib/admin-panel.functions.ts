@@ -24,7 +24,7 @@ export const adminReadingStats = createServerFn({ method: "GET" })
     const since = new Date(Date.now() - 30 * 86400_000).toISOString();
     const { data: sessions } = await supabaseAdmin
       .from("recitation_sessions")
-      .select("user_id, duration_seconds, words_read, words_missed, accuracy, created_at")
+      .select("user_id, duration_ms, words_matched, words_missing, accuracy, created_at")
       .gte("created_at", since)
       .limit(5000);
 
@@ -32,9 +32,9 @@ export const adminReadingStats = createServerFn({ method: "GET" })
     const totals = rows.reduce(
       (a, r) => {
         a.sessions += 1;
-        a.seconds += r.duration_seconds ?? 0;
-        a.words += r.words_read ?? 0;
-        a.missed += r.words_missed ?? 0;
+        a.seconds += Math.round((r.duration_ms ?? 0) / 1000);
+        a.words += r.words_matched ?? 0;
+        a.missed += r.words_missing ?? 0;
         a.accSum += r.accuracy ?? 0;
         a.accCount += r.accuracy != null ? 1 : 0;
         return a;
@@ -52,9 +52,9 @@ export const adminReadingStats = createServerFn({ method: "GET" })
       const d = (r.created_at ?? "").slice(0, 10);
       const b = byDay.get(d);
       if (b) {
-        b.seconds += r.duration_seconds ?? 0;
+        b.seconds += Math.round((r.duration_ms ?? 0) / 1000);
         b.sessions += 1;
-        b.words += r.words_read ?? 0;
+        b.words += r.words_matched ?? 0;
       }
     }
 
@@ -63,7 +63,7 @@ export const adminReadingStats = createServerFn({ method: "GET" })
     for (const r of rows) {
       if (!r.user_id) continue;
       const b = byUser.get(r.user_id) ?? { seconds: 0, sessions: 0 };
-      b.seconds += r.duration_seconds ?? 0;
+      b.seconds += Math.round((r.duration_ms ?? 0) / 1000);
       b.sessions += 1;
       byUser.set(r.user_id, b);
     }
