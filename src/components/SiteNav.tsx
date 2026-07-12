@@ -3,12 +3,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
 import { useUserRoles } from "@/hooks/use-user-roles";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield } from "lucide-react";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useRef, useState } from "react";
 
 export function SiteNav() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { theme, toggle } = useTheme();
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -16,7 +18,7 @@ export function SiteNav() {
   };
 
   return (
-    <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-full bg-[#0F1E3D]/70 backdrop-blur-xl border border-white/10 shadow-2xl">
+    <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-full glass-panel !rounded-full transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-5 md:px-6 h-14 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label="Ayatica — Read, Reflect, Live">
           <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0B1730] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
@@ -56,6 +58,14 @@ export function SiteNav() {
         </Link>
         <ScrollableNav user={!!user} />
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={toggle}
+            className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-foreground/70 hover:text-foreground transition-all hover:scale-105"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            title={theme === "dark" ? "Light mode" : "Dark mode"}
+          >
+            {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </button>
           {user ? (
             <>
               <span className="hidden sm:inline text-xs text-white/50 truncate max-w-[140px]">
