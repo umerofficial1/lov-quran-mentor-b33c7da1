@@ -163,6 +163,7 @@ function ScrollableNav({ user }: { user: boolean }) {
         <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
         {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
         {user && <NavLink to="/profile" icon={<UserIcon className="size-4" />} label="Profile" />}
+        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-4" />} label="Admin" />}
       </div>
     </div>
   );
