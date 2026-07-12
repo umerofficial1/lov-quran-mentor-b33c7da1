@@ -4,6 +4,8 @@ import type { QuranVerse } from "@/components/VerseCard";
 import { requestMicrophoneStream, releaseMicrophoneStream } from "@/lib/microphone";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
 import { normalizeArabic, tokenize } from "@/lib/ayah-diff";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Flatten verses into a global word sequence for cross-ayah live diffing.
 interface FlatWord {
@@ -240,6 +242,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       .slice(0, 60) as { expected: string; verseKey: string }[];
 
     setAnalyzing(true);
+    let aiAdvice: string | null = null;
     try {
       const res = await fetch("/api/tajweed-feedback", {
         method: "POST",
@@ -255,12 +258,77 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         }),
       });
       if (res.ok) {
-        setFeedback((await res.json()) as Feedback);
+        const fb = (await res.json()) as Feedback;
+        setFeedback(fb);
+        aiAdvice = [fb.summary_urdu, ...(fb.tajweed_tips ?? []), ...(fb.pronunciation_tips ?? [])]
+          .filter(Boolean).join("\n");
       }
     } catch {
       // no-op
     } finally {
       setAnalyzing(false);
+    }
+
+    // Persist session + evaluate achievements
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (uid) {
+        const startAyah = flat[0]?.verseNumber ?? 1;
+        const endAyah = flat[flat.length - 1]?.verseNumber ?? startAyah;
+        const durationMs = startedAt ? Date.now() - startedAt : elapsedMs;
+        const wpmFinal = durationMs > 0 ? Math.round(((correct + wrong) / (durationMs / 1000)) * 60) : 0;
+        const completedRun = missed === 0 && wrong <= Math.max(1, Math.floor(flat.length * 0.05));
+
+        const { error: insErr } = await supabase.from("recitation_sessions").insert({
+          user_id: uid,
+          surah_id: surahId,
+          start_ayah: startAyah,
+          end_ayah: endAyah,
+          words_total: flat.length,
+          words_matched: correct,
+          words_wrong: wrong,
+          words_missing: missed,
+          accuracy,
+          pronunciation_score: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
+          wpm: wpmFinal,
+          duration_ms: durationMs,
+          tajweed_notes: feedback?.tajweed_tips ?? [],
+          word_states: finalStatuses,
+          ai_advice: aiAdvice,
+          completed: completedRun,
+        });
+        if (insErr) throw insErr;
+
+        // Evaluate achievements
+        const { count: sessionCount } = await supabase
+          .from("recitation_sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", uid);
+        const toUnlock: string[] = [];
+        if ((sessionCount ?? 0) >= 1) toUnlock.push("first_session");
+        if ((sessionCount ?? 0) >= 10) toUnlock.push("sessions_10");
+        if ((sessionCount ?? 0) >= 50) toUnlock.push("sessions_50");
+        if (accuracy >= 80) toUnlock.push("accuracy_80");
+        if (accuracy >= 95) toUnlock.push("accuracy_95");
+        if (completedRun) toUnlock.push("surah_complete");
+
+        if (toUnlock.length) {
+          const rows = toUnlock.map((id) => ({ user_id: uid, achievement_id: id, progress: 100 }));
+          const { data: newlyUnlocked } = await supabase
+            .from("user_achievements")
+            .upsert(rows, { onConflict: "user_id,achievement_id", ignoreDuplicates: true })
+            .select("achievement_id, achievement:achievements(title, icon)");
+          (newlyUnlocked ?? []).forEach((row: { achievement?: { title?: string } | null }) => {
+            const t = row?.achievement?.title;
+            if (t) toast.success(`🏆 Achievement unlocked: ${t}`);
+          });
+        }
+
+        toast.success("Session saved");
+      }
+    } catch (e) {
+      console.error("save session failed", e);
     }
   }
 
