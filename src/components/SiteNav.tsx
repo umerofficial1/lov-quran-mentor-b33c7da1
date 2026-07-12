@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
 import { useUserRoles } from "@/hooks/use-user-roles";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield, Sun, Moon } from "lucide-react";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, Mic, ChevronLeft, ChevronRight, Shield, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useRef, useState } from "react";
 
@@ -168,6 +168,7 @@ function ScrollableNav({ user }: { user: boolean }) {
         <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
         <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
         <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
+        {user && <NavLink to="/reports" icon={<Mic className="size-4" />} label="Recite" />}
         <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
         <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
         <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BookOpen, MessageSquare, Compass, Search } from "lucide-react";
+import { Home, BookOpen, MessageSquare, Compass, Mic } from "lucide-react";
 
 export function MobileNav() {
   return (
@@ -10,9 +10,9 @@ export function MobileNav() {
       <ul className="grid grid-cols-5 text-[10px] font-bold uppercase tracking-wider">
         <Item to="/" icon={<Home className="size-5" />} label="Home" exact />
         <Item to="/quran" icon={<BookOpen className="size-5" />} label="Quran" />
+        <Item to="/reports" icon={<Mic className="size-5" />} label="Recite" />
         <Item to="/chat" icon={<MessageSquare className="size-5" />} label="AI" />
         <Item to="/tools" icon={<Compass className="size-5" />} label="Tools" />
-        <Item to="/search" icon={<Search className="size-5" />} label="Search" />
       </ul>
     </nav>
   );
