@@ -281,6 +281,19 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   const liveWrong = statuses.filter((s) => s === "wrong").length;
   const liveAttempted = liveCorrect + liveWrong;
   const liveAcc = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
+  const wordsDone = liveCorrect + liveWrong;
+  const wordsRemaining = Math.max(0, flat.length - wordsDone);
+  const elapsedSec = Math.max(1, Math.round(elapsedMs / 1000));
+  const wpm = wordsDone > 0 ? Math.round((wordsDone / elapsedSec) * 60) : 0;
+  const etaSec = wpm > 0 ? Math.round((wordsRemaining / wpm) * 60) : 0;
+  const pronScore = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
+  const currentVerse = flat[Math.min(currentIdx, flat.length - 1)]?.verseNumber ?? 1;
+  const fmt = (s: number) => {
+    if (!s || !Number.isFinite(s)) return "—";
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}:${r.toString().padStart(2, "0")}`;
+  };
 
   // Group words back by ayah for rendering.
   const groups: Array<{ verseKey: string; verseNumber: number; wordIdx: number[] }> = [];
