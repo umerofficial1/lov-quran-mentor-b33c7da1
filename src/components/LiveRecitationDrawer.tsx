@@ -59,6 +59,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   const [analyzing, setAnalyzing] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [finished, setFinished] = useState(false);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   const recorderRef = useRef<LiveWavRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -152,6 +154,13 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     }
   }, [currentIdx, recording]);
 
+  // Elapsed timer while recording.
+  useEffect(() => {
+    if (!recording || !startedAt) return;
+    const id = window.setInterval(() => setElapsedMs(Date.now() - startedAt), 500);
+    return () => window.clearInterval(id);
+  }, [recording, startedAt]);
+
   async function startRecording() {
     setError(null);
     setStarting(true);
@@ -175,6 +184,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       recorderRef.current = recorder;
       streamRef.current = stream;
       setRecording(true);
+      setStartedAt(Date.now());
+      setElapsedMs(0);
     } catch (err) {
       const name = (err as DOMException)?.name;
       if (name === "NotAllowedError" || name === "SecurityError") {
@@ -270,6 +281,19 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   const liveWrong = statuses.filter((s) => s === "wrong").length;
   const liveAttempted = liveCorrect + liveWrong;
   const liveAcc = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
+  const wordsDone = liveCorrect + liveWrong;
+  const wordsRemaining = Math.max(0, flat.length - wordsDone);
+  const elapsedSec = Math.max(1, Math.round(elapsedMs / 1000));
+  const wpm = wordsDone > 0 ? Math.round((wordsDone / elapsedSec) * 60) : 0;
+  const etaSec = wpm > 0 ? Math.round((wordsRemaining / wpm) * 60) : 0;
+  const pronScore = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
+  const currentVerse = flat[Math.min(currentIdx, flat.length - 1)]?.verseNumber ?? 1;
+  const fmt = (s: number) => {
+    if (!s || !Number.isFinite(s)) return "—";
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}:${r.toString().padStart(2, "0")}`;
+  };
 
   // Group words back by ayah for rendering.
   const groups: Array<{ verseKey: string; verseNumber: number; wordIdx: number[] }> = [];
@@ -305,11 +329,19 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           </div>
         </div>
 
-        {/* Stats chips */}
-        <div className="flex gap-2 px-4 py-3 border-b border-white/10 text-xs">
-          <Chip label="Correct" value={liveCorrect} color="text-emerald-400" />
-          <Chip label="Wrong" value={liveWrong} color="text-red-400" />
-          <Chip label="Total" value={flat.length} color="text-pearl" />
+        {/* Live stats panel */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
+          <LiveStat label="Ayah" value={String(currentVerse)} tone="pearl" />
+          <LiveStat label="Word" value={`${wordsDone}/${flat.length}`} tone="pearl" />
+          <LiveStat label="Accuracy" value={`${liveAcc}%`} tone={liveAcc >= 80 ? "teal" : liveAcc >= 50 ? "gold" : "red"} />
+          <LiveStat label="Pronunciation" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
+          <LiveStat label="Speed" value={wpm ? `${wpm} wpm` : "—"} tone="pearl" />
+          <LiveStat label="ETA" value={fmt(etaSec)} tone="pearl" />
+        </div>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400">
+          <span>Time <span className="text-pearl font-mono">{fmt(elapsedSec)}</span></span>
+          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span> words</span>
+          <span className="hidden sm:inline">Correct <span className="text-emerald-400 font-bold">{liveCorrect}</span> · Wrong <span className="text-red-400 font-bold">{liveWrong}</span></span>
         </div>
 
         {/* Mushaf — continuous flowing page */}
@@ -445,6 +477,17 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 function toArabicNumeral(n: number): string {
   const digits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
   return String(n).split("").map((d) => digits[Number(d)] ?? d).join("");
+}
+
+function LiveStat({ label, value, tone }: { label: string; value: string; tone: "teal" | "gold" | "red" | "pearl" }) {
+  const toneCls =
+    tone === "teal" ? "text-teal" : tone === "gold" ? "text-gold" : tone === "red" ? "text-red-400" : "text-pearl";
+  return (
+    <div className="rounded-xl bg-white/[0.04] border border-white/10 px-2 py-2 text-center">
+      <div className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">{label}</div>
+      <div className={`text-sm font-bold font-mono mt-0.5 ${toneCls}`}>{value}</div>
+    </div>
+  );
 }
 
 function Chip({ label, value, color }: { label: string; value: number; color: string }) {
