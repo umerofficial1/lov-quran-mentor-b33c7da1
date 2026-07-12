@@ -3,6 +3,7 @@ import { Mic, Square, X, Loader2, RotateCcw, Trophy } from "lucide-react";
 import type { QuranVerse } from "@/components/VerseCard";
 import { requestMicrophoneStream, releaseMicrophoneStream } from "@/lib/microphone";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
+import { startLiveSpeech, isSpeechRecognitionSupported, type LiveSpeechHandle } from "@/lib/live-speech";
 import { normalizeArabic, tokenize } from "@/lib/ayah-diff";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
