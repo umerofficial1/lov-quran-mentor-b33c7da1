@@ -199,24 +199,44 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setError(null);
     setStarting(true);
     try {
-      const { recorder, stream } = await startLiveWavRecorder(
-        () => requestMicrophoneStream(),
-        async (blob) => {
-          try {
-            const fd = new FormData();
-            fd.append("audio", blob, "chunk.wav");
-            const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-            if (!res.ok) return;
-            const j = (await res.json()) as { text?: string };
-            const text = (j.text ?? "").trim();
-            if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
-          } catch {
-            // ignore transient chunk errors
-          }
-        },
-      );
-      recorderRef.current = recorder;
+      // Ask for mic first so we own permission + can show waveform later if needed.
+      const stream = await requestMicrophoneStream();
       streamRef.current = stream;
+
+      // PRIMARY: Web Speech API — instant streaming transcript, no chunk latency.
+      if (isSpeechRecognitionSupported()) {
+        const handle = startLiveSpeech({
+          onTranscript: (text) => {
+            // Replace transcript wholesale — Web Speech gives cumulative text.
+            setTranscript(text);
+          },
+          onError: (err) => {
+            // 'no-speech' / 'aborted' are common and transient — ignore.
+            if (err === "not-allowed" || err === "service-not-allowed") {
+              setError("Mic ki ijazat nahi mili. Browser settings mein microphone allow karein.");
+            }
+          },
+        }, "ar-SA");
+        speechRef.current = handle;
+      } else {
+        // FALLBACK: 1-second WAV chunks → server transcription (slower but works everywhere).
+        const { recorder } = await startLiveWavRecorder(
+          async () => stream,
+          async (blob) => {
+            try {
+              const fd = new FormData();
+              fd.append("audio", blob, "chunk.wav");
+              const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+              if (!res.ok) return;
+              const j = (await res.json()) as { text?: string };
+              const text = (j.text ?? "").trim();
+              if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
+            } catch { /* ignore */ }
+          },
+        );
+        recorderRef.current = recorder;
+      }
+
       setRecording(true);
       setStartedAt(Date.now());
       setElapsedMs(0);
@@ -238,10 +258,14 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   async function stopRecording() {
     try {
+      if (speechRef.current) {
+        speechRef.current.stop();
+      }
       if (recorderRef.current) {
         await recorderRef.current.stop();
       }
     } catch { /* ignore */ }
+    speechRef.current = null;
     recorderRef.current = null;
     if (streamRef.current) {
       releaseMicrophoneStream(streamRef.current);
