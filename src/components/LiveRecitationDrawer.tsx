@@ -154,6 +154,13 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     }
   }, [currentIdx, recording]);
 
+  // Elapsed timer while recording.
+  useEffect(() => {
+    if (!recording || !startedAt) return;
+    const id = window.setInterval(() => setElapsedMs(Date.now() - startedAt), 500);
+    return () => window.clearInterval(id);
+  }, [recording, startedAt]);
+
   async function startRecording() {
     setError(null);
     setStarting(true);
