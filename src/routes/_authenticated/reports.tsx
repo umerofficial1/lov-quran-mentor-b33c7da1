@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState, useEffect } from "react";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SURAHS } from "@/lib/surahs";
-import { Award, Clock, Target, Zap, TrendingUp, BookOpen, Mic2, Sparkles } from "lucide-react";
+import { Award, Clock, Target, Zap, TrendingUp, BookOpen, Mic2, Sparkles, Flame, Calendar, Lightbulb, Check } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({
@@ -100,8 +100,23 @@ function ReportsPage() {
     },
   });
 
+  const goalsQ = useQuery({
+    queryKey: ["user-goals", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_goals")
+        .select("daily_minutes_target, weekly_sessions_target")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data ?? { daily_minutes_target: 10, weekly_sessions_target: 5 };
+    },
+  });
+
   const sessions = sessionsQ.data ?? [];
   const achievements = achievementsQ.data ?? [];
+  const goals = goalsQ.data ?? { daily_minutes_target: 10, weekly_sessions_target: 5 };
 
   const totals = useMemo(() => {
     if (!sessions.length) {
@@ -114,6 +129,57 @@ function ReportsPage() {
     const best = Math.max(...sessions.map((s) => s.accuracy || 0));
     return { count: sessions.length, wordsRead, timeMs, avgAccuracy, avgPron, best };
   }, [sessions]);
+
+  const progress = useMemo(() => {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const day = now.getDay(); // 0=Sun
+    const startOfWeek = startOfToday - day * 86400000;
+    let todayMs = 0;
+    let weekSessions = 0;
+    const dayCounts = new Set<string>();
+    for (const s of sessions) {
+      const t = new Date(s.created_at).getTime();
+      if (t >= startOfToday) todayMs += s.duration_ms || 0;
+      if (t >= startOfWeek) weekSessions += 1;
+      if (t >= startOfWeek) dayCounts.add(new Date(s.created_at).toDateString());
+    }
+    // Streak (consecutive days back from today with >=1 session)
+    const allDays = new Set(sessions.map((s) => new Date(s.created_at).toDateString()));
+    let streak = 0;
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(startOfToday - i * 86400000).toDateString();
+      if (allDays.has(d)) streak += 1;
+      else if (i > 0) break;
+    }
+    return {
+      todayMinutes: Math.round(todayMs / 60000),
+      weekSessions,
+      streak,
+      activeDaysThisWeek: dayCounts.size,
+    };
+  }, [sessions]);
+
+  const recommendations = useMemo(() => {
+    const recs: { title: string; body: string; tone: "teal" | "gold" | "red" }[] = [];
+    if (!sessions.length) {
+      recs.push({ title: "Begin your first session", body: "Open Al-Fatiha and tap Live Recite to establish your baseline.", tone: "teal" });
+      return recs;
+    }
+    if (totals.avgAccuracy < 60) {
+      recs.push({ title: "Slow down and focus on accuracy", body: "Recite at 40–60 WPM and re-listen to each ayah before repeating.", tone: "red" });
+    } else if (totals.avgAccuracy < 85) {
+      recs.push({ title: "Tighten pronunciation", body: "Repeat the last surah while paying attention to makharij of ح، ع، ق، ط.", tone: "gold" });
+    } else {
+      recs.push({ title: "Extend your range", body: "Try a new juz — your accuracy is strong enough to progress.", tone: "teal" });
+    }
+    const wrongTotal = sessions.slice(0, 10).reduce((a, s) => a + (s.words_wrong || 0), 0);
+    if (wrongTotal > 15) recs.push({ title: "Review common mistake words", body: "Drill the words highlighted red in your last 10 sessions before advancing.", tone: "gold" });
+    if (progress.streak === 0) recs.push({ title: "Rebuild your streak", body: "Even 5 minutes today keeps consistency alive.", tone: "gold" });
+    if (progress.streak >= 7) recs.push({ title: `${progress.streak}-day streak!`, body: "Consider raising your daily goal by 5 minutes.", tone: "teal" });
+    return recs.slice(0, 4);
+  }, [sessions, totals, progress]);
+
 
   return (
     <div className="min-h-screen pb-32 md:pb-16">
@@ -138,6 +204,42 @@ function ReportsPage() {
           <StatTile icon={<Sparkles className="size-4" />} label="Avg pronunciation" value={`${Math.round(totals.avgPron)}%`} tone="gold" />
           <StatTile icon={<TrendingUp className="size-4" />} label="Best session" value={`${Math.round(totals.best)}%`} tone="teal" />
         </section>
+
+        {/* Goals */}
+        <GoalsSection
+          userId={user?.id}
+          daily={goals.daily_minutes_target}
+          weekly={goals.weekly_sessions_target}
+          todayMinutes={progress.todayMinutes}
+          weekSessions={progress.weekSessions}
+          streak={progress.streak}
+          activeDaysThisWeek={progress.activeDaysThisWeek}
+        />
+
+        {/* Recommendations */}
+        <section className="mb-10">
+          <h2 className="text-lg font-display text-white flex items-center gap-2 mb-3">
+            <Lightbulb className="size-5 text-[#C9A24C]" /> Learning recommendations
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {recommendations.map((r, i) => (
+              <div
+                key={i}
+                className={`rounded-2xl border p-4 ${
+                  r.tone === "teal"
+                    ? "border-[#1FB6B0]/30 bg-[#1FB6B0]/[0.06]"
+                    : r.tone === "red"
+                      ? "border-red-400/30 bg-red-400/[0.06]"
+                      : "border-[#C9A24C]/30 bg-[#C9A24C]/[0.06]"
+                }`}
+              >
+                <p className="text-sm font-bold text-white">{r.title}</p>
+                <p className="text-xs text-white/70 mt-1 leading-relaxed">{r.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
 
         {/* Achievements */}
         <section className="mb-10">
@@ -325,6 +427,155 @@ function MiniStat({
     <div className="rounded-lg bg-white/[0.04] px-2 py-1.5">
       <p className="text-[9px] uppercase tracking-widest text-white/40">{label}</p>
       <p className={`text-sm font-bold ${toneClass}`}>{value}</p>
+    </div>
+  );
+}
+
+function GoalsSection({
+  userId,
+  daily,
+  weekly,
+  todayMinutes,
+  weekSessions,
+  streak,
+  activeDaysThisWeek,
+}: {
+  userId: string | undefined;
+  daily: number;
+  weekly: number;
+  todayMinutes: number;
+  weekSessions: number;
+  streak: number;
+  activeDaysThisWeek: number;
+}) {
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [dailyDraft, setDailyDraft] = useState(daily);
+  const [weeklyDraft, setWeeklyDraft] = useState(weekly);
+
+  useEffect(() => {
+    setDailyDraft(daily);
+    setWeeklyDraft(weekly);
+  }, [daily, weekly]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!userId) return;
+      const { error } = await supabase
+        .from("user_goals")
+        .upsert(
+          { user_id: userId, daily_minutes_target: dailyDraft, weekly_sessions_target: weeklyDraft },
+          { onConflict: "user_id" },
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["user-goals", userId] });
+      setEditing(false);
+    },
+  });
+
+  const dailyPct = Math.min(100, Math.round((todayMinutes / Math.max(1, daily)) * 100));
+  const weeklyPct = Math.min(100, Math.round((weekSessions / Math.max(1, weekly)) * 100));
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-display text-white flex items-center gap-2">
+          <Target className="size-5 text-[#1FB6B0]" /> Goals
+        </h2>
+        <button
+          onClick={() => setEditing((v) => !v)}
+          className="text-xs text-[#C9A24C] hover:text-[#C9A24C]/80"
+        >
+          {editing ? "Cancel" : "Edit goals"}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <GoalCard
+          icon={<Calendar className="size-4" />}
+          label="Daily practice"
+          value={`${todayMinutes} / ${daily} min`}
+          pct={dailyPct}
+          done={dailyPct >= 100}
+        />
+        <GoalCard
+          icon={<Mic2 className="size-4" />}
+          label="Weekly sessions"
+          value={`${weekSessions} / ${weekly}`}
+          pct={weeklyPct}
+          done={weeklyPct >= 100}
+        />
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+            <Flame className="size-4 text-[#C9A24C]" /> Streak
+          </div>
+          <p className="mt-1 text-2xl font-bold text-[#C9A24C]">{streak} day{streak === 1 ? "" : "s"}</p>
+          <p className="text-[11px] text-white/50 mt-1">
+            {activeDaysThisWeek}/7 active days this week
+          </p>
+        </div>
+      </div>
+
+      {editing && (
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-4">
+          <div>
+            <label className="text-xs text-white/70 flex justify-between">
+              <span>Daily practice target</span>
+              <span className="text-[#1FB6B0] font-bold">{dailyDraft} min</span>
+            </label>
+            <input
+              type="range" min={1} max={120} step={1}
+              value={dailyDraft}
+              onChange={(e) => setDailyDraft(Number(e.target.value))}
+              className="w-full mt-2 accent-[#1FB6B0]"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-white/70 flex justify-between">
+              <span>Weekly sessions target</span>
+              <span className="text-[#1FB6B0] font-bold">{weeklyDraft}</span>
+            </label>
+            <input
+              type="range" min={1} max={30} step={1}
+              value={weeklyDraft}
+              onChange={(e) => setWeeklyDraft(Number(e.target.value))}
+              className="w-full mt-2 accent-[#1FB6B0]"
+            />
+          </div>
+          <button
+            onClick={() => save.mutate()}
+            disabled={save.isPending}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
+          >
+            <Check className="size-4" /> {save.isPending ? "Saving…" : "Save goals"}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function GoalCard({
+  icon, label, value, pct, done,
+}: { icon: React.ReactNode; label: string; value: string; pct: number; done: boolean }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+        <span className={done ? "text-[#1FB6B0]" : "text-white/70"}>{icon}</span>
+        {label}
+      </div>
+      <div className="flex items-baseline justify-between mt-1">
+        <p className={`text-lg font-bold ${done ? "text-[#1FB6B0]" : "text-white"}`}>{value}</p>
+        <p className="text-xs text-white/50">{pct}%</p>
+      </div>
+      <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${done ? "bg-[#1FB6B0]" : "bg-[#C9A24C]"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
     </div>
   );
 }
