@@ -292,7 +292,7 @@ function ProfilePage() {
             </div>
 
             <button
-              onClick={() => signOut?.()}
+              onClick={() => supabase.auth.signOut()}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/80 hover:bg-white/10"
             >
               <LogOut className="size-3.5" /> Sign out
