@@ -68,7 +68,7 @@ function AdminPanel() {
   const isAdmin = roles.includes("admin");
 
   return (
-    <div className="min-h-screen pb-28 md:pb-12">
+    <div className="min-h-dvh pb-28 md:pb-12">
       <SiteNav />
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         <header className="mb-6 flex items-center gap-3 flex-wrap">

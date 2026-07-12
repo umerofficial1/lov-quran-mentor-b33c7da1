@@ -110,7 +110,7 @@ function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pb-24 md:pb-8">
+    <div className="min-h-dvh flex flex-col pb-24 md:pb-8">
       <SiteNav />
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-8 flex flex-col">
         <div className="text-center mb-6">

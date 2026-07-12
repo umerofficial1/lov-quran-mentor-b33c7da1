@@ -48,7 +48,7 @@ function BookmarksPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <SiteNav />
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10">
         <div className="mb-8">

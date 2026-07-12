@@ -37,7 +37,7 @@ function RecitersPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#070C1F] text-[#EEF2FB]">
+    <div className="min-h-dvh bg-[#070C1F] text-[#EEF2FB]">
       <SiteNav />
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-10 pb-32">
         {/* Hero */}
@@ -121,7 +121,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
-      <div className="min-h-screen flex items-start justify-center p-4 py-10">
+      <div className="min-h-dvh flex items-start justify-center p-4 py-10">
         <div
           className="relative w-full max-w-4xl bg-gradient-to-br from-[#0F1E3D] to-[#070C1F] border border-[#C9A24C]/30 rounded-3xl shadow-2xl overflow-hidden"
           onClick={e => e.stopPropagation()}

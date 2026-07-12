@@ -71,11 +71,11 @@ function HifzPage() {
   const filtered = SURAHS.filter((s) => !tracked.has(s.n) && (query === "" || s.nameAr.includes(query) || s.nameUr.includes(query) || String(s.n).startsWith(query)));
 
   if (loading || !user) {
-    return <div className="min-h-screen"><SiteNav /><p className="text-center text-slate-400 mt-20">Loading…</p></div>;
+    return <div className="min-h-dvh"><SiteNav /><p className="text-center text-slate-400 mt-20">Loading…</p></div>;
   }
 
   return (
-    <div className="min-h-screen pb-28 md:pb-12">
+    <div className="min-h-dvh pb-28 md:pb-12">
       <SiteNav />
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-8 space-y-6">
         <header>

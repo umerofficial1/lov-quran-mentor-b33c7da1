@@ -36,7 +36,7 @@ function HizbReader() {
   const next = id < HIZB_COUNT ? id + 1 : null;
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-dvh pb-24">
       <SiteNav />
       <ReadingChrome prefs={prefs}>
         {({ markRead, containerClass }) => (
