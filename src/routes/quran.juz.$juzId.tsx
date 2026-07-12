@@ -10,6 +10,7 @@ import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { JUZ_COUNT } from "@/lib/quran-meta";
 
 export const Route = createFileRoute("/quran/juz/$juzId")({
@@ -27,10 +28,22 @@ function JuzReader() {
   const { juzId } = useParams({ from: "/quran/juz/$juzId" });
   const id = Math.max(1, Math.min(JUZ_COUNT, Number(juzId) || 1));
   const { prefs, update } = useQuranPrefs();
+  const audio = useAudioPlayer();
   const verses = useQuery({
     queryKey: ["juz", id, 131],
     queryFn: () => fetchJuzVerses(id, 131),
   });
+
+  const playFromKey = (verseKey: string) => {
+    const data = verses.data ?? [];
+    if (!data.length) return;
+    const q = data.map((v) => {
+      const [s, a] = v.verse_key.split(":").map(Number);
+      return { surah: s, ayah: a, page: v.page_number ?? null };
+    });
+    const idx = q.findIndex((it) => `${it.surah}:${it.ayah}` === verseKey);
+    void audio.loadQueue(q, Math.max(0, idx), true);
+  };
 
   const prev = id > 1 ? id - 1 : null;
   const next = id < JUZ_COUNT ? id + 1 : null;
@@ -86,6 +99,7 @@ function JuzReader() {
               onToggleBookmark={() => {}}
               showSurahInHeader
               onVisible={markRead}
+              onPlayFrom={playFromKey}
             />
           ))}
         </div>
