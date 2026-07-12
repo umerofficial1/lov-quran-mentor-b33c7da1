@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          threshold: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          icon?: string
+          id: string
+          threshold?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          threshold?: number
+          title?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           audience: string
@@ -199,6 +229,104 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      recitation_sessions: {
+        Row: {
+          accuracy: number
+          ai_advice: string | null
+          completed: boolean
+          created_at: string
+          duration_ms: number
+          end_ayah: number
+          id: string
+          pronunciation_score: number
+          start_ayah: number
+          surah_id: number
+          tajweed_notes: Json
+          updated_at: string
+          user_id: string
+          word_states: Json
+          words_matched: number
+          words_missing: number
+          words_total: number
+          words_wrong: number
+          wpm: number
+        }
+        Insert: {
+          accuracy?: number
+          ai_advice?: string | null
+          completed?: boolean
+          created_at?: string
+          duration_ms?: number
+          end_ayah: number
+          id?: string
+          pronunciation_score?: number
+          start_ayah: number
+          surah_id: number
+          tajweed_notes?: Json
+          updated_at?: string
+          user_id: string
+          word_states?: Json
+          words_matched?: number
+          words_missing?: number
+          words_total?: number
+          words_wrong?: number
+          wpm?: number
+        }
+        Update: {
+          accuracy?: number
+          ai_advice?: string | null
+          completed?: boolean
+          created_at?: string
+          duration_ms?: number
+          end_ayah?: number
+          id?: string
+          pronunciation_score?: number
+          start_ayah?: number
+          surah_id?: number
+          tajweed_notes?: Json
+          updated_at?: string
+          user_id?: string
+          word_states?: Json
+          words_matched?: number
+          words_missing?: number
+          words_total?: number
+          words_wrong?: number
+          wpm?: number
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          progress: number
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          progress?: number
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          progress?: number
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
