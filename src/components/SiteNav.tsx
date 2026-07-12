@@ -97,6 +97,8 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
 }
 
 function ScrollableNav({ user }: { user: boolean }) {
+  const { roles } = useUserRoles();
+  const isAdmin = roles.includes("admin");
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
