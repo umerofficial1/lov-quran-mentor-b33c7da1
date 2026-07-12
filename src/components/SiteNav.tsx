@@ -159,6 +159,7 @@ function ScrollableNav({ user }: { user: boolean }) {
         <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
         <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
         {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
+        {user && <NavLink to="/profile" icon={<UserIcon className="size-4" />} label="Profile" />}
       </div>
     </div>
   );
