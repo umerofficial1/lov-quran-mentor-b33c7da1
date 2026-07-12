@@ -168,6 +168,7 @@ function ScrollableNav({ user }: { user: boolean }) {
         <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
         <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
         <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
+        {user && <NavLink to="/reports" icon={<Mic className="size-4" />} label="Recite" />}
         <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
         <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
         <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
