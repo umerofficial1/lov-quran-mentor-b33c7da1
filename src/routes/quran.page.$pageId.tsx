@@ -103,6 +103,31 @@ function PageReader() {
       </ReadingChrome>
 
       <QuranSettings prefs={prefs} update={update} />
+
+      <button
+        onClick={() => setReciteOpen(true)}
+        disabled={!verses.data?.length}
+        className="fixed bottom-24 md:bottom-8 right-5 z-40 group inline-flex items-center gap-2 pl-4 pr-5 py-3 rounded-full bg-gradient-to-br from-teal-500 to-emerald-700 text-white font-bold shadow-[0_0_30px_rgba(31,182,176,0.5)] hover:scale-105 active:scale-95 transition disabled:opacity-40"
+        aria-label="Start live recitation"
+      >
+        <span className="relative flex size-8 items-center justify-center rounded-full bg-white/15">
+          <span className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
+          <Mic className="size-5 relative" />
+        </span>
+        <span className="hidden md:inline text-sm">Live Recite</span>
+      </button>
+
+      <LiveRecitationDrawer
+        open={reciteOpen}
+        onClose={() => setReciteOpen(false)}
+        surahId={verses.data?.[0] ? Number(verses.data[0].verse_key.split(":")[0]) : 1}
+        surahName={(() => {
+          const s = verses.data?.[0] ? SURAHS.find((x) => x.n === Number(verses.data![0].verse_key.split(":")[0])) : null;
+          return s ? s.nameAr : `Page ${id}`;
+        })()}
+        verses={verses.data ?? []}
+      />
+
       <MobileNav />
     </div>
   );
