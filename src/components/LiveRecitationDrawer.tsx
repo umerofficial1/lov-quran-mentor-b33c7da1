@@ -442,6 +442,11 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   );
 }
 
+function toArabicNumeral(n: number): string {
+  const digits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  return String(n).split("").map((d) => digits[Number(d)] ?? d).join("");
+}
+
 function Chip({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
