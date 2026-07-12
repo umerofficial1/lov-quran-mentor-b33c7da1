@@ -3,6 +3,7 @@ import { Mic, Square, X, Loader2, RotateCcw, Trophy } from "lucide-react";
 import type { QuranVerse } from "@/components/VerseCard";
 import { requestMicrophoneStream, releaseMicrophoneStream } from "@/lib/microphone";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
+import { startLiveSpeech, isSpeechRecognitionSupported, type LiveSpeechHandle } from "@/lib/live-speech";
 import { normalizeArabic, tokenize } from "@/lib/ayah-diff";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -67,6 +68,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   const prevStatusesRef = useRef<WordStatus[]>([]);
   const recorderRef = useRef<LiveWavRecorder | null>(null);
+  const speechRef = useRef<LiveSpeechHandle | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const scrollBoxRef = useRef<HTMLDivElement | null>(null);
@@ -197,24 +199,44 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setError(null);
     setStarting(true);
     try {
-      const { recorder, stream } = await startLiveWavRecorder(
-        () => requestMicrophoneStream(),
-        async (blob) => {
-          try {
-            const fd = new FormData();
-            fd.append("audio", blob, "chunk.wav");
-            const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-            if (!res.ok) return;
-            const j = (await res.json()) as { text?: string };
-            const text = (j.text ?? "").trim();
-            if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
-          } catch {
-            // ignore transient chunk errors
-          }
-        },
-      );
-      recorderRef.current = recorder;
+      // Ask for mic first so we own permission + can show waveform later if needed.
+      const stream = await requestMicrophoneStream();
       streamRef.current = stream;
+
+      // PRIMARY: Web Speech API — instant streaming transcript, no chunk latency.
+      if (isSpeechRecognitionSupported()) {
+        const handle = startLiveSpeech({
+          onTranscript: (text) => {
+            // Replace transcript wholesale — Web Speech gives cumulative text.
+            setTranscript(text);
+          },
+          onError: (err) => {
+            // 'no-speech' / 'aborted' are common and transient — ignore.
+            if (err === "not-allowed" || err === "service-not-allowed") {
+              setError("Mic ki ijazat nahi mili. Browser settings mein microphone allow karein.");
+            }
+          },
+        }, "ar-SA");
+        speechRef.current = handle;
+      } else {
+        // FALLBACK: 1-second WAV chunks → server transcription (slower but works everywhere).
+        const { recorder } = await startLiveWavRecorder(
+          async () => stream,
+          async (blob) => {
+            try {
+              const fd = new FormData();
+              fd.append("audio", blob, "chunk.wav");
+              const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+              if (!res.ok) return;
+              const j = (await res.json()) as { text?: string };
+              const text = (j.text ?? "").trim();
+              if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
+            } catch { /* ignore */ }
+          },
+        );
+        recorderRef.current = recorder;
+      }
+
       setRecording(true);
       setStartedAt(Date.now());
       setElapsedMs(0);
@@ -236,10 +258,14 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   async function stopRecording() {
     try {
+      if (speechRef.current) {
+        speechRef.current.stop();
+      }
       if (recorderRef.current) {
         await recorderRef.current.stop();
       }
     } catch { /* ignore */ }
+    speechRef.current = null;
     recorderRef.current = null;
     if (streamRef.current) {
       releaseMicrophoneStream(streamRef.current);
@@ -442,20 +468,34 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           <span className="hidden sm:inline">Correct <span className="text-emerald-400 font-bold">{liveCorrect}</span> · Wrong <span className="text-red-400 font-bold">{liveWrong}</span></span>
         </div>
 
-        {/* Next-word indicator + live mistake banner */}
+        {/* Teleprompter — big current word, live mistake banner */}
         {recording && !finished && (
-          <div className="px-4 py-3 border-b border-white/10 bg-gradient-to-r from-teal/10 via-transparent to-transparent">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="text-[10px] uppercase tracking-widest text-teal font-bold mb-0.5">Ab yeh parhein →</div>
-                <div dir="rtl" className="font-arabic text-2xl text-emerald-300 truncate drop-shadow-[0_0_12px_rgba(52,211,153,0.6)]">
-                  {flat[currentIdx]?.display ?? "—"}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] uppercase tracking-widest text-slate-400">Ayah</div>
-                <div className="text-lg font-bold text-gold font-mono">{flat[currentIdx]?.verseNumber ?? "—"}</div>
-              </div>
+          <div className="px-4 py-4 border-b border-white/10 bg-gradient-to-r from-teal/15 via-teal/5 to-transparent">
+            <div className="text-[10px] uppercase tracking-widest text-teal font-bold mb-2 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-teal animate-pulse" />
+              Ab yeh parhein
+              <span className="ml-auto text-slate-400">Ayah {flat[currentIdx]?.verseNumber ?? "—"}</span>
+            </div>
+            <div dir="rtl" className="flex items-baseline justify-end gap-4 font-arabic">
+              {/* previous word (faded) */}
+              {currentIdx > 0 && (
+                <span className="text-2xl text-emerald-400/40 truncate max-w-[30%]">
+                  {flat[currentIdx - 1]?.display}
+                </span>
+              )}
+              {/* current word — hero */}
+              <span
+                key={currentIdx}
+                className="text-5xl md:text-6xl text-emerald-300 font-bold drop-shadow-[0_0_24px_rgba(52,211,153,0.85)] animate-pulse"
+              >
+                {flat[currentIdx]?.display ?? "—"}
+              </span>
+              {/* next word (hint) */}
+              {currentIdx + 1 < flat.length && (
+                <span className="text-2xl text-pearl/40 truncate max-w-[30%]">
+                  {flat[currentIdx + 1]?.display}
+                </span>
+              )}
             </div>
             {liveMistake && (
               <div key={liveMistake.at} className="mt-3 flex items-center gap-3 rounded-xl bg-red-500/15 border border-red-500/40 px-3 py-2 animate-fade-in">
@@ -464,7 +504,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
                   <div className="text-[10px] uppercase tracking-widest text-red-300 font-bold">Yahan galti — ayah {liveMistake.verseNumber}</div>
                   <div className="text-xs text-slate-300">Sahi lafz tha:</div>
                 </div>
-                <div dir="rtl" className="font-arabic text-xl text-red-100 font-bold">{liveMistake.expected}</div>
+                <div dir="rtl" className="font-arabic text-2xl text-red-100 font-bold">{liveMistake.expected}</div>
               </div>
             )}
           </div>
