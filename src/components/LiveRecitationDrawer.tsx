@@ -4,6 +4,8 @@ import type { QuranVerse } from "@/components/VerseCard";
 import { requestMicrophoneStream, releaseMicrophoneStream } from "@/lib/microphone";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
 import { normalizeArabic, tokenize } from "@/lib/ayah-diff";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Flatten verses into a global word sequence for cross-ayah live diffing.
 interface FlatWord {
