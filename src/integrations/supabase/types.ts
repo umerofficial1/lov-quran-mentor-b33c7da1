@@ -328,6 +328,33 @@ export type Database = {
           },
         ]
       }
+      user_goals: {
+        Row: {
+          created_at: string
+          daily_minutes_target: number
+          id: string
+          updated_at: string
+          user_id: string
+          weekly_sessions_target: number
+        }
+        Insert: {
+          created_at?: string
+          daily_minutes_target?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+          weekly_sessions_target?: number
+        }
+        Update: {
+          created_at?: string
+          daily_minutes_target?: number
+          id?: string
+          updated_at?: string
+          user_id?: string
+          weekly_sessions_target?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
