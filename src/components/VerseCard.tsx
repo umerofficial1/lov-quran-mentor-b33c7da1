@@ -131,7 +131,7 @@ export function VerseCard({
           className={`text-white text-right tajweed ${scriptClass}`}
           dir="rtl"
           lang="ar"
-          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing }}
+          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing, wordSpacing: `${prefs.wordSpacing}em` }}
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(v.text_uthmani_tajweed ?? "", TAJWEED_SANITIZE),
           }}
@@ -141,7 +141,7 @@ export function VerseCard({
           className={`text-white text-right ${scriptClass}`}
           dir="rtl"
           lang="ar"
-          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing }}
+          style={{ fontSize: `${effectiveFontSize}px`, lineHeight: prefs.lineSpacing, wordSpacing: `${prefs.wordSpacing}em` }}
         >
           {arabicPlain}
           {v.rub_el_hizb_number != null && v.verse_number === 1 && (

@@ -118,6 +118,13 @@ export function QuranSettings({
               onChange={(v) => update({ lineSpacing: v })}
             />
             <Slider
+              icon={<AlignJustify className="size-3 rotate-90" />}
+              label="Word spacing"
+              value={prefs.wordSpacing} min={0} max={0.8} step={0.02}
+              format={(v) => `${v.toFixed(2)}em`}
+              onChange={(v) => update({ wordSpacing: v })}
+            />
+            <Slider
               icon={<ZoomIn className="size-3" />}
               label="Zoom"
               value={prefs.zoom} min={0.8} max={1.8} step={0.05}

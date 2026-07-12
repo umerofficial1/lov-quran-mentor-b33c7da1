@@ -21,6 +21,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
+import { Route as QuranBookmarksRouteImport } from './routes/quran.bookmarks'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
 import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
 import { Route as ApiTranscribeChunkRouteImport } from './routes/api/transcribe-chunk'
@@ -96,6 +97,11 @@ const IndexRoute = IndexRouteImport.update({
 const QuranIndexRoute = QuranIndexRouteImport.update({
   id: '/quran/',
   path: '/quran/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranBookmarksRoute = QuranBookmarksRouteImport.update({
+  id: '/quran/bookmarks',
+  path: '/quran/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuranSurahIdRoute = QuranSurahIdRouteImport.update({
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
+  '/quran/bookmarks': typeof QuranBookmarksRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
+  '/quran/bookmarks': typeof QuranBookmarksRoute
   '/quran': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
+  '/quran/bookmarks': typeof QuranBookmarksRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
+    | '/quran/bookmarks'
     | '/quran/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
+    | '/quran/bookmarks'
     | '/quran'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/api/transcribe-chunk'
     | '/courses/$level'
     | '/quran/$surahId'
+    | '/quran/bookmarks'
     | '/quran/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   ApiTranscribeChunkRoute: typeof ApiTranscribeChunkRoute
   CoursesLevelRoute: typeof CoursesLevelRoute
   QuranSurahIdRoute: typeof QuranSurahIdRoute
+  QuranBookmarksRoute: typeof QuranBookmarksRoute
   QuranIndexRoute: typeof QuranIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/quran'
       fullPath: '/quran/'
       preLoaderRoute: typeof QuranIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/bookmarks': {
+      id: '/quran/bookmarks'
+      path: '/quran/bookmarks'
+      fullPath: '/quran/bookmarks'
+      preLoaderRoute: typeof QuranBookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quran/$surahId': {
@@ -647,6 +667,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTranscribeChunkRoute: ApiTranscribeChunkRoute,
   CoursesLevelRoute: CoursesLevelRoute,
   QuranSurahIdRoute: QuranSurahIdRoute,
+  QuranBookmarksRoute: QuranBookmarksRoute,
   QuranIndexRoute: QuranIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,

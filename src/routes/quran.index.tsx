@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Bookmark } from "lucide-react";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 
 export const Route = createFileRoute("/quran/")({
@@ -54,15 +54,23 @@ function QuranIndex() {
             <h1 className="text-4xl font-bold text-white">القرآن الكريم</h1>
             <p className="text-slate-400 mt-1">114 Surahs • Word-by-word translation • Audio</p>
           </div>
-          {last && (
+          <div className="flex items-center gap-2 flex-wrap">
             <Link
-              to="/quran/$surahId"
-              params={{ surahId: String(last.surah) }}
-              className="px-5 py-3 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-300 hover:bg-amber-500/25 transition-all inline-flex items-center gap-2"
+              to="/quran/bookmarks"
+              className="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200 hover:text-[#C9A24C] hover:border-[#C9A24C]/40 transition-all inline-flex items-center gap-2"
             >
-              <BookOpen className="size-4" /> Continue reading — Surah {last.surah}:{last.ayah}
+              <Bookmark className="size-4" /> Bookmarks
             </Link>
-          )}
+            {last && (
+              <Link
+                to="/quran/$surahId"
+                params={{ surahId: String(last.surah) }}
+                className="px-5 py-3 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-300 hover:bg-amber-500/25 transition-all inline-flex items-center gap-2"
+              >
+                <BookOpen className="size-4" /> Continue — Surah {last.surah}:{last.ayah}
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="mb-6">

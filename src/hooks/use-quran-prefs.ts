@@ -8,6 +8,7 @@ export type QuranPrefs = {
   script: QuranScript;
   fontSize: number; // px for Arabic text
   lineSpacing: number; // line-height multiplier
+  wordSpacing: number; // em; extra breathing between words
   showTranslation: boolean;
   tajweed: boolean;
   layout: MushafLayout;
@@ -26,6 +27,7 @@ const DEFAULTS: QuranPrefs = {
   script: "uthmani",
   fontSize: 32,
   lineSpacing: 2,
+  wordSpacing: 0.1,
   showTranslation: true,
   tajweed: false,
   layout: "flow",
