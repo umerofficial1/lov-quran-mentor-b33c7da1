@@ -26,15 +26,16 @@ export function AudioPlayerBar() {
 
   return (
     <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-3xl z-40">
-      <div className="relative rounded-2xl bg-[#0B1730]/95 backdrop-blur-3xl border border-amber-400/20 shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden">
-        <button
-          onClick={() => p.stop()}
-          aria-label="Close player"
-          title="Close player"
-          className="absolute top-1.5 left-1.5 z-10 size-6 grid place-items-center rounded-full bg-white/10 hover:bg-red-500/80 text-white/70 hover:text-white border border-white/15 transition-colors"
-        >
-          <X className="size-3.5" />
-        </button>
+      <button
+        type="button"
+        onClick={() => { setOpen(false); p.stop(); }}
+        aria-label="Close player"
+        title="Close player"
+        className="absolute -top-2.5 right-1 z-50 size-7 grid place-items-center rounded-full bg-[#0B1730] hover:bg-red-500 text-white/90 hover:text-white border border-amber-400/40 hover:border-red-400 shadow-[0_4px_14px_rgba(0,0,0,0.6)] transition-colors"
+      >
+        <X className="size-3.5" />
+      </button>
+      <div className="rounded-2xl bg-[#0B1730]/95 backdrop-blur-3xl border border-amber-400/20 shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden">
         {/* Main bar */}
         <div className="flex items-center gap-3 p-3">
           <button

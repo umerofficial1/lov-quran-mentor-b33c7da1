@@ -223,10 +223,13 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
   const stop = useCallback(() => {
     const a = audioRef.current;
-    if (!a) return;
-    a.pause();
-    a.currentTime = 0;
+    if (a) {
+      a.pause();
+      a.currentTime = 0;
+    }
     setPlaying(false);
+    setQueue([]);
+    setCurrentIndex(-1);
   }, []);
 
   // Attach audio element listeners.
