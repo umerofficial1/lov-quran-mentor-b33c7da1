@@ -100,8 +100,23 @@ function ReportsPage() {
     },
   });
 
+  const goalsQ = useQuery({
+    queryKey: ["user-goals", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_goals")
+        .select("daily_minutes_target, weekly_sessions_target")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data ?? { daily_minutes_target: 10, weekly_sessions_target: 5 };
+    },
+  });
+
   const sessions = sessionsQ.data ?? [];
   const achievements = achievementsQ.data ?? [];
+  const goals = goalsQ.data ?? { daily_minutes_target: 10, weekly_sessions_target: 5 };
 
   const totals = useMemo(() => {
     if (!sessions.length) {
@@ -114,6 +129,57 @@ function ReportsPage() {
     const best = Math.max(...sessions.map((s) => s.accuracy || 0));
     return { count: sessions.length, wordsRead, timeMs, avgAccuracy, avgPron, best };
   }, [sessions]);
+
+  const progress = useMemo(() => {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const day = now.getDay(); // 0=Sun
+    const startOfWeek = startOfToday - day * 86400000;
+    let todayMs = 0;
+    let weekSessions = 0;
+    const dayCounts = new Set<string>();
+    for (const s of sessions) {
+      const t = new Date(s.created_at).getTime();
+      if (t >= startOfToday) todayMs += s.duration_ms || 0;
+      if (t >= startOfWeek) weekSessions += 1;
+      if (t >= startOfWeek) dayCounts.add(new Date(s.created_at).toDateString());
+    }
+    // Streak (consecutive days back from today with >=1 session)
+    const allDays = new Set(sessions.map((s) => new Date(s.created_at).toDateString()));
+    let streak = 0;
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(startOfToday - i * 86400000).toDateString();
+      if (allDays.has(d)) streak += 1;
+      else if (i > 0) break;
+    }
+    return {
+      todayMinutes: Math.round(todayMs / 60000),
+      weekSessions,
+      streak,
+      activeDaysThisWeek: dayCounts.size,
+    };
+  }, [sessions]);
+
+  const recommendations = useMemo(() => {
+    const recs: { title: string; body: string; tone: "teal" | "gold" | "red" }[] = [];
+    if (!sessions.length) {
+      recs.push({ title: "Begin your first session", body: "Open Al-Fatiha and tap Live Recite to establish your baseline.", tone: "teal" });
+      return recs;
+    }
+    if (totals.avgAccuracy < 60) {
+      recs.push({ title: "Slow down and focus on accuracy", body: "Recite at 40–60 WPM and re-listen to each ayah before repeating.", tone: "red" });
+    } else if (totals.avgAccuracy < 85) {
+      recs.push({ title: "Tighten pronunciation", body: "Repeat the last surah while paying attention to makharij of ح، ع، ق، ط.", tone: "gold" });
+    } else {
+      recs.push({ title: "Extend your range", body: "Try a new juz — your accuracy is strong enough to progress.", tone: "teal" });
+    }
+    const wrongTotal = sessions.slice(0, 10).reduce((a, s) => a + (s.words_wrong || 0), 0);
+    if (wrongTotal > 15) recs.push({ title: "Review common mistake words", body: "Drill the words highlighted red in your last 10 sessions before advancing.", tone: "gold" });
+    if (progress.streak === 0) recs.push({ title: "Rebuild your streak", body: "Even 5 minutes today keeps consistency alive.", tone: "gold" });
+    if (progress.streak >= 7) recs.push({ title: `${progress.streak}-day streak!`, body: "Consider raising your daily goal by 5 minutes.", tone: "teal" });
+    return recs.slice(0, 4);
+  }, [sessions, totals, progress]);
+
 
   return (
     <div className="min-h-screen pb-32 md:pb-16">
