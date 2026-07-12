@@ -94,14 +94,20 @@ export function SiteNav() {
 }
 
 function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  const base =
+    "group/nav shrink-0 snap-start whitespace-nowrap px-2.5 md:px-3 py-2 rounded-full transition-all inline-flex items-center gap-1.5 md:gap-2 uppercase tracking-widest text-[11px] font-medium";
   return (
     <Link
       to={to}
-      className="shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-white/70 hover:text-[#C9A24C] hover:bg-white/5 transition-all inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium"
-      activeProps={{ className: "shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-[#C9A24C] bg-white/5 inline-flex items-center gap-2 uppercase tracking-widest text-[11px] font-medium" }}
+      aria-label={label}
+      title={label}
+      className={`${base} text-white/70 hover:text-[#C9A24C] hover:bg-white/5`}
+      activeProps={{ className: `${base} text-[#C9A24C] bg-white/10 ring-1 ring-[#C9A24C]/40` }}
       activeOptions={{ exact: to === "/" }}
     >
-      {icon} {label}
+      {icon}
+      <span className="hidden md:inline">{label}</span>
+      <span className="md:hidden text-[10px]">{label}</span>
     </Link>
   );
 }
@@ -126,6 +132,13 @@ function ScrollableNav({ user }: { user: boolean }) {
     if (!el) return;
     el.addEventListener("scroll", check, { passive: true });
     window.addEventListener("resize", check);
+    // Auto-scroll active item into view
+    const active = el.querySelector<HTMLElement>("[data-status='active']")
+      || el.querySelector<HTMLElement>("a[aria-current='page']");
+    if (active) {
+      const offset = active.offsetLeft - el.clientWidth / 2 + active.clientWidth / 2;
+      el.scrollTo({ left: Math.max(0, offset), behavior: "smooth" });
+    }
     return () => {
       el.removeEventListener("scroll", check);
       window.removeEventListener("resize", check);
@@ -135,17 +148,26 @@ function ScrollableNav({ user }: { user: boolean }) {
   const scrollBy = (dir: 1 | -1) => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * Math.max(160, el.clientWidth * 0.7), behavior: "smooth" });
+    el.scrollBy({ left: dir * Math.max(160, el.clientWidth * 0.8), behavior: "smooth" });
   };
 
+  const fadeMask =
+    (canLeft && canRight)
+      ? "[mask-image:linear-gradient(90deg,transparent_0,#000_28px,#000_calc(100%-28px),transparent_100%)]"
+      : canLeft
+        ? "[mask-image:linear-gradient(90deg,transparent_0,#000_28px,#000_100%)]"
+        : canRight
+          ? "[mask-image:linear-gradient(90deg,#000_0,#000_calc(100%-28px),transparent_100%)]"
+          : "";
+
   return (
-    <div className="relative flex-1 min-w-0 mx-2">
+    <div className="relative flex-1 min-w-0 mx-1 md:mx-2">
       {canLeft && (
         <button
           type="button"
           onClick={() => scrollBy(-1)}
           aria-label="Scroll nav left"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/90 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md md:hidden"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
           <ChevronLeft className="size-4" />
         </button>
@@ -155,14 +177,14 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(1)}
           aria-label="Scroll nav right"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/90 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md md:hidden"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
           <ChevronRight className="size-4" />
         </button>
       )}
       <div
         ref={scrollRef}
-        className="flex items-center gap-1 text-sm overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-6 md:px-0 md:justify-center"
+        className={`flex items-center gap-1 text-sm overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-8 md:px-2 md:justify-center ${fadeMask}`}
       >
         <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
         <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
