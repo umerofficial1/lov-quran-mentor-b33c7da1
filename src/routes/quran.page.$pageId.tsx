@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Mic } from "lucide-react";
 import { fetchPageVerses } from "@/lib/quran-api";
 import { VerseCard } from "@/components/VerseCard";
 import { QuranSettings } from "@/components/QuranSettings";
@@ -11,6 +12,8 @@ import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { LiveRecitationDrawer } from "@/components/LiveRecitationDrawer";
+import { SURAHS } from "@/lib/surahs";
 import { PAGE_COUNT } from "@/lib/quran-meta";
 
 export const Route = createFileRoute("/quran/page/$pageId")({
