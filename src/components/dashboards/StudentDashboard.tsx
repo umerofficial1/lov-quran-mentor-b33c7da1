@@ -265,7 +265,7 @@ export function StudentDashboard({ user }: { user: User }) {
                 <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 11 }} tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{ background: "#0F1E3D", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff" }}
-                  formatter={(v: number | null) => (v == null ? "—" : `${v}%`)}
+                  formatter={(v) => (v == null ? "—" : `${v}%`)}
                 />
                 <Line type="monotone" dataKey="accuracy" stroke="#1FB6B0" strokeWidth={2.5} dot={{ r: 3, fill: "#1FB6B0" }} connectNulls />
               </LineChart>
