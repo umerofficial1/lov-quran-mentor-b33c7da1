@@ -222,9 +222,10 @@
   .hover\:border-gold-leaf\/40:hover { border-color: rgba(201, 162, 76, 0.45) !important; }
 
   .glass {
-    background-color: rgba(15, 30, 61, 0.5);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(238, 242, 251, 0.08);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(135%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
   }
   .hairline { border-color: rgba(201, 162, 76, 0.25); }
   .gold-underline {
