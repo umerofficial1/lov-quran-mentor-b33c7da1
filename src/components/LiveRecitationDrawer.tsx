@@ -68,6 +68,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   const prevStatusesRef = useRef<WordStatus[]>([]);
   const recorderRef = useRef<LiveWavRecorder | null>(null);
+  const speechRef = useRef<LiveSpeechHandle | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const scrollBoxRef = useRef<HTMLDivElement | null>(null);
