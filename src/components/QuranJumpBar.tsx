@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SURAHS } from "@/lib/surahs";
 import { JUZ_COUNT, HIZB_COUNT, PAGE_COUNT } from "@/lib/quran-meta";
 import { BookOpen, Layers, FileText, Hash } from "lucide-react";
