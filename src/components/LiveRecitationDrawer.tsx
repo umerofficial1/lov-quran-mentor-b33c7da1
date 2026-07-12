@@ -177,6 +177,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       recorderRef.current = recorder;
       streamRef.current = stream;
       setRecording(true);
+      setStartedAt(Date.now());
+      setElapsedMs(0);
     } catch (err) {
       const name = (err as DOMException)?.name;
       if (name === "NotAllowedError" || name === "SecurityError") {
