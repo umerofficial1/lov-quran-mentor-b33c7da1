@@ -11,6 +11,14 @@ export function QuranJumpBar({ current }: { current?: { mode: Mode; id: number }
   const [mode, setMode] = useState<Mode>(current?.mode ?? "surah");
   const [value, setValue] = useState<number>(current?.id ?? 1);
 
+  // Sync when user navigates externally (prev/next chevrons, other links)
+  useEffect(() => {
+    if (current) {
+      setMode(current.mode);
+      setValue(current.id);
+    }
+  }, [current?.mode, current?.id]);
+
   const go = (m: Mode, v: number) => {
     if (m === "surah") navigate({ to: "/quran/$surahId", params: { surahId: String(v) } });
     else if (m === "juz") navigate({ to: "/quran/juz/$juzId", params: { juzId: String(v) } });
