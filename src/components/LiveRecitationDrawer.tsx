@@ -63,7 +63,9 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   const [finished, setFinished] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [liveMistake, setLiveMistake] = useState<{ expected: string; verseNumber: number; at: number } | null>(null);
 
+  const prevStatusesRef = useRef<WordStatus[]>([]);
   const recorderRef = useRef<LiveWavRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
