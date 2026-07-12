@@ -108,12 +108,17 @@ export function VerseCard({
           {onPlayFrom && (
             <button
               onClick={() => (isCurrentPlaying ? audio.pause() : onPlayFrom(v.verse_key))}
-              className={`p-2 rounded-lg transition-colors ${
-                isCurrent ? "text-amber-300 bg-amber-400/10" : "text-slate-400 hover:text-amber-300 hover:bg-white/5"
+              className={`size-9 grid place-items-center rounded-full border transition-all ${
+                isCurrentPlaying
+                  ? "bg-amber-400 text-black border-amber-300 shadow-[0_0_18px_rgba(201,162,76,0.55)] animate-pulse"
+                  : isCurrent
+                    ? "bg-amber-400/25 text-amber-200 border-amber-300/60"
+                    : "bg-white/5 text-slate-300 border-white/15 hover:text-amber-300 hover:border-amber-400/40 hover:bg-amber-400/10"
               }`}
-              aria-label={isCurrentPlaying ? "Pause" : "Play from this ayah"}
+              aria-label={isCurrentPlaying ? "Pause ayah" : "Play this ayah"}
+              title={isCurrentPlaying ? "Pause" : "Play ayah"}
             >
-              {isCurrentPlaying ? <Pause className="size-5" /> : <Play className="size-5" />}
+              {isCurrentPlaying ? <Pause className="size-4" /> : <Play className="size-4 translate-x-[1px]" />}
             </button>
           )}
           <button
