@@ -312,39 +312,50 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           <Chip label="Total" value={flat.length} color="text-pearl" />
         </div>
 
-        {/* Mushaf */}
-        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto p-5">
-          {groups.map((g) => (
-            <div key={g.verseKey} className="mb-6 rounded-2xl bg-white/[0.03] border border-white/10 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] uppercase tracking-widest text-gold font-bold">Ayah {g.verseNumber}</span>
-              </div>
-              <p dir="rtl" className="font-arabic text-3xl leading-[2.4] text-right">
-                {g.wordIdx.map((i) => {
-                  const st = statuses[i] ?? "pending";
-                  const cls =
-                    st === "match"
-                      ? "text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]"
-                      : st === "current"
-                      ? "text-sky-300 ring-2 ring-sky-400/70 rounded-md px-1 shadow-[0_0_16px_rgba(56,189,248,0.6)] animate-pulse"
-                      : st === "wrong"
-                      ? "text-red-400 underline decoration-red-500 decoration-2 underline-offset-4"
-                      : st === "missing"
-                      ? "text-red-300/70 line-through decoration-red-400/60"
-                      : "text-pearl/70";
-                  return (
-                    <span
-                      key={i}
-                      ref={(el) => { wordRefs.current[i] = el; }}
-                      className={`inline-block mx-1 transition-colors duration-200 ${cls}`}
-                    >
-                      {flat[i].display}
-                    </span>
-                  );
-                })}
-              </p>
-            </div>
-          ))}
+        {/* Mushaf — continuous flowing page */}
+        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto px-5 py-6">
+          <div className="rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] p-6">
+            <p
+              dir="rtl"
+              className="font-arabic text-[2rem] md:text-[2.25rem] leading-[2.6] text-right text-pearl/80"
+              style={{ wordSpacing: "0.15em" }}
+            >
+              {groups.map((g, gi) => (
+                <span key={g.verseKey}>
+                  {g.wordIdx.map((i) => {
+                    const st = statuses[i] ?? "pending";
+                    const cls =
+                      st === "match"
+                        ? "text-emerald-400/85"
+                        : st === "current"
+                        ? "text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.9)] animate-pulse"
+                        : st === "wrong"
+                        ? "text-red-400 underline decoration-red-500 decoration-2 underline-offset-4"
+                        : st === "missing"
+                        ? "text-red-300/70 line-through decoration-red-400/60"
+                        : "text-pearl/70";
+                    return (
+                      <span
+                        key={i}
+                        ref={(el) => { wordRefs.current[i] = el; }}
+                        className={`inline-block mx-[0.15em] transition-all duration-300 ${cls}`}
+                      >
+                        {flat[i].display}
+                      </span>
+                    );
+                  })}
+                  {/* Ayah end marker */}
+                  <span
+                    className="inline-flex items-center justify-center align-middle mx-2 w-8 h-8 rounded-full border border-gold/40 text-gold text-[0.7em] font-bold bg-gold/5"
+                    aria-label={`Ayah ${g.verseNumber}`}
+                  >
+                    {toArabicNumeral(g.verseNumber)}
+                  </span>
+                  {gi < groups.length - 1 ? " " : ""}
+                </span>
+              ))}
+            </p>
+          </div>
         </div>
 
         {/* Report */}
@@ -429,6 +440,11 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       </div>
     </div>
   );
+}
+
+function toArabicNumeral(n: number): string {
+  const digits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  return String(n).split("").map((d) => digits[Number(d)] ?? d).join("");
 }
 
 function Chip({ label, value, color }: { label: string; value: number; color: string }) {
