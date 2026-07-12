@@ -10,6 +10,7 @@ import { QuranSettings } from "@/components/QuranSettings";
 import { QuranJumpBar } from "@/components/QuranJumpBar";
 import { ReadingChrome } from "@/components/ReadingChrome";
 import { useQuranPrefs } from "@/hooks/use-quran-prefs";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { HIZB_COUNT } from "@/lib/quran-meta";
 
 export const Route = createFileRoute("/quran/hizb/$hizbId")({
@@ -27,10 +28,22 @@ function HizbReader() {
   const { hizbId } = useParams({ from: "/quran/hizb/$hizbId" });
   const id = Math.max(1, Math.min(HIZB_COUNT, Number(hizbId) || 1));
   const { prefs, update } = useQuranPrefs();
+  const audio = useAudioPlayer();
   const verses = useQuery({
     queryKey: ["hizb", id, 131],
     queryFn: () => fetchHizbVerses(id, 131),
   });
+
+  const playFromKey = (verseKey: string) => {
+    const data = verses.data ?? [];
+    if (!data.length) return;
+    const q = data.map((v) => {
+      const [s, a] = v.verse_key.split(":").map(Number);
+      return { surah: s, ayah: a, page: v.page_number ?? null };
+    });
+    const idx = q.findIndex((it) => `${it.surah}:${it.ayah}` === verseKey);
+    void audio.loadQueue(q, Math.max(0, idx), true);
+  };
 
   const prev = id > 1 ? id - 1 : null;
   const next = id < HIZB_COUNT ? id + 1 : null;
@@ -78,7 +91,7 @@ function HizbReader() {
 
         <div className="space-y-4">
           {verses.data?.map((v) => (
-            <VerseCard key={v.id} v={v} prefs={prefs} isBookmarked={false} onToggleBookmark={() => {}} showSurahInHeader onVisible={markRead} />
+            <VerseCard key={v.id} v={v} prefs={prefs} isBookmarked={false} onToggleBookmark={() => {}} showSurahInHeader onVisible={markRead} onPlayFrom={playFromKey} />
           ))}
         </div>
       </main>
