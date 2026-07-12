@@ -2,7 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ProBadge } from "@/components/ProBadge";
-import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useUserRoles } from "@/hooks/use-user-roles";
+import { BookOpen, MessageSquare, Home, LogOut, User as UserIcon, Compass, LayoutDashboard, Search, Sparkles, Mic2, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function SiteNav() {
@@ -96,6 +97,8 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
 }
 
 function ScrollableNav({ user }: { user: boolean }) {
+  const { roles } = useUserRoles();
+  const isAdmin = roles.includes("admin");
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
@@ -160,6 +163,7 @@ function ScrollableNav({ user }: { user: boolean }) {
         <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
         {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
         {user && <NavLink to="/profile" icon={<UserIcon className="size-4" />} label="Profile" />}
+        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-4" />} label="Admin" />}
       </div>
     </div>
   );
