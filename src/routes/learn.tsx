@@ -470,20 +470,28 @@ function MistakeTool() {
     return () => { cancelled = true; };
   }, [verseKey]);
 
-  const sendChunk = async (blob: Blob) => {
+  const sendChunk = async ({ blob, speechDetected }: { blob: Blob; speechDetected: boolean }) => {
+    if (!speechDetected) return;
     if (blob.size < 1024) return;
     const fd = new FormData();
     fd.append("audio", blob, "chunk.wav");
+    if (expected) fd.append("quranContext", expected);
     try {
       const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-      if (!r.ok) return; // ignore transient chunk failures, keep listening
-      const { text } = await r.json() as { text?: string };
-      const clean = (text ?? "").trim();
+      const result = await r.json() as { text?: string; error?: string };
+      if (!r.ok) {
+        setError(result.error || "Voice process nahi hui. Dobara parhein.");
+        return;
+      }
+      const clean = (result.text ?? "").trim().replace(/^[\s.,،۔…!?؟]+$|^[\s]+$/g, "");
       if (!clean) return;
-      transcriptRef.current = (transcriptRef.current + " " + clean).trim();
+      // Recorder sends the complete recitation so far; replace instead of
+      // appending the same words on every update.
+      transcriptRef.current = clean;
       setLiveTranscript(transcriptRef.current);
+      setError(null);
     } catch {
-      // network hiccup on one chunk — keep going, don't kill the session
+      setError("Internet ki wajah se voice process nahi hui. Recording jari rakhein.");
     }
   };
 
