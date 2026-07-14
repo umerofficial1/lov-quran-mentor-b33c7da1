@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Play, Pause, SkipBack, SkipForward, Repeat, Repeat1, Gauge,
   Download, Loader2, ChevronDown, Radio, X, ScrollText, Check,
+  Volume2, VolumeX, Volume1,
 } from "lucide-react";
 import { useAudioPlayer, type RepeatMode } from "@/hooks/use-audio-player";
 import { RECITERS } from "@/lib/reciters";
@@ -14,6 +15,13 @@ const REPEAT_MODES: { id: RepeatMode; label: string; icon: React.ReactNode }[] =
   { id: "page",  label: "Repeat Page", icon: <Repeat className="size-3.5" /> },
   { id: "surah", label: "Repeat Surah",icon: <Repeat className="size-3.5" /> },
 ];
+
+function fmt(t: number): string {
+  if (!Number.isFinite(t) || t < 0) return "0:00";
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 export function AudioPlayerBar() {
   const p = useAudioPlayer();
