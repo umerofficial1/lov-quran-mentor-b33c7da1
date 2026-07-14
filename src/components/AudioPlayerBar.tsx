@@ -90,6 +90,28 @@ export function AudioPlayerBar() {
           </button>
         </div>
 
+        {/* Progress bar (seekable) */}
+        <div className="px-4 pb-3">
+          <input
+            type="range"
+            min={0}
+            max={1000}
+            value={p.duration > 0 ? Math.floor((p.currentTime / p.duration) * 1000) : 0}
+            onChange={(e) => p.seekPct(Number(e.target.value) / 1000)}
+            aria-label="Seek"
+            className="w-full h-1 accent-amber-400 cursor-pointer"
+          />
+          <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <span>{fmt(p.currentTime)}</span>
+            {p.buffering && (
+              <span className="inline-flex items-center gap-1 text-teal-300">
+                <Loader2 className="size-3 animate-spin" /> Buffering…
+              </span>
+            )}
+            <span>{fmt(p.duration)}</span>
+          </div>
+        </div>
+
         {/* Progress strip during caching */}
         {p.caching.active && (
           <div className="px-4 pb-2">
