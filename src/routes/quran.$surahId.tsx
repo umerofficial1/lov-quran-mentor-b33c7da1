@@ -37,6 +37,7 @@ export const Route = createFileRoute("/quran/$surahId")({
 
 function SurahReader() {
   const { surahId } = useParams({ from: "/quran/$surahId" });
+  const search = useSearch({ from: "/quran/$surahId" });
   const id = Math.max(1, Math.min(114, Number(surahId) || 1));
   const surah = SURAHS.find((s) => s.n === id)!;
   const [translation, setTranslation] = useState(131);
@@ -50,6 +51,12 @@ function SurahReader() {
     queryKey: ["surah-v2", id, translation],
     queryFn: () => fetchSurahVerses(id, translation),
   });
+
+  // Auto-open Live Recite when ?live=1 (navigated from Reports hero CTA)
+  useEffect(() => {
+    if (search.live === 1 && verses.data?.length) setReciteOpen(true);
+  }, [search.live, verses.data]);
+
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
