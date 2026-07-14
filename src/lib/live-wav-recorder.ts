@@ -2,6 +2,12 @@ export type LiveWavRecorder = {
   stop: () => Promise<void>;
 };
 
+export type LiveAudioChunk = {
+  blob: Blob;
+  speechDetected: boolean;
+  level: number;
+};
+
 type AudioContextConstructor = typeof AudioContext;
 
 function getAudioContextConstructor(): AudioContextConstructor | null {
@@ -11,7 +17,7 @@ function getAudioContextConstructor(): AudioContextConstructor | null {
   return window.AudioContext ?? audioWindow.webkitAudioContext ?? null;
 }
 
-function encodeMonoWav(input: Float32Array, inputRate: number): Blob | null {
+function encodeMonoWav(input: Float32Array, inputRate: number): LiveAudioChunk | null {
   if (!input.length) return null;
 
   const outputRate = Math.min(16_000, inputRate);
@@ -27,18 +33,53 @@ function encodeMonoWav(input: Float32Array, inputRate: number): Blob | null {
     output[i] = sum / Math.max(1, end - start);
   }
 
-  let peak = 0;
-  for (const sample of output) peak = Math.max(peak, Math.abs(sample));
-  if (peak < 0.0004) return null;
+  // Find actual speech rather than uploading several seconds of near-silence.
+  // A low absolute threshold still supports quiet phone microphones, while the
+  // consecutive-frame requirement prevents fan/static noise being sent as speech.
+  const frameSize = Math.max(160, Math.round(outputRate * 0.02));
+  const frameRms: number[] = [];
+  for (let start = 0; start < output.length; start += frameSize) {
+    const end = Math.min(output.length, start + frameSize);
+    let power = 0;
+    for (let i = start; i < end; i++) power += output[i] * output[i];
+    frameRms.push(Math.sqrt(power / Math.max(1, end - start)));
+  }
+  const sortedRms = [...frameRms].sort((a, b) => a - b);
+  const noiseFloor = sortedRms[Math.floor(sortedRms.length * 0.2)] ?? 0;
+  const speechThreshold = Math.max(0.0015, noiseFloor * 3.5);
+  const activeFrames = frameRms.reduce((count, rms) => count + (rms >= speechThreshold ? 1 : 0), 0);
+  const speechDetected = activeFrames >= 8;
+  if (!speechDetected) return null;
 
-  const buffer = new ArrayBuffer(44 + output.length * 2);
+  let firstActive = frameRms.findIndex((rms) => rms >= speechThreshold);
+  let lastActive = frameRms.length - 1;
+  while (lastActive >= 0 && frameRms[lastActive] < speechThreshold) lastActive--;
+  firstActive = Math.max(0, firstActive - 10);
+  lastActive = Math.min(frameRms.length - 1, lastActive + 10);
+  const trimmed = output.subarray(
+    firstActive * frameSize,
+    Math.min(output.length, (lastActive + 1) * frameSize),
+  );
+
+  let peak = 0;
+  let power = 0;
+  for (const sample of trimmed) {
+    peak = Math.max(peak, Math.abs(sample));
+    power += sample * sample;
+  }
+  const rms = Math.sqrt(power / Math.max(1, trimmed.length));
+  // Lift quiet captures before encoding, without boosting background noise without
+  // limit or clipping naturally loud recitation.
+  const gain = peak > 0 ? Math.min(12, 0.82 / peak) : 1;
+
+  const buffer = new ArrayBuffer(44 + trimmed.length * 2);
   const view = new DataView(buffer);
   const writeText = (offset: number, value: string) => {
     for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
   };
 
   writeText(0, "RIFF");
-  view.setUint32(4, 36 + output.length * 2, true);
+  view.setUint32(4, 36 + trimmed.length * 2, true);
   writeText(8, "WAVE");
   writeText(12, "fmt ");
   view.setUint32(16, 16, true);
@@ -49,22 +90,26 @@ function encodeMonoWav(input: Float32Array, inputRate: number): Blob | null {
   view.setUint16(32, 2, true);
   view.setUint16(34, 16, true);
   writeText(36, "data");
-  view.setUint32(40, output.length * 2, true);
+  view.setUint32(40, trimmed.length * 2, true);
 
   let offset = 44;
-  for (const sample of output) {
-    const clamped = Math.max(-1, Math.min(1, sample));
+  for (const sample of trimmed) {
+    const clamped = Math.max(-1, Math.min(1, sample * gain));
     view.setInt16(offset, clamped < 0 ? clamped * 0x8000 : clamped * 0x7fff, true);
     offset += 2;
   }
 
-  return new Blob([buffer], { type: "audio/wav" });
+  return {
+    blob: new Blob([buffer], { type: "audio/wav" }),
+    speechDetected,
+    level: Math.min(1, rms * gain * 4),
+  };
 }
 
 export async function startLiveWavRecorder(
   getStream: () => Promise<MediaStream>,
-  onChunk: (blob: Blob) => void | Promise<void>,
-  chunkDurationMs = 2200,
+  onChunk: (chunk: LiveAudioChunk) => void | Promise<void>,
+  chunkDurationMs = 3200,
 ): Promise<{ recorder: LiveWavRecorder; stream: MediaStream }> {
   const AudioContextClass = getAudioContextConstructor();
   if (!AudioContextClass) throw new DOMException("Web Audio is unavailable", "NotSupportedError");
@@ -85,10 +130,10 @@ export async function startLiveWavRecorder(
   const mutedOutput = context.createGain();
   mutedOutput.gain.value = 0;
 
-  // Cumulative PCM store — keeps the ENTIRE recording so each upload contains
-  // full context. gpt-4o-transcribe returns noise on isolated <1s Arabic clips
-  // but is accurate over the full utterance. Cap at ~4 min to bound memory.
-  const MAX_SECONDS = 240;
+  // Rolling PCM store. Every upload is a complete, independently decodable WAV;
+  // only a small tail overlaps clips so words crossing a boundary are retained.
+  const MAX_PENDING_SECONDS = 15;
+  const OVERLAP_SECONDS = 0.45;
   const pcm: Float32Array[] = [];
   let totalSamples = 0;
   let stopped = false;
@@ -101,8 +146,8 @@ export async function startLiveWavRecorder(
     pcm.push(chunk);
     totalSamples += chunk.length;
     dirty = true;
-    // Drop oldest audio if we exceed the cap.
-    const capSamples = MAX_SECONDS * context.sampleRate;
+    // Bound memory if the network is temporarily slower than recording.
+    const capSamples = MAX_PENDING_SECONDS * context.sampleRate;
     while (totalSamples > capSamples && pcm.length > 1) {
       totalSamples -= pcm[0].length;
       pcm.shift();
@@ -115,18 +160,26 @@ export async function startLiveWavRecorder(
   const flush = async () => {
     if (inFlight || !dirty) return;
     dirty = false;
-    // Merge all captured PCM into one Float32Array.
+    // Snapshot pending audio and retain only a short boundary overlap.
     const merged = new Float32Array(totalSamples);
     let writeAt = 0;
     for (const c of pcm) {
       merged.set(c, writeAt);
       writeAt += c.length;
     }
-    const wav = encodeMonoWav(merged, context.sampleRate);
-    if (!wav || wav.size < 4096) return;
+    const overlapSamples = Math.min(
+      merged.length,
+      Math.round(context.sampleRate * OVERLAP_SECONDS),
+    );
+    const overlap = new Float32Array(merged.subarray(merged.length - overlapSamples));
+    pcm.length = 0;
+    if (overlap.length) pcm.push(overlap);
+    totalSamples = overlap.length;
+    const chunk = encodeMonoWav(merged, context.sampleRate);
+    if (!chunk || chunk.blob.size < 4096) return;
     inFlight = true;
     try {
-      await onChunk(wav);
+      await onChunk(chunk);
     } catch {
       /* ignore */
     } finally {

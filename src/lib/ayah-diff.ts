@@ -2,10 +2,10 @@
 
 export function normalizeArabic(input: string): string {
   return input
-    // Strip tashkeel (harakat), tatweel and dagger alef.
-    .replace(/[\u064B-\u0652\u0670\u0640]/g, "")
+    // Strip tashkeel, Quranic pause/annotation marks, tatweel and dagger alef.
+    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "")
     // Unify alef variants.
-    .replace(/[\u0622\u0623\u0625]/g, "\u0627")
+    .replace(/[\u0622\u0623\u0625\u0671]/g, "\u0627")
     // Alef maqsura -> ya.
     .replace(/\u0649/g, "\u064A")
     // Ta marbuta -> ha (best-effort merging).
@@ -16,9 +16,67 @@ export function normalizeArabic(input: string): string {
     .trim();
 }
 
+export function arabicWordsMatch(expected: string, spoken: string): boolean {
+  if (expected === spoken) return true;
+  if (!expected || !spoken) return false;
+
+  // STT writes ordinary Arabic while Quran text uses Uthmani orthography.
+  const canonical = (word: string) => word
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .replace(/ء/g, "")
+    .replace(/و(?=ه?$)/g, "و");
+  const a = canonical(expected);
+  const b = canonical(spoken);
+  if (a === b) return true;
+
+  // One recognition-character difference is common for longer Arabic words;
+  // allowing it avoids calling an STT spelling variation a recitation mistake.
+  if (Math.max(a.length, b.length) < 5 || Math.abs(a.length - b.length) > 1) return false;
+  let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) {
+      current[j] = Math.min(
+        current[j - 1] + 1,
+        previous[j] + 1,
+        previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+    }
+    previous = current;
+  }
+  return previous[b.length] <= 1;
+}
+
 export function tokenize(input: string): string[] {
   const norm = normalizeArabic(input);
   return norm ? norm.split(" ").filter(Boolean) : [];
+}
+
+export function mergeArabicTranscript(previous: string, incoming: string): string {
+  const left = previous.trim().split(/\s+/).filter(Boolean);
+  const right = incoming.trim().split(/\s+/).filter(Boolean);
+  if (!left.length) return right.join(" ");
+  if (!right.length) return left.join(" ");
+
+  // Rolling audio clips overlap slightly. Remove the repeated boundary words
+  // while using tolerant Quranic/STT spelling comparison.
+  const maxOverlap = Math.min(10, left.length, right.length);
+  let overlap = 0;
+  for (let size = maxOverlap; size > 0; size--) {
+    let matches = true;
+    for (let i = 0; i < size; i++) {
+      if (!arabicWordsMatch(normalizeArabic(left[left.length - size + i]), normalizeArabic(right[i]))) {
+        matches = false;
+        break;
+      }
+    }
+    if (matches) {
+      overlap = size;
+      break;
+    }
+  }
+  return [...left, ...right.slice(overlap)].join(" ");
 }
 
 export type LiveStatus = "pending" | "match" | "wrong" | "missing";
@@ -59,7 +117,7 @@ export function diffAyah(
   const dp: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0));
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
-      dp[i][j] = exp[i - 1] === spoken[j - 1]
+      dp[i][j] = arabicWordsMatch(exp[i - 1], spoken[j - 1])
         ? dp[i - 1][j - 1] + 1
         : Math.max(dp[i - 1][j], dp[i][j - 1]);
     }
@@ -70,7 +128,7 @@ export function diffAyah(
   let i = n;
   let j = m;
   while (i > 0 && j > 0) {
-    if (exp[i - 1] === spoken[j - 1]) {
+    if (arabicWordsMatch(exp[i - 1], spoken[j - 1])) {
       matchedExpected.add(i - 1);
       matchedSpoken.add(j - 1);
       i--;
