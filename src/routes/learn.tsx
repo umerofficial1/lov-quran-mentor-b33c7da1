@@ -7,7 +7,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, Mic, Square, Smartphone,
+  Brain, Languages, GraduationCap, CalendarRange, Ear, ScanSearch, Sparkles, Play, Loader2, CheckCircle2, XCircle, Mic, Square, Smartphone, AudioLines,
 } from "lucide-react";
 import {
   translationCompare, generateQuiz, memorizationCoach, revisionPlanner,
@@ -16,10 +16,14 @@ import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
 import { diffAyah } from "@/lib/ayah-diff";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
-    tool: search.tool === "mistake" ? ("mistake" as const) : undefined,
+    tool:
+      search.tool === "mistake" ? ("mistake" as const)
+      : search.tool === "record" ? ("record" as const)
+      : undefined,
     start: search.start === "voice" ? ("voice" as const) : undefined,
   }),
   head: () => ({
@@ -28,16 +32,16 @@ export const Route = createFileRoute("/learn")({
       {
         name: "description",
         content:
-          "AI-powered Quran learning: translation compare, quiz mode, memorization coach, revision planner, listening test and mistake checker.",
+          "AI-powered Quran learning: translation compare, quiz mode, memorization coach, revision planner, listening test, mistake checker and voice recorder.",
       },
       { property: "og:title", content: "AI Learn — Verse Wise Mentor" },
-      { property: "og:description", content: "Six AI-guided tools to learn, memorize and revise the Quran." },
+      { property: "og:description", content: "Seven AI-guided tools to learn, memorize and revise the Quran." },
     ],
   }),
   component: () => (<RequireAuth><LearnPage /></RequireAuth>),
 });
 
-type Tab = "compare" | "quiz" | "coach" | "revise" | "listen" | "mistake";
+type Tab = "compare" | "quiz" | "coach" | "revise" | "listen" | "mistake" | "record";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = [
   { id: "compare", label: "Translation compare", icon: <Languages className="size-4" />, hint: "See 5 translations side-by-side + AI notes" },
@@ -46,6 +50,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = 
   { id: "revise",  label: "Revision planner",    icon: <CalendarRange className="size-4" />, hint: "Weekly cycle across memorized surahs" },
   { id: "listen",  label: "Listening test",      icon: <Ear className="size-4" />,        hint: "Listen and identify the ayah" },
   { id: "mistake", label: "Mistake checker",     icon: <ScanSearch className="size-4" />, hint: "Compare your recitation to the ayah" },
+  { id: "record",  label: "Voice recorder",      icon: <AudioLines className="size-4" />, hint: "Record, replay, download your recitation" },
 ];
 
 function LearnPage() {
@@ -97,6 +102,7 @@ function LearnPage() {
           {tab === "revise" && <ReviseTool />}
           {tab === "listen" && <ListenTool />}
           {tab === "mistake" && <MistakeTool />}
+          {tab === "record" && <VoiceRecorder />}
         </div>
       </main>
       <MobileNav />
