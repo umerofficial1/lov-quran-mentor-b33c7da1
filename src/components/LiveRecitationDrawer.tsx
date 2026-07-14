@@ -224,8 +224,9 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             fd.append("audio", blob, "chunk.wav");
             fd.append(
               "quranContext",
-              tokenize(transcriptRef.current)
-                .slice(-12)
+              flat
+                .slice(Math.max(0, currentIdxRef.current - 5), currentIdxRef.current + 25)
+                .map((word) => word.display)
                 .join(" "),
             );
             const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });

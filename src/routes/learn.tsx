@@ -476,8 +476,8 @@ function MistakeTool() {
     if (blob.size < 1024) return;
     const fd = new FormData();
     fd.append("audio", blob, "chunk.wav");
-    const priorWords = transcriptRef.current.trim().split(/\s+/).slice(-12).join(" ");
-    if (priorWords) fd.append("quranContext", priorWords);
+    const shortContext = expected.trim().split(/\s+/).slice(0, 30).join(" ");
+    if (shortContext) fd.append("quranContext", shortContext);
     try {
       const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
       const result = await r.json() as { text?: string; error?: string };
