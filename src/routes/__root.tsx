@@ -153,7 +153,9 @@ function RootComponent() {
         <AnnouncementsBanner />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
-        <FeedbackWidget />
+        <Suspense fallback={null}>
+          <FeedbackWidget />
+        </Suspense>
         <AudioPlayerBar />
       </AudioPlayerProvider>
     </QueryClientProvider>
