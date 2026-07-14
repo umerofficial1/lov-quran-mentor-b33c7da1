@@ -468,43 +468,55 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     flat.length > 0 ? Math.round((finalCorrect / flat.length) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-stretch justify-end bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full md:max-w-2xl bg-madinah-bg/95 backdrop-blur-2xl border-l border-white/10 flex flex-col shadow-2xl animate-slide-in-right">
+    <div className="fixed inset-0 z-[70] flex items-stretch justify-end bg-black/70 backdrop-blur-sm animate-fade-in overscroll-contain">
+      <div
+        className="relative w-full md:max-w-2xl bg-madinah-bg/95 backdrop-blur-2xl border-l border-white/10 flex flex-col shadow-2xl animate-slide-in-right"
+        style={{ height: "100dvh", maxHeight: "100dvh" }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.03]">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-gold font-bold">Live Recitation</p>
-            <h2 className="text-lg text-pearl font-display" dir="rtl">{surahName}</h2>
+        <div
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 p-3 md:p-4 border-b border-white/10 bg-white/[0.03]"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <div className="min-w-0">
+            <p className="text-[10px] md:text-xs uppercase tracking-widest text-gold font-bold">Live Recitation</p>
+            <h2 className="text-base md:text-lg text-pearl font-display truncate" dir="rtl">{surahName}</h2>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Accuracy</span>
-            <span className={`text-lg font-bold ${liveAcc >= 80 ? "text-teal" : liveAcc >= 50 ? "text-gold" : "text-red-400"}`}>
-              {liveAcc}%
-            </span>
-            <button onClick={onClose} className="ml-2 p-2 rounded-lg hover:bg-white/10 text-slate-300" aria-label="Close">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-right leading-tight">
+              <div className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Accuracy</div>
+              <div className={`text-base md:text-lg font-bold ${liveAcc >= 80 ? "text-teal" : liveAcc >= 50 ? "text-gold" : "text-red-400"}`}>
+                {liveAcc}%
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="min-h-11 min-w-11 grid place-items-center rounded-lg hover:bg-white/10 active:bg-white/20 text-slate-300"
+              aria-label="Close"
+            >
               <X className="size-5" />
             </button>
           </div>
         </div>
 
-        {/* Live stats panel */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
+        {/* Live stats panel — 3 cols on mobile, 6 on desktop */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
           <LiveStat label="Ayah" value={String(currentVerse)} tone="pearl" />
-          <LiveStat label="Completion" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
+          <LiveStat label="Done" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
           <LiveStat label="Accuracy" value={`${liveAcc}%`} tone={liveAcc >= 80 ? "teal" : liveAcc >= 50 ? "gold" : "red"} />
           <LiveStat label="Confidence" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
-          <LiveStat label="Speed" value={wpm ? `${wpm} wpm` : "—"} tone="pearl" />
+          <LiveStat label="Speed" value={wpm ? `${wpm}` : "—"} tone="pearl" />
           <LiveStat label="ETA" value={fmt(etaSec)} tone="pearl" />
         </div>
         {/* Progress bar */}
-        <div className="px-4 pt-2">
+        <div className="px-3 md:px-4 pt-2">
           <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
             <div className="h-full bg-gradient-to-r from-teal to-emerald-400 transition-all duration-300" style={{ width: `${completionPct}%` }} />
           </div>
         </div>
-        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400 flex-wrap gap-2">
+        <div className="flex items-center justify-between px-3 md:px-4 py-1.5 md:py-2 border-b border-white/10 text-[10px] md:text-[11px] text-slate-400 flex-wrap gap-2">
           <span>Time <span className="text-pearl font-mono">{fmt(elapsedSec)}</span></span>
-          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span></span>
+          <span>Left <span className="text-pearl font-mono">{wordsRemaining}</span></span>
           <span className="flex items-center gap-2">
             <span className="text-emerald-400 font-bold">✓ {liveCorrect}</span>
             <span className="text-red-400 font-bold">✗ {liveWrong}</span>
