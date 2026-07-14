@@ -563,13 +563,14 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           <div className="border-t border-white/10 p-5 bg-white/[0.02] max-h-[45vh] overflow-y-auto">
             <div className="flex items-center gap-3 mb-4">
               <Trophy className={`size-6 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
-              <h3 className="text-lg text-pearl font-bold">Session Report</h3>
-              <span className="ml-auto text-2xl font-bold text-pearl">{finalAcc}%</span>
+              <h3 className="text-lg text-pearl font-bold">Final Score</h3>
+              <span className={`ml-auto text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-4 gap-2 mb-4">
               <StatCard label="Correct" value={finalCorrect} color="bg-emerald-500/10 text-emerald-300 border-emerald-500/30" />
-              <StatCard label="Incorrect" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
-              <StatCard label="Missed" value={finalMissed} color="bg-amber-500/10 text-amber-300 border-amber-500/30" />
+              <StatCard label="Mistakes" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
+              <StatCard label="Skipped" value={finalSkipped} color="bg-orange-500/10 text-orange-300 border-orange-500/30" />
+              <StatCard label="Missing" value={finalMissed} color="bg-yellow-500/10 text-yellow-300 border-yellow-500/30" />
             </div>
             {analyzing ? (
               <div className="flex items-center gap-2 text-sm text-slate-400 py-2">
@@ -578,6 +579,22 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             ) : feedback ? (
               <div className="space-y-3">
                 <p className="text-sm text-pearl leading-relaxed" dir="rtl">{feedback.summary_urdu}</p>
+                {(feedback.tajweed_mistakes?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-red-300 font-bold mb-1">Tajweed Mistakes</p>
+                    <ul className="text-sm text-slate-200 space-y-1 list-disc list-inside" dir="rtl">
+                      {feedback.tajweed_mistakes!.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {(feedback.makharij_mistakes?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-orange-300 font-bold mb-1">Makharij Mistakes</p>
+                    <ul className="text-sm text-slate-200 space-y-1 list-disc list-inside" dir="rtl">
+                      {feedback.makharij_mistakes!.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+                )}
                 {feedback.tajweed_tips.length > 0 && (
                   <div>
                     <p className="text-xs uppercase tracking-widest text-gold font-bold mb-1">Tajweed Tips</p>
