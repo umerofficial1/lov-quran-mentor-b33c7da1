@@ -199,43 +199,47 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setError(null);
     setStarting(true);
     try {
-      // PRIMARY: Web Speech API — instant streaming transcript, no chunk latency.
-      // It owns the mic itself — don't grab a separate MediaStream (causes conflicts on Chrome).
+      // PRIMARY: server-side gpt-4o-transcribe with 700ms WAV chunks.
+      // More accurate for Arabic than Web Speech API (which fails silently on ar-SA in most browsers).
+      const stream = await requestMicrophoneStream();
+      streamRef.current = stream;
+
+      const { recorder } = await startLiveWavRecorder(
+        async () => stream,
+        async (blob) => {
+          try {
+            const fd = new FormData();
+            fd.append("audio", blob, "chunk.wav");
+            const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+            if (!res.ok) return;
+            const j = (await res.json()) as { text?: string };
+            const text = (j.text ?? "").trim();
+            if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
+          } catch { /* ignore */ }
+        },
+      );
+      recorderRef.current = recorder;
+
+      // SECONDARY (opportunistic): Web Speech runs in parallel when supported for
+      // *interim* words — instant visual feel even before the server chunk lands.
+      // If Arabic isn't supported, it just fails silently and the server path carries on.
       if (isSpeechRecognitionSupported()) {
-        const handle = startLiveSpeech({
-          onTranscript: (text) => {
-            setTranscript(text);
-          },
-          onError: (err) => {
-            if (err === "not-allowed" || err === "service-not-allowed") {
-              setError("Mic ki ijazat nahi mili. Browser settings mein microphone allow karein.");
-            } else if (err === "network") {
-              setError("Speech recognition network error. Internet check karein.");
-            } else if (err === "language-not-supported") {
-              setError("Yeh browser Arabic recognition support nahi karta. Chrome desktop try karein.");
-            }
-          },
-        }, "ar-SA");
-        speechRef.current = handle;
-      } else {
-        // FALLBACK: 1-second WAV chunks → server transcription (slower but works everywhere).
-        const stream = await requestMicrophoneStream();
-        streamRef.current = stream;
-        const { recorder } = await startLiveWavRecorder(
-          async () => stream,
-          async (blob) => {
-            try {
-              const fd = new FormData();
-              fd.append("audio", blob, "chunk.wav");
-              const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-              if (!res.ok) return;
-              const j = (await res.json()) as { text?: string };
-              const text = (j.text ?? "").trim();
-              if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
-            } catch { /* ignore */ }
-          },
-        );
-        recorderRef.current = recorder;
+        try {
+          const handle = startLiveSpeech({
+            onTranscript: (text, isFinal) => {
+              // Only use interim results — final text comes from server for accuracy.
+              if (!isFinal && text) {
+                setTranscript((prev) => {
+                  // Show interim after committed server text
+                  const committed = prev.split("  ⟶  ")[0] ?? prev;
+                  return `${committed}  ⟶  ${text}`;
+                });
+              }
+            },
+            onError: () => { /* silent — server path is primary */ },
+          }, "ar-SA");
+          speechRef.current = handle;
+        } catch { /* ignore */ }
       }
 
       setRecording(true);
