@@ -567,11 +567,11 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         )}
 
         {/* Mushaf — continuous flowing page */}
-        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto px-5 py-6">
-          <div className="rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] p-6">
+        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto px-3 md:px-5 py-4 md:py-6 -webkit-overflow-scrolling-touch">
+          <div className="rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] p-4 md:p-6">
             <p
               dir="rtl"
-              className="font-arabic text-[2rem] md:text-[2.25rem] leading-[2.6] text-right text-pearl/80"
+              className="font-arabic text-[1.5rem] md:text-[2.25rem] leading-[2.4] md:leading-[2.6] text-right text-pearl/80"
               style={{ wordSpacing: "0.15em" }}
             >
               {groups.map((g, gi) => (
