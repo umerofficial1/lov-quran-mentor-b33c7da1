@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { generateText, Output } from "ai";
+import { generateText } from "ai";
 
 const MODEL = "google/gemini-2.5-flash";
 
