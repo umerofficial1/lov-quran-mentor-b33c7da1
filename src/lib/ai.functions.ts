@@ -109,23 +109,31 @@ export const generateQuiz = createServerFn({ method: "POST" })
     const first = clean.indexOf("{");
     const last = clean.lastIndexOf("}");
     const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
-    let parsed: unknown;
+    let parsed: unknown = {};
     try {
       parsed = JSON.parse(jsonStr);
     } catch {
-      throw new Error("AI did not return valid JSON");
+      // try to salvage by trimming to last complete question object
+      try {
+        const trimmed = jsonStr.replace(/,\s*\{[^{}]*$/, "").replace(/,\s*$/, "");
+        const closed = trimmed.endsWith("]}") ? trimmed : trimmed.replace(/\]?\s*\}?\s*$/, "") + "]}";
+        parsed = JSON.parse(closed);
+      } catch {
+        parsed = { questions: [] };
+      }
     }
     const check = QuizSchema.safeParse(parsed);
-    const questions = check.success
+    const rawQuestions: unknown[] = check.success
       ? check.data.questions
-      : Array.isArray((parsed as { questions?: unknown }).questions)
-        ? ((parsed as { questions: unknown[] }).questions.filter(
-            (q): q is { question: string; choices: string[]; answerIndex: number; explanation: string } =>
-              !!q && typeof q === "object" &&
-              typeof (q as { question?: unknown }).question === "string" &&
-              Array.isArray((q as { choices?: unknown }).choices),
-          ))
+      : Array.isArray((parsed as { questions?: unknown })?.questions)
+        ? (parsed as { questions: unknown[] }).questions
         : [];
+    const questions = rawQuestions.filter(
+      (q): q is { question: string; choices: unknown[]; answerIndex: unknown; explanation?: unknown } =>
+        !!q && typeof q === "object" &&
+        typeof (q as { question?: unknown }).question === "string" &&
+        Array.isArray((q as { choices?: unknown }).choices),
+    );
 
     return {
       topic: data.topic,
