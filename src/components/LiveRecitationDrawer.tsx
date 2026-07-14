@@ -446,16 +446,26 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         {/* Live stats panel */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
           <LiveStat label="Ayah" value={String(currentVerse)} tone="pearl" />
-          <LiveStat label="Word" value={`${wordsDone}/${flat.length}`} tone="pearl" />
+          <LiveStat label="Completion" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
           <LiveStat label="Accuracy" value={`${liveAcc}%`} tone={liveAcc >= 80 ? "teal" : liveAcc >= 50 ? "gold" : "red"} />
-          <LiveStat label="Pronunciation" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
+          <LiveStat label="Confidence" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
           <LiveStat label="Speed" value={wpm ? `${wpm} wpm` : "—"} tone="pearl" />
           <LiveStat label="ETA" value={fmt(etaSec)} tone="pearl" />
         </div>
-        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400">
+        {/* Progress bar */}
+        <div className="px-4 pt-2">
+          <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-teal to-emerald-400 transition-all duration-300" style={{ width: `${completionPct}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400 flex-wrap gap-2">
           <span>Time <span className="text-pearl font-mono">{fmt(elapsedSec)}</span></span>
-          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span> words</span>
-          <span className="hidden sm:inline">Correct <span className="text-emerald-400 font-bold">{liveCorrect}</span> · Wrong <span className="text-red-400 font-bold">{liveWrong}</span></span>
+          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span></span>
+          <span className="flex items-center gap-2">
+            <span className="text-emerald-400 font-bold">✓ {liveCorrect}</span>
+            <span className="text-red-400 font-bold">✗ {liveWrong}</span>
+            <span className="text-orange-400 font-bold">↷ {liveSkipped}</span>
+          </span>
         </div>
 
         {/* Teleprompter — big current word, live mistake banner */}
