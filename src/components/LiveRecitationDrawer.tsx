@@ -526,29 +526,29 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
         {/* Teleprompter — big current word, live mistake banner */}
         {recording && !finished && (
-          <div className="px-4 py-4 border-b border-white/10 bg-gradient-to-r from-teal/15 via-teal/5 to-transparent">
+          <div className="px-3 md:px-4 py-3 md:py-4 border-b border-white/10 bg-gradient-to-r from-teal/15 via-teal/5 to-transparent">
             <div className="text-[10px] uppercase tracking-widest text-teal font-bold mb-2 flex items-center gap-2">
               <span className="inline-block w-2 h-2 rounded-full bg-teal animate-pulse" />
               Ab yeh parhein
               <span className="ml-auto text-slate-400">Ayah {flat[currentIdx]?.verseNumber ?? "—"}</span>
             </div>
-            <div dir="rtl" className="flex items-baseline justify-end gap-4 font-arabic">
+            <div dir="rtl" className="flex items-baseline justify-end gap-2 md:gap-4 font-arabic">
               {/* previous word (faded) */}
               {currentIdx > 0 && (
-                <span className="text-2xl text-emerald-400/40 truncate max-w-[30%]">
+                <span className="text-lg md:text-2xl text-emerald-400/40 truncate max-w-[25%]">
                   {flat[currentIdx - 1]?.display}
                 </span>
               )}
               {/* current word — hero */}
               <span
                 key={currentIdx}
-                className="text-5xl md:text-6xl text-emerald-300 font-bold drop-shadow-[0_0_24px_rgba(52,211,153,0.85)] animate-pulse"
+                className="text-4xl md:text-6xl text-emerald-300 font-bold drop-shadow-[0_0_24px_rgba(52,211,153,0.85)] animate-pulse"
               >
                 {flat[currentIdx]?.display ?? "—"}
               </span>
               {/* next word (hint) */}
               {currentIdx + 1 < flat.length && (
-                <span className="text-2xl text-pearl/40 truncate max-w-[30%]">
+                <span className="text-lg md:text-2xl text-pearl/40 truncate max-w-[25%]">
                   {flat[currentIdx + 1]?.display}
                 </span>
               )}
