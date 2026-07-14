@@ -123,16 +123,17 @@ export const generateQuiz = createServerFn({ method: "POST" })
       }
     }
     const check = QuizSchema.safeParse(parsed);
-    const questions = check.success
+    const rawQuestions: unknown[] = check.success
       ? check.data.questions
-      : Array.isArray((parsed as { questions?: unknown }).questions)
-        ? ((parsed as { questions: unknown[] }).questions.filter(
-            (q): q is { question: string; choices: string[]; answerIndex: number; explanation: string } =>
-              !!q && typeof q === "object" &&
-              typeof (q as { question?: unknown }).question === "string" &&
-              Array.isArray((q as { choices?: unknown }).choices),
-          ))
+      : Array.isArray((parsed as { questions?: unknown })?.questions)
+        ? (parsed as { questions: unknown[] }).questions
         : [];
+    const questions = rawQuestions.filter(
+      (q): q is { question: string; choices: unknown[]; answerIndex: unknown; explanation?: unknown } =>
+        !!q && typeof q === "object" &&
+        typeof (q as { question?: unknown }).question === "string" &&
+        Array.isArray((q as { choices?: unknown }).choices),
+    );
 
     return {
       topic: data.topic,
