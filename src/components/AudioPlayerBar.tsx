@@ -197,6 +197,41 @@ export function AudioPlayerBar() {
               </div>
             </section>
 
+            {/* Volume */}
+            <section>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 inline-flex items-center gap-1">
+                {p.muted || p.volume === 0 ? (
+                  <VolumeX className="size-3" />
+                ) : p.volume < 0.5 ? (
+                  <Volume1 className="size-3" />
+                ) : (
+                  <Volume2 className="size-3" />
+                )}
+                Volume
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => p.setMuted(!p.muted)}
+                  className="size-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 grid place-items-center"
+                  aria-label={p.muted ? "Unmute" : "Mute"}
+                >
+                  {p.muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                </button>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round((p.muted ? 0 : p.volume) * 100)}
+                  onChange={(e) => p.setVolume(Number(e.target.value) / 100)}
+                  aria-label="Volume"
+                  className="flex-1 h-1 accent-amber-400 cursor-pointer"
+                />
+                <span className="text-xs font-mono text-slate-400 w-8 text-right">
+                  {Math.round((p.muted ? 0 : p.volume) * 100)}
+                </span>
+              </div>
+            </section>
+
             {/* Toggles + actions */}
             <section className="flex flex-wrap items-center gap-2">
               <label className="inline-flex items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-xs text-white cursor-pointer">
