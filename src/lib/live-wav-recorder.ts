@@ -37,7 +37,7 @@ function encodeMonoWav(chunks: Float32Array[], inputRate: number): Blob | null {
 
   let peak = 0;
   for (const sample of output) peak = Math.max(peak, Math.abs(sample));
-  if (peak < 0.002) return null;
+  if (peak < 0.0004) return null;
 
   const buffer = new ArrayBuffer(44 + output.length * 2);
   const view = new DataView(buffer);
