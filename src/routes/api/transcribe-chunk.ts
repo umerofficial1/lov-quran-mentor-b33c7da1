@@ -50,8 +50,9 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
         });
 
         if (!r.ok) {
-          const errText = await r.text().catch(() => "");
-          return new Response(`Transcription failed: ${errText}`, { status: r.status });
+          // Don't 500 the client — return empty text so the live loop survives
+          // transient upstream hiccups.
+          return Response.json({ text: "" });
         }
         const j = await r.json();
         return Response.json({ text: String(j.text ?? "") });
