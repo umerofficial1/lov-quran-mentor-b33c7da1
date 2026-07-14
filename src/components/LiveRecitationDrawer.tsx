@@ -468,43 +468,55 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     flat.length > 0 ? Math.round((finalCorrect / flat.length) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-stretch justify-end bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full md:max-w-2xl bg-madinah-bg/95 backdrop-blur-2xl border-l border-white/10 flex flex-col shadow-2xl animate-slide-in-right">
+    <div className="fixed inset-0 z-[70] flex items-stretch justify-end bg-black/70 backdrop-blur-sm animate-fade-in overscroll-contain">
+      <div
+        className="relative w-full md:max-w-2xl bg-madinah-bg/95 backdrop-blur-2xl border-l border-white/10 flex flex-col shadow-2xl animate-slide-in-right"
+        style={{ height: "100dvh", maxHeight: "100dvh" }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.03]">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-gold font-bold">Live Recitation</p>
-            <h2 className="text-lg text-pearl font-display" dir="rtl">{surahName}</h2>
+        <div
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 p-3 md:p-4 border-b border-white/10 bg-white/[0.03]"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <div className="min-w-0">
+            <p className="text-[10px] md:text-xs uppercase tracking-widest text-gold font-bold">Live Recitation</p>
+            <h2 className="text-base md:text-lg text-pearl font-display truncate" dir="rtl">{surahName}</h2>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Accuracy</span>
-            <span className={`text-lg font-bold ${liveAcc >= 80 ? "text-teal" : liveAcc >= 50 ? "text-gold" : "text-red-400"}`}>
-              {liveAcc}%
-            </span>
-            <button onClick={onClose} className="ml-2 p-2 rounded-lg hover:bg-white/10 text-slate-300" aria-label="Close">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-right leading-tight">
+              <div className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Accuracy</div>
+              <div className={`text-base md:text-lg font-bold ${liveAcc >= 80 ? "text-teal" : liveAcc >= 50 ? "text-gold" : "text-red-400"}`}>
+                {liveAcc}%
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="min-h-11 min-w-11 grid place-items-center rounded-lg hover:bg-white/10 active:bg-white/20 text-slate-300"
+              aria-label="Close"
+            >
               <X className="size-5" />
             </button>
           </div>
         </div>
 
-        {/* Live stats panel */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
+        {/* Live stats panel — 3 cols on mobile, 6 on desktop */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
           <LiveStat label="Ayah" value={String(currentVerse)} tone="pearl" />
-          <LiveStat label="Completion" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
+          <LiveStat label="Done" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
           <LiveStat label="Accuracy" value={`${liveAcc}%`} tone={liveAcc >= 80 ? "teal" : liveAcc >= 50 ? "gold" : "red"} />
           <LiveStat label="Confidence" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
-          <LiveStat label="Speed" value={wpm ? `${wpm} wpm` : "—"} tone="pearl" />
+          <LiveStat label="Speed" value={wpm ? `${wpm}` : "—"} tone="pearl" />
           <LiveStat label="ETA" value={fmt(etaSec)} tone="pearl" />
         </div>
         {/* Progress bar */}
-        <div className="px-4 pt-2">
+        <div className="px-3 md:px-4 pt-2">
           <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
             <div className="h-full bg-gradient-to-r from-teal to-emerald-400 transition-all duration-300" style={{ width: `${completionPct}%` }} />
           </div>
         </div>
-        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400 flex-wrap gap-2">
+        <div className="flex items-center justify-between px-3 md:px-4 py-1.5 md:py-2 border-b border-white/10 text-[10px] md:text-[11px] text-slate-400 flex-wrap gap-2">
           <span>Time <span className="text-pearl font-mono">{fmt(elapsedSec)}</span></span>
-          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span></span>
+          <span>Left <span className="text-pearl font-mono">{wordsRemaining}</span></span>
           <span className="flex items-center gap-2">
             <span className="text-emerald-400 font-bold">✓ {liveCorrect}</span>
             <span className="text-red-400 font-bold">✗ {liveWrong}</span>
@@ -514,29 +526,29 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
         {/* Teleprompter — big current word, live mistake banner */}
         {recording && !finished && (
-          <div className="px-4 py-4 border-b border-white/10 bg-gradient-to-r from-teal/15 via-teal/5 to-transparent">
+          <div className="px-3 md:px-4 py-3 md:py-4 border-b border-white/10 bg-gradient-to-r from-teal/15 via-teal/5 to-transparent">
             <div className="text-[10px] uppercase tracking-widest text-teal font-bold mb-2 flex items-center gap-2">
               <span className="inline-block w-2 h-2 rounded-full bg-teal animate-pulse" />
               Ab yeh parhein
               <span className="ml-auto text-slate-400">Ayah {flat[currentIdx]?.verseNumber ?? "—"}</span>
             </div>
-            <div dir="rtl" className="flex items-baseline justify-end gap-4 font-arabic">
+            <div dir="rtl" className="flex items-baseline justify-end gap-2 md:gap-4 font-arabic">
               {/* previous word (faded) */}
               {currentIdx > 0 && (
-                <span className="text-2xl text-emerald-400/40 truncate max-w-[30%]">
+                <span className="text-lg md:text-2xl text-emerald-400/40 truncate max-w-[25%]">
                   {flat[currentIdx - 1]?.display}
                 </span>
               )}
               {/* current word — hero */}
               <span
                 key={currentIdx}
-                className="text-5xl md:text-6xl text-emerald-300 font-bold drop-shadow-[0_0_24px_rgba(52,211,153,0.85)] animate-pulse"
+                className="text-4xl md:text-6xl text-emerald-300 font-bold drop-shadow-[0_0_24px_rgba(52,211,153,0.85)] animate-pulse"
               >
                 {flat[currentIdx]?.display ?? "—"}
               </span>
               {/* next word (hint) */}
               {currentIdx + 1 < flat.length && (
-                <span className="text-2xl text-pearl/40 truncate max-w-[30%]">
+                <span className="text-lg md:text-2xl text-pearl/40 truncate max-w-[25%]">
                   {flat[currentIdx + 1]?.display}
                 </span>
               )}
@@ -555,11 +567,11 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         )}
 
         {/* Mushaf — continuous flowing page */}
-        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto px-5 py-6">
-          <div className="rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] p-6">
+        <div ref={scrollBoxRef} className="flex-1 overflow-y-auto px-3 md:px-5 py-4 md:py-6 -webkit-overflow-scrolling-touch">
+          <div className="rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] p-4 md:p-6">
             <p
               dir="rtl"
-              className="font-arabic text-[2rem] md:text-[2.25rem] leading-[2.6] text-right text-pearl/80"
+              className="font-arabic text-[1.5rem] md:text-[2.25rem] leading-[2.4] md:leading-[2.6] text-right text-pearl/80"
               style={{ wordSpacing: "0.15em" }}
             >
               {groups.map((g, gi) => (
@@ -604,13 +616,13 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
         {/* Report */}
         {finished && (
-          <div className="border-t border-white/10 p-5 bg-white/[0.02] max-h-[45vh] overflow-y-auto">
-            <div className="flex items-center gap-3 mb-4">
-              <Trophy className={`size-6 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
-              <h3 className="text-lg text-pearl font-bold">Final Score</h3>
-              <span className={`ml-auto text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
+          <div className="border-t border-white/10 p-4 md:p-5 bg-white/[0.02] max-h-[40vh] md:max-h-[45vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
+              <Trophy className={`size-5 md:size-6 shrink-0 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
+              <h3 className="text-base md:text-lg text-pearl font-bold">Final Score</h3>
+              <span className={`ml-auto text-2xl md:text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
             </div>
-            <div className="grid grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               <StatCard label="Correct" value={finalCorrect} color="bg-emerald-500/10 text-emerald-300 border-emerald-500/30" />
               <StatCard label="Mistakes" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
               <StatCard label="Skipped" value={finalSkipped} color="bg-orange-500/10 text-orange-300 border-orange-500/30" />
@@ -667,35 +679,38 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         )}
 
         {/* Controls */}
-        <div className="border-t border-white/10 p-4 bg-madinah-surface/60 backdrop-blur-xl">
+        <div
+          className="border-t border-white/10 p-3 md:p-4 bg-madinah-surface/60 backdrop-blur-xl"
+          style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        >
           {error && <p className="text-xs text-red-400 mb-2 text-center">{error}</p>}
           <div className="flex items-center justify-center gap-3">
             {!recording ? (
               <button
                 onClick={startRecording}
                 disabled={starting || finished}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold shadow-[0_0_40px_rgba(31,182,176,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50"
+                className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(31,182,176,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50 min-h-14 touch-manipulation"
               >
-                {starting ? <Loader2 className="size-6 animate-spin" /> : <Mic className="size-6" />}
+                {starting ? <Loader2 className="size-5 md:size-6 animate-spin" /> : <Mic className="size-5 md:size-6" />}
                 <span>{starting ? "Starting…" : "Start Reciting"}</span>
               </button>
             ) : (
               <button
                 onClick={finishAndAnalyze}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white font-bold shadow-[0_0_40px_rgba(239,68,68,0.4)] hover:scale-[1.03] active:scale-95 transition"
+                className="inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(239,68,68,0.4)] hover:scale-[1.03] active:scale-95 transition min-h-14 touch-manipulation"
               >
-                <Square className="size-6 fill-white" />
+                <Square className="size-5 md:size-6 fill-white" />
                 <span>Stop & Analyze</span>
               </button>
             )}
           </div>
           {recording && (
-            <p className="text-center text-xs text-teal mt-2 animate-pulse">
+            <p className="text-center text-[11px] md:text-xs text-teal mt-2 animate-pulse">
               ● {voiceDetected ? "Awaaz mil gayi — lafz pehchan raha hoon…" : "Sun raha hoon — mic ke qareeb parhein…"}
             </p>
           )}
           {transcript && (
-            <p dir="rtl" className="mt-3 text-xs text-slate-400 font-arabic max-h-16 overflow-y-auto text-right">
+            <p dir="rtl" className="mt-2 md:mt-3 text-[11px] md:text-xs text-slate-400 font-arabic max-h-14 md:max-h-16 overflow-y-auto text-right">
               {transcript}
             </p>
           )}
