@@ -59,6 +59,12 @@ type AudioAPI = {
 };
 
 const Ctx = createContext<AudioAPI | null>(null);
+// Lightweight context for high-frequency read of "which verse is playing".
+// VerseCard subscribes only to this, avoiding re-renders on every timeupdate tick.
+const CurrentKeyCtx = createContext<{ currentKey: string | null; playing: boolean }>({
+  currentKey: null,
+  playing: false,
+});
 
 const PREFS_KEY = "vwm.audio.prefs.v2";
 type Prefs = {
