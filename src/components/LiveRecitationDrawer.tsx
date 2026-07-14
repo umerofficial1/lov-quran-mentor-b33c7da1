@@ -17,13 +17,15 @@ interface FlatWord {
   normalized: string; // for matching
 }
 
-type WordStatus = "pending" | "current" | "match" | "wrong" | "missing";
+type WordStatus = "pending" | "current" | "match" | "wrong" | "skipped" | "missing";
 
 interface Feedback {
   overall: "excellent" | "good" | "needs_work";
   summary_urdu: string;
   tajweed_tips: string[];
   pronunciation_tips: string[];
+  tajweed_mistakes?: string[];
+  makharij_mistakes?: string[];
 }
 
 interface Props {
@@ -124,7 +126,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           }
         }
         if (found > 0) {
-          for (let k = 0; k < found; k++) next[ei + k] = "wrong"; // skipped
+          for (let k = 0; k < found; k++) next[ei + k] = "skipped"; // jumped over
           next[ei + found] = "match";
           ei += found + 1;
           si++;
@@ -140,7 +142,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           if (sfound > 0) {
             si += sfound; // extras are ignored, next spoken matches
           } else {
-            next[ei] = "wrong";
+            next[ei] = "wrong"; // mispronounced
             ei++;
             si++;
           }
@@ -157,7 +159,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     const prev = prevStatusesRef.current;
     let newestWrong = -1;
     for (let i = 0; i < next.length; i++) {
-      if (next[i] === "wrong" && prev[i] !== "wrong") newestWrong = i;
+      if ((next[i] === "wrong" || next[i] === "skipped") && prev[i] !== next[i]) newestWrong = i;
     }
     if (newestWrong >= 0 && flat[newestWrong]) {
       setLiveMistake({
@@ -165,7 +167,6 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         verseNumber: flat[newestWrong].verseNumber,
         at: Date.now(),
       });
-      // Gentle haptic buzz on mobile
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         try { navigator.vibrate?.([40, 60, 40]); } catch { /* ignore */ }
       }
@@ -273,13 +274,15 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       i >= currentIdx || s === "pending" || s === "current" ? "missing" : s,
     ) as WordStatus[];
     const correct = finalStatuses.filter((s) => s === "match").length;
-    const wrong = finalStatuses.filter((s) => s === "wrong").length;
+    const wrongOnly = finalStatuses.filter((s) => s === "wrong").length;
+    const skipped = finalStatuses.filter((s) => s === "skipped").length;
+    const wrong = wrongOnly + skipped;
     const missed = finalStatuses.filter((s) => s === "missing").length;
     const attempted = correct + wrong;
-    const accuracy = attempted > 0 ? Math.round((correct / (correct + wrong + missed)) * 100) : 0;
+    const accuracy = flat.length > 0 ? Math.round((correct / flat.length) * 100) : 0;
 
     const mistakes = finalStatuses
-      .map((s, i) => (s === "wrong" || s === "missing" ? { expected: flat[i].display, verseKey: flat[i].verseKey } : null))
+      .map((s, i) => (s === "wrong" || s === "skipped" || s === "missing" ? { expected: flat[i].display, verseKey: flat[i].verseKey } : null))
       .filter(Boolean)
       .slice(0, 60) as { expected: string; verseKey: string }[];
 
@@ -389,10 +392,12 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   // Stats live
   const liveCorrect = statuses.filter((s) => s === "match").length;
   const liveWrong = statuses.filter((s) => s === "wrong").length;
+  const liveSkipped = statuses.filter((s) => s === "skipped").length;
   const liveAttempted = liveCorrect + liveWrong;
   const liveAcc = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
-  const wordsDone = liveCorrect + liveWrong;
+  const wordsDone = liveCorrect + liveWrong + liveSkipped;
   const wordsRemaining = Math.max(0, flat.length - wordsDone);
+  const completionPct = flat.length > 0 ? Math.round((wordsDone / flat.length) * 100) : 0;
   const elapsedSec = Math.max(1, Math.round(elapsedMs / 1000));
   const wpm = wordsDone > 0 ? Math.round((wordsDone / elapsedSec) * 60) : 0;
   const etaSec = wpm > 0 ? Math.round((wordsRemaining / wpm) * 60) : 0;
@@ -415,6 +420,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   const finalCorrect = statuses.filter((s) => s === "match").length;
   const finalWrong = statuses.filter((s) => s === "wrong").length;
+  const finalSkipped = statuses.filter((s) => s === "skipped").length;
   const finalMissed = statuses.filter((s) => s === "missing").length;
   const finalAcc =
     flat.length > 0 ? Math.round((finalCorrect / flat.length) * 100) : 0;
@@ -442,16 +448,26 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         {/* Live stats panel */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
           <LiveStat label="Ayah" value={String(currentVerse)} tone="pearl" />
-          <LiveStat label="Word" value={`${wordsDone}/${flat.length}`} tone="pearl" />
+          <LiveStat label="Completion" value={`${completionPct}%`} tone={completionPct >= 80 ? "teal" : "gold"} />
           <LiveStat label="Accuracy" value={`${liveAcc}%`} tone={liveAcc >= 80 ? "teal" : liveAcc >= 50 ? "gold" : "red"} />
-          <LiveStat label="Pronunciation" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
+          <LiveStat label="Confidence" value={`${pronScore}%`} tone={pronScore >= 80 ? "teal" : "gold"} />
           <LiveStat label="Speed" value={wpm ? `${wpm} wpm` : "—"} tone="pearl" />
           <LiveStat label="ETA" value={fmt(etaSec)} tone="pearl" />
         </div>
-        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400">
+        {/* Progress bar */}
+        <div className="px-4 pt-2">
+          <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-teal to-emerald-400 transition-all duration-300" style={{ width: `${completionPct}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 text-[11px] text-slate-400 flex-wrap gap-2">
           <span>Time <span className="text-pearl font-mono">{fmt(elapsedSec)}</span></span>
-          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span> words</span>
-          <span className="hidden sm:inline">Correct <span className="text-emerald-400 font-bold">{liveCorrect}</span> · Wrong <span className="text-red-400 font-bold">{liveWrong}</span></span>
+          <span>Remaining <span className="text-pearl font-mono">{wordsRemaining}</span></span>
+          <span className="flex items-center gap-2">
+            <span className="text-emerald-400 font-bold">✓ {liveCorrect}</span>
+            <span className="text-red-400 font-bold">✗ {liveWrong}</span>
+            <span className="text-orange-400 font-bold">↷ {liveSkipped}</span>
+          </span>
         </div>
 
         {/* Teleprompter — big current word, live mistake banner */}
@@ -510,13 +526,15 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
                     const st = statuses[i] ?? "pending";
                     const cls =
                       st === "match"
-                        ? "text-emerald-400/85"
+                        ? "text-emerald-400"
                         : st === "current"
-                        ? "text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.9)] animate-pulse"
+                        ? "text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.95)] animate-pulse scale-110"
                         : st === "wrong"
                         ? "text-red-400 underline decoration-red-500 decoration-2 underline-offset-4"
+                        : st === "skipped"
+                        ? "text-orange-400 underline decoration-orange-400/70 decoration-dotted decoration-2 underline-offset-4"
                         : st === "missing"
-                        ? "text-red-300/70 line-through decoration-red-400/60"
+                        ? "text-yellow-300/80 line-through decoration-yellow-400/60"
                         : "text-pearl/70";
                     return (
                       <span
@@ -547,13 +565,14 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           <div className="border-t border-white/10 p-5 bg-white/[0.02] max-h-[45vh] overflow-y-auto">
             <div className="flex items-center gap-3 mb-4">
               <Trophy className={`size-6 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
-              <h3 className="text-lg text-pearl font-bold">Session Report</h3>
-              <span className="ml-auto text-2xl font-bold text-pearl">{finalAcc}%</span>
+              <h3 className="text-lg text-pearl font-bold">Final Score</h3>
+              <span className={`ml-auto text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-4 gap-2 mb-4">
               <StatCard label="Correct" value={finalCorrect} color="bg-emerald-500/10 text-emerald-300 border-emerald-500/30" />
-              <StatCard label="Incorrect" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
-              <StatCard label="Missed" value={finalMissed} color="bg-amber-500/10 text-amber-300 border-amber-500/30" />
+              <StatCard label="Mistakes" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
+              <StatCard label="Skipped" value={finalSkipped} color="bg-orange-500/10 text-orange-300 border-orange-500/30" />
+              <StatCard label="Missing" value={finalMissed} color="bg-yellow-500/10 text-yellow-300 border-yellow-500/30" />
             </div>
             {analyzing ? (
               <div className="flex items-center gap-2 text-sm text-slate-400 py-2">
@@ -562,6 +581,22 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             ) : feedback ? (
               <div className="space-y-3">
                 <p className="text-sm text-pearl leading-relaxed" dir="rtl">{feedback.summary_urdu}</p>
+                {(feedback.tajweed_mistakes?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-red-300 font-bold mb-1">Tajweed Mistakes</p>
+                    <ul className="text-sm text-slate-200 space-y-1 list-disc list-inside" dir="rtl">
+                      {feedback.tajweed_mistakes!.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {(feedback.makharij_mistakes?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-orange-300 font-bold mb-1">Makharij Mistakes</p>
+                    <ul className="text-sm text-slate-200 space-y-1 list-disc list-inside" dir="rtl">
+                      {feedback.makharij_mistakes!.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+                )}
                 {feedback.tajweed_tips.length > 0 && (
                   <div>
                     <p className="text-xs uppercase tracking-widest text-gold font-bold mb-1">Tajweed Tips</p>

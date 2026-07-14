@@ -12,6 +12,8 @@ const FeedbackSchema = z.object({
   summary_urdu: z.string(),
   tajweed_tips: z.array(z.string()),
   pronunciation_tips: z.array(z.string()),
+  tajweed_mistakes: z.array(z.string()).optional().default([]),
+  makharij_mistakes: z.array(z.string()).optional().default([]),
 });
 
 const InputSchema = z.object({
@@ -69,6 +71,8 @@ function heuristicFallback(accuracy: number, mistakes: number) {
         : "ہر آیت کے بعد ایک لمحے کا وقفہ لیں۔",
       "قاری کی ریکارڈنگ کے ساتھ ساتھ آہستہ آواز میں پڑھیں۔",
     ],
+    tajweed_mistakes: [] as string[],
+    makharij_mistakes: [] as string[],
   };
 }
 
@@ -101,8 +105,8 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
             model: gateway("google/gemini-2.5-flash"),
             system:
               "You are a kind Qur'an tajweed coach. Reply ONLY with a single JSON object (no prose, no markdown fences). " +
-              "Schema: { \"overall\": \"excellent\" | \"good\" | \"needs_work\", \"summary_urdu\": string, \"tajweed_tips\": string[2..4], \"pronunciation_tips\": string[2..4] }. " +
-              "All text values MUST be in simple Urdu (Nastaliq). Keep each tip short, actionable, and specific to the mistakes provided.",
+              "Schema: { \"overall\": \"excellent\" | \"good\" | \"needs_work\", \"summary_urdu\": string, \"tajweed_tips\": string[2..4], \"pronunciation_tips\": string[2..4], \"tajweed_mistakes\": string[0..5], \"makharij_mistakes\": string[0..5] }. " +
+              "All text values MUST be in simple Urdu (Nastaliq). tajweed_mistakes = specific tajweed rule errors (ghunna, madd, qalqala, ikhfa, idgham) observed. makharij_mistakes = specific letter articulation errors (e.g. ص/س confusion, ق/ک). Keep each entry short and specific.",
             prompt:
               `Surah: ${data.surahId}\n` +
               `Accuracy: ${data.accuracy}% (correct ${data.correct}, wrong ${data.wrong}, missed ${data.missed}).\n` +
@@ -143,6 +147,12 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
             pronunciation_tips: Array.isArray(anyObj.pronunciation_tips)
               ? (anyObj.pronunciation_tips.filter((x) => typeof x === "string") as string[])
               : heuristicFallback(data.accuracy, data.mistakes.length).pronunciation_tips,
+            tajweed_mistakes: Array.isArray(anyObj.tajweed_mistakes)
+              ? (anyObj.tajweed_mistakes.filter((x) => typeof x === "string") as string[])
+              : [],
+            makharij_mistakes: Array.isArray(anyObj.makharij_mistakes)
+              ? (anyObj.makharij_mistakes.filter((x) => typeof x === "string") as string[])
+              : [],
           };
           return Response.json(coerced);
         } catch (err) {
