@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Play, Pause, SkipBack, SkipForward, Repeat, Repeat1, Gauge,
   Download, Loader2, ChevronDown, Radio, X, ScrollText, Check,
+  Volume2, VolumeX, Volume1,
 } from "lucide-react";
 import { useAudioPlayer, type RepeatMode } from "@/hooks/use-audio-player";
 import { RECITERS } from "@/lib/reciters";
@@ -14,6 +15,13 @@ const REPEAT_MODES: { id: RepeatMode; label: string; icon: React.ReactNode }[] =
   { id: "page",  label: "Repeat Page", icon: <Repeat className="size-3.5" /> },
   { id: "surah", label: "Repeat Surah",icon: <Repeat className="size-3.5" /> },
 ];
+
+function fmt(t: number): string {
+  if (!Number.isFinite(t) || t < 0) return "0:00";
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 export function AudioPlayerBar() {
   const p = useAudioPlayer();
@@ -80,6 +88,28 @@ export function AudioPlayerBar() {
           >
             <ChevronDown className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
+        </div>
+
+        {/* Progress bar (seekable) */}
+        <div className="px-4 pb-3">
+          <input
+            type="range"
+            min={0}
+            max={1000}
+            value={p.duration > 0 ? Math.floor((p.currentTime / p.duration) * 1000) : 0}
+            onChange={(e) => p.seekPct(Number(e.target.value) / 1000)}
+            aria-label="Seek"
+            className="w-full h-1 accent-amber-400 cursor-pointer"
+          />
+          <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <span>{fmt(p.currentTime)}</span>
+            {p.buffering && (
+              <span className="inline-flex items-center gap-1 text-teal-300">
+                <Loader2 className="size-3 animate-spin" /> Buffering…
+              </span>
+            )}
+            <span>{fmt(p.duration)}</span>
+          </div>
         </div>
 
         {/* Progress strip during caching */}
@@ -164,6 +194,41 @@ export function AudioPlayerBar() {
                     {s}×
                   </button>
                 ))}
+              </div>
+            </section>
+
+            {/* Volume */}
+            <section>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 inline-flex items-center gap-1">
+                {p.muted || p.volume === 0 ? (
+                  <VolumeX className="size-3" />
+                ) : p.volume < 0.5 ? (
+                  <Volume1 className="size-3" />
+                ) : (
+                  <Volume2 className="size-3" />
+                )}
+                Volume
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => p.setMuted(!p.muted)}
+                  className="size-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 grid place-items-center"
+                  aria-label={p.muted ? "Unmute" : "Mute"}
+                >
+                  {p.muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                </button>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round((p.muted ? 0 : p.volume) * 100)}
+                  onChange={(e) => p.setVolume(Number(e.target.value) / 100)}
+                  aria-label="Volume"
+                  className="flex-1 h-1 accent-amber-400 cursor-pointer"
+                />
+                <span className="text-xs font-mono text-slate-400 w-8 text-right">
+                  {Math.round((p.muted ? 0 : p.volume) * 100)}
+                </span>
               </div>
             </section>
 
