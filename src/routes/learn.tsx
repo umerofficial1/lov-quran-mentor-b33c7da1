@@ -660,32 +660,34 @@ function MistakeTool() {
       {data && (
         <div className="space-y-3">
           <div className={`rounded-2xl border p-4 ${badge}`}>
-            <p className="font-bold">Score: {data.score}/100 · {data.overall.toUpperCase()}</p>
-            <p className="text-sm mt-1">{data.summary}</p>
+            <p className="font-bold">Score: {data.score ?? 0}/100 · {(data.overall ?? "minor").toUpperCase()}</p>
+            <p className="text-sm mt-1">{data.summary ?? ""}</p>
           </div>
 
-          <div className="rounded-xl bg-black/20 border border-white/10 p-4">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Word-by-word (AI)</p>
-            <div dir="rtl" className="font-uthmani text-2xl leading-loose text-right flex flex-wrap gap-x-2 gap-y-1 justify-end">
-              {data.words.map((w, i) => {
-                const cls =
-                  w.status === "ok" ? "text-white"
-                  : w.status === "wrong" ? "bg-rose-500/25 text-rose-100 border-b-2 border-rose-400 px-1 rounded"
-                  : w.status === "missing" ? "text-rose-300 line-through decoration-rose-400"
-                  : "text-amber-300 italic";
-                return (
-                  <span key={i} className={cls} title={w.issue || w.status}>
-                    {w.status === "extra" ? `+${w.heard}` : w.expected || w.heard}
-                  </span>
-                );
-              })}
+          {(data.words?.length ?? 0) > 0 && (
+            <div className="rounded-xl bg-black/20 border border-white/10 p-4">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-2">Word-by-word (AI)</p>
+              <div dir="rtl" className="font-uthmani text-2xl leading-loose text-right flex flex-wrap gap-x-2 gap-y-1 justify-end">
+                {(data.words ?? []).map((w, i) => {
+                  const cls =
+                    w.status === "ok" ? "text-white"
+                    : w.status === "wrong" ? "bg-rose-500/25 text-rose-100 border-b-2 border-rose-400 px-1 rounded"
+                    : w.status === "missing" ? "text-rose-300 line-through decoration-rose-400"
+                    : "text-amber-300 italic";
+                  return (
+                    <span key={i} className={cls} title={w.issue || w.status}>
+                      {w.status === "extra" ? `+${w.heard}` : w.expected || w.heard}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
-          {data.words.some((w) => w.status !== "ok") && (
+          {(data.words ?? []).some((w) => w.status !== "ok") && (
             <div className="rounded-xl bg-black/20 border border-white/10 p-4 space-y-2">
               <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">Mistakes explained</p>
-              {data.words.filter((w) => w.status !== "ok").map((w, i) => (
+              {(data.words ?? []).filter((w) => w.status !== "ok").map((w, i) => (
                 <div key={i} className="flex items-start justify-between gap-3 border-b border-white/5 pb-2 last:border-0">
                   <div className="text-sm">
                     <span className="font-uthmani text-lg text-white mr-2" dir="rtl">{w.expected || "—"}</span>
@@ -700,11 +702,11 @@ function MistakeTool() {
             </div>
           )}
 
-          {data.tips.length > 0 && (
+          {(data.tips?.length ?? 0) > 0 && (
             <div className="rounded-xl bg-emerald-500/5 border border-emerald-400/20 p-3">
               <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-300 mb-1">Practice tips</p>
               <ul className="list-disc list-inside text-slate-200 text-sm space-y-1">
-                {data.tips.map((t, i) => <li key={i}>{t}</li>)}
+                {(data.tips ?? []).map((t, i) => <li key={i}>{t}</li>)}
               </ul>
             </div>
           )}
