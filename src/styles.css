@@ -108,7 +108,13 @@
 }
 
 @layer base {
-  html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
   body {
     color: var(--foreground);
     font-family: var(--font-ui);
@@ -116,8 +122,17 @@
     background-image: var(--body-gradient);
     background-attachment: fixed;
     min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
     transition: background-color 400ms ease, color 400ms ease;
   }
+  /* Prevent long unbroken tokens (URLs, Arabic tashkeel runs) from forcing horizontal scroll */
+  p, span, h1, h2, h3, h4, h5, h6, li, a, button, label { overflow-wrap: anywhere; word-break: normal; }
+  /* Media never overflows its container */
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  /* Respect notches / home indicator */
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
   ::selection { background: rgba(31, 182, 176, 0.35); color: var(--foreground); }
 
   .font-display { font-family: var(--font-display); }
