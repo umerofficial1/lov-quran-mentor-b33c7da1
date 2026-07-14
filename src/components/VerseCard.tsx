@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 import { toCleanText } from "@/lib/clean-html";
 import { Bookmark, BookmarkCheck, Play, Pause } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { useAudioPlayer, useCurrentVerseKey } from "@/hooks/use-audio-player";
 import { TafsirButton } from "@/components/TafsirPanel";
 import { WordByWord } from "@/components/WordByWord";
 
