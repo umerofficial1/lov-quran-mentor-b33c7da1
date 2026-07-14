@@ -274,13 +274,15 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       i >= currentIdx || s === "pending" || s === "current" ? "missing" : s,
     ) as WordStatus[];
     const correct = finalStatuses.filter((s) => s === "match").length;
-    const wrong = finalStatuses.filter((s) => s === "wrong").length;
+    const wrongOnly = finalStatuses.filter((s) => s === "wrong").length;
+    const skipped = finalStatuses.filter((s) => s === "skipped").length;
+    const wrong = wrongOnly + skipped;
     const missed = finalStatuses.filter((s) => s === "missing").length;
     const attempted = correct + wrong;
-    const accuracy = attempted > 0 ? Math.round((correct / (correct + wrong + missed)) * 100) : 0;
+    const accuracy = flat.length > 0 ? Math.round((correct / flat.length) * 100) : 0;
 
     const mistakes = finalStatuses
-      .map((s, i) => (s === "wrong" || s === "missing" ? { expected: flat[i].display, verseKey: flat[i].verseKey } : null))
+      .map((s, i) => (s === "wrong" || s === "skipped" || s === "missing" ? { expected: flat[i].display, verseKey: flat[i].verseKey } : null))
       .filter(Boolean)
       .slice(0, 60) as { expected: string; verseKey: string }[];
 
