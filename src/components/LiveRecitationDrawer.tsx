@@ -524,13 +524,15 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
                     const st = statuses[i] ?? "pending";
                     const cls =
                       st === "match"
-                        ? "text-emerald-400/85"
+                        ? "text-emerald-400"
                         : st === "current"
-                        ? "text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.9)] animate-pulse"
+                        ? "text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.95)] animate-pulse scale-110"
                         : st === "wrong"
                         ? "text-red-400 underline decoration-red-500 decoration-2 underline-offset-4"
+                        : st === "skipped"
+                        ? "text-orange-400 underline decoration-orange-400/70 decoration-dotted decoration-2 underline-offset-4"
                         : st === "missing"
-                        ? "text-red-300/70 line-through decoration-red-400/60"
+                        ? "text-yellow-300/80 line-through decoration-yellow-400/60"
                         : "text-pearl/70";
                     return (
                       <span
