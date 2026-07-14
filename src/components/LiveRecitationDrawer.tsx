@@ -418,6 +418,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   const finalCorrect = statuses.filter((s) => s === "match").length;
   const finalWrong = statuses.filter((s) => s === "wrong").length;
+  const finalSkipped = statuses.filter((s) => s === "skipped").length;
   const finalMissed = statuses.filter((s) => s === "missing").length;
   const finalAcc =
     flat.length > 0 ? Math.round((finalCorrect / flat.length) * 100) : 0;
