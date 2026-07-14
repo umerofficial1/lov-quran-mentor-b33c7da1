@@ -126,7 +126,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           }
         }
         if (found > 0) {
-          for (let k = 0; k < found; k++) next[ei + k] = "wrong"; // skipped
+          for (let k = 0; k < found; k++) next[ei + k] = "skipped"; // jumped over
           next[ei + found] = "match";
           ei += found + 1;
           si++;
@@ -142,7 +142,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           if (sfound > 0) {
             si += sfound; // extras are ignored, next spoken matches
           } else {
-            next[ei] = "wrong";
+            next[ei] = "wrong"; // mispronounced
             ei++;
             si++;
           }
