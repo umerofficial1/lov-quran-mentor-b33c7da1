@@ -46,8 +46,9 @@ function VerseCardInner({
   onPlayFrom?: (verseKey: string) => void;
 }) {
   const audio = useAudioPlayer();
-  const isCurrent = audio.currentKey === v.verse_key;
-  const isCurrentPlaying = isCurrent && audio.playing;
+  const { currentKey, playing } = useCurrentVerseKey();
+  const isCurrent = currentKey === v.verse_key;
+  const isCurrentPlaying = isCurrent && playing;
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
