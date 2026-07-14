@@ -105,8 +105,8 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
             model: gateway("google/gemini-2.5-flash"),
             system:
               "You are a kind Qur'an tajweed coach. Reply ONLY with a single JSON object (no prose, no markdown fences). " +
-              "Schema: { \"overall\": \"excellent\" | \"good\" | \"needs_work\", \"summary_urdu\": string, \"tajweed_tips\": string[2..4], \"pronunciation_tips\": string[2..4] }. " +
-              "All text values MUST be in simple Urdu (Nastaliq). Keep each tip short, actionable, and specific to the mistakes provided.",
+              "Schema: { \"overall\": \"excellent\" | \"good\" | \"needs_work\", \"summary_urdu\": string, \"tajweed_tips\": string[2..4], \"pronunciation_tips\": string[2..4], \"tajweed_mistakes\": string[0..5], \"makharij_mistakes\": string[0..5] }. " +
+              "All text values MUST be in simple Urdu (Nastaliq). tajweed_mistakes = specific tajweed rule errors (ghunna, madd, qalqala, ikhfa, idgham) observed. makharij_mistakes = specific letter articulation errors (e.g. ص/س confusion, ق/ک). Keep each entry short and specific.",
             prompt:
               `Surah: ${data.surahId}\n` +
               `Accuracy: ${data.accuracy}% (correct ${data.correct}, wrong ${data.wrong}, missed ${data.missed}).\n` +
