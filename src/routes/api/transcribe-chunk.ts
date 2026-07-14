@@ -13,8 +13,10 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
         if (!(audio instanceof Blob)) {
           return new Response("bad request", { status: 400 });
         }
-        if (audio.size < 2048) {
-          return new Response("audio chunk is empty", { status: 400 });
+        if (audio.size < 1024) {
+          // Too tiny to be meaningful — return empty text instead of erroring
+          // so the client loop keeps going.
+          return Response.json({ text: "" });
         }
         if (audio.size > 5 * 1024 * 1024) {
           return new Response("chunk too large", { status: 413 });
