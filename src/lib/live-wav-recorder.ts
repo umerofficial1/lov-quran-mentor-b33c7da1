@@ -11,16 +11,8 @@ function getAudioContextConstructor(): AudioContextConstructor | null {
   return window.AudioContext ?? audioWindow.webkitAudioContext ?? null;
 }
 
-function encodeMonoWav(chunks: Float32Array[], inputRate: number): Blob | null {
-  const inputLength = chunks.reduce((total, chunk) => total + chunk.length, 0);
-  if (!inputLength) return null;
-
-  const input = new Float32Array(inputLength);
-  let writeAt = 0;
-  for (const chunk of chunks) {
-    input.set(chunk, writeAt);
-    writeAt += chunk.length;
-  }
+function encodeMonoWav(input: Float32Array, inputRate: number): Blob | null {
+  if (!input.length) return null;
 
   const outputRate = Math.min(16_000, inputRate);
   const ratio = inputRate / outputRate;
@@ -72,13 +64,11 @@ function encodeMonoWav(chunks: Float32Array[], inputRate: number): Blob | null {
 export async function startLiveWavRecorder(
   getStream: () => Promise<MediaStream>,
   onChunk: (blob: Blob) => void | Promise<void>,
-  chunkDurationMs = 700,
+  chunkDurationMs = 2200,
 ): Promise<{ recorder: LiveWavRecorder; stream: MediaStream }> {
   const AudioContextClass = getAudioContextConstructor();
   if (!AudioContextClass) throw new DOMException("Web Audio is unavailable", "NotSupportedError");
 
-  // Create/resume during the click gesture. iOS suspends contexts created after
-  // awaiting the permission prompt.
   const context = new AudioContextClass();
   await context.resume();
 
@@ -95,38 +85,70 @@ export async function startLiveWavRecorder(
   const mutedOutput = context.createGain();
   mutedOutput.gain.value = 0;
 
-  let pcm: Float32Array[] = [];
+  // Cumulative PCM store — keeps the ENTIRE recording so each upload contains
+  // full context. gpt-4o-transcribe returns noise on isolated <1s Arabic clips
+  // but is accurate over the full utterance. Cap at ~4 min to bound memory.
+  const MAX_SECONDS = 240;
+  const pcm: Float32Array[] = [];
+  let totalSamples = 0;
   let stopped = false;
-  let uploadQueue = Promise.resolve();
+  let inFlight = false;
+  let dirty = false;
 
   processor.onaudioprocess = (event) => {
-    if (!stopped) pcm.push(new Float32Array(event.inputBuffer.getChannelData(0)));
+    if (stopped) return;
+    const chunk = new Float32Array(event.inputBuffer.getChannelData(0));
+    pcm.push(chunk);
+    totalSamples += chunk.length;
+    dirty = true;
+    // Drop oldest audio if we exceed the cap.
+    const capSamples = MAX_SECONDS * context.sampleRate;
+    while (totalSamples > capSamples && pcm.length > 1) {
+      totalSamples -= pcm[0].length;
+      pcm.shift();
+    }
   };
   source.connect(processor);
   processor.connect(mutedOutput);
   mutedOutput.connect(context.destination);
 
-  const flush = () => {
-    const current = pcm;
-    pcm = [];
-    const wav = encodeMonoWav(current, context.sampleRate);
-    if (!wav || wav.size < 2048) return;
-    uploadQueue = uploadQueue.then(() => onChunk(wav)).catch(() => undefined);
+  const flush = async () => {
+    if (inFlight || !dirty) return;
+    dirty = false;
+    // Merge all captured PCM into one Float32Array.
+    const merged = new Float32Array(totalSamples);
+    let writeAt = 0;
+    for (const c of pcm) {
+      merged.set(c, writeAt);
+      writeAt += c.length;
+    }
+    const wav = encodeMonoWav(merged, context.sampleRate);
+    if (!wav || wav.size < 4096) return;
+    inFlight = true;
+    try {
+      await onChunk(wav);
+    } catch {
+      /* ignore */
+    } finally {
+      inFlight = false;
+    }
   };
 
-  const interval = window.setInterval(flush, chunkDurationMs);
+  const interval = window.setInterval(() => { void flush(); }, chunkDurationMs);
   const recorder: LiveWavRecorder = {
     stop: async () => {
       if (stopped) return;
       stopped = true;
       window.clearInterval(interval);
-      flush();
       processor.onaudioprocess = null;
       source.disconnect();
       processor.disconnect();
       mutedOutput.disconnect();
+      // Final flush — wait for any in-flight upload, then send the tail.
+      while (inFlight) await new Promise((r) => setTimeout(r, 50));
+      dirty = true;
+      await flush();
       await context.close().catch(() => undefined);
-      await uploadQueue;
     },
   };
 
