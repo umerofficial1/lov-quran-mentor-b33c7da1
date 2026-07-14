@@ -81,7 +81,7 @@ export function VerseCard({
     <article
       ref={ref}
       id={`v-${v.verse_key.replace(":", "-")}`}
-      className={`verse-card rounded-2xl bg-white/5 backdrop-blur-xl border p-6 transition-all scroll-mt-24 ${
+      className={`verse-card cv-auto rounded-2xl bg-white/5 backdrop-blur-xl border p-6 transition-all scroll-mt-24 ${
         isCurrent ? "border-amber-400/70 shadow-[0_0_0_2px_rgba(201,162,76,0.25)] bg-amber-400/[0.04] is-focused" : "border-white/10 hover:border-amber-400/20"
       }`}
     >
