@@ -213,7 +213,7 @@ function SurahReader() {
           <span className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
           <Mic className="size-5 relative" />
         </span>
-        <span className="hidden md:inline text-sm">Live Recite</span>
+        <span className="text-sm">Live Recite</span>
       </button>
 
       <LiveRecitationDrawer
