@@ -195,6 +195,11 @@ function ReportsPage() {
           </p>
         </header>
 
+        {/* Start Live Recitation — primary action */}
+        <StartLiveRecitationCard lastSurahId={sessions[0]?.surah_id ?? 1} />
+
+
+
         {/* Summary tiles */}
         <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           <StatTile icon={<Mic2 className="size-4" />} label="Sessions" value={totals.count.toString()} tone="teal" />
