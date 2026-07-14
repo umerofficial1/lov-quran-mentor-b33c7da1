@@ -97,20 +97,43 @@ export const generateQuiz = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const gateway = getGateway();
-    const { output } = await generateText({
+    const { text } = await generateText({
       model: gateway(MODEL),
-      output: Output.object({ schema: QuizSchema }),
       system:
-        "You are an Islamic studies teacher. Create multiple-choice quiz questions grounded in mainstream Sunni scholarship. Cite Surah:Ayah when relevant. Each question has exactly 4 choices. answerIndex is 0-based.",
+        'You are an Islamic studies teacher. Create multiple-choice quiz questions grounded in mainstream Sunni scholarship. Cite Surah:Ayah when relevant. Reply ONLY with a single JSON object (no markdown fences, no prose). Schema: {"questions":[{"question":string,"choices":string[4],"answerIndex":number 0-3,"explanation":string}]}. Exactly 4 choices per question.',
       prompt: `Topic: ${data.topic}. Difficulty: ${data.difficulty}. Count: ${data.count}. Return JSON only.`,
     });
-    // Normalize
+
+    // Lenient extract + parse — avoids AI_NoObjectGeneratedError from strict schema mode.
+    const clean = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    const first = clean.indexOf("{");
+    const last = clean.lastIndexOf("}");
+    const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch {
+      throw new Error("AI did not return valid JSON");
+    }
+    const check = QuizSchema.safeParse(parsed);
+    const questions = check.success
+      ? check.data.questions
+      : Array.isArray((parsed as { questions?: unknown }).questions)
+        ? ((parsed as { questions: unknown[] }).questions.filter(
+            (q): q is { question: string; choices: string[]; answerIndex: number; explanation: string } =>
+              !!q && typeof q === "object" &&
+              typeof (q as { question?: unknown }).question === "string" &&
+              Array.isArray((q as { choices?: unknown }).choices),
+          ))
+        : [];
+
     return {
       topic: data.topic,
-      questions: output.questions.slice(0, data.count).map((q) => ({
-        ...q,
-        choices: q.choices.slice(0, 4),
-        answerIndex: Math.max(0, Math.min(3, q.answerIndex)),
+      questions: questions.slice(0, data.count).map((q) => ({
+        question: q.question,
+        choices: (q.choices ?? []).slice(0, 4).map(String),
+        answerIndex: Math.max(0, Math.min(3, Number(q.answerIndex) || 0)),
+        explanation: String(q.explanation ?? ""),
       })),
     };
   });
