@@ -71,6 +71,8 @@ function heuristicFallback(accuracy: number, mistakes: number) {
         : "ہر آیت کے بعد ایک لمحے کا وقفہ لیں۔",
       "قاری کی ریکارڈنگ کے ساتھ ساتھ آہستہ آواز میں پڑھیں۔",
     ],
+    tajweed_mistakes: [] as string[],
+    makharij_mistakes: [] as string[],
   };
 }
 
