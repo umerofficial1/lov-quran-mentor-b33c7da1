@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText, Output } from "ai";
+import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
@@ -71,26 +71,57 @@ export const Route = createFileRoute("/api/mistake-check-voice")({
         const sttJson = await sttRes.json();
         const transcript: string = sttJson.text ?? "";
         if (!transcript.trim()) {
-          return new Response("Empty transcription — please record again", { status: 400 });
+          return new Response("Aap ki awaaz clearly detect nahi hui. Mic ke qareeb parhen aur dobara try karen.", { status: 400 });
         }
 
-        // 3. Compare with Gemini
+        // 3. Compare with Gemini — lenient parsing so schema mismatches don't 500.
         const gateway = createLovableAiGatewayProvider(key);
-        const { output } = await generateText({
-          model: gateway("google/gemini-2.5-flash"),
-          output: Output.object({ schema: DiffSchema }),
-          system:
-            "You are a strict but kind tajweed teacher. Compare the student's recited transcript to the correct ayah. " +
-            "Return a word-by-word diff aligned to the CORRECT ayah in reading order. " +
-            "For every word of the correct ayah, output an entry with: expected (the correct word in Arabic), " +
-            "heard (what the student actually said for that word, or empty), " +
-            "status ('ok' = correctly recited, 'wrong' = mispronounced or wrong word, 'missing' = skipped), " +
-            "issue (short Urdu/English note e.g. 'madd chhoot gayi', 'ghunna nahi lagaya', 'lafz badal diya'). " +
-            "If the student added extra words not in the ayah, append entries with status 'extra'. " +
-            "Then give: overall verdict (correct/minor/major), score 0-100, one-line summary in Urdu, " +
-            "and 2-3 practical tips in Urdu. Be gentle and specific.",
-          prompt: `Ayah ${verseKey}\nCorrect Arabic: ${arabic}\nStudent said (transcribed): ${transcript}`,
-        });
+        let output: z.infer<typeof DiffSchema> | null = null;
+        try {
+          const res = await generateText({
+            model: gateway("google/gemini-2.5-flash"),
+            output: Output.object({ schema: DiffSchema }),
+            system:
+              "You are a strict but kind tajweed teacher. Compare the student's recited transcript to the correct ayah. " +
+              "Return JSON with EXACTLY these top-level keys: overall, score, summary, words, tips. " +
+              "overall = 'correct' | 'minor' | 'major'. score = 0-100. summary = one-line Urdu. " +
+              "words = array aligned to the correct ayah in reading order; each item MUST have keys: expected, heard, status, issue. " +
+              "status = 'ok' | 'wrong' | 'missing' | 'extra'. Append 'extra' entries for extra spoken words. " +
+              "tips = 2-3 Urdu practical tips.",
+            prompt: `Ayah ${verseKey}\nCorrect Arabic: ${arabic}\nStudent said (transcribed): ${transcript}`,
+          });
+          output = res.output;
+        } catch (err) {
+          if (NoObjectGeneratedError.isInstance(err)) {
+            try {
+              const raw = JSON.parse(err.text ?? "{}");
+              output = DiffSchema.parse({
+                overall: raw.overall ?? raw.overall_verdict ?? "minor",
+                score: typeof raw.score === "number" ? raw.score : 0,
+                summary: String(raw.summary ?? ""),
+                words: Array.isArray(raw.words) ? raw.words : Array.isArray(raw.diff) ? raw.diff : [],
+                tips: Array.isArray(raw.tips) ? raw.tips : [],
+              });
+            } catch {
+              output = null;
+            }
+          } else {
+            throw err;
+          }
+        }
+
+        if (!output) {
+          return Response.json({
+            verseKey,
+            correct: arabic,
+            transcript,
+            overall: "minor",
+            score: 50,
+            summary: "AI analysis mukammal nahi hui — transcript neeche dekhen.",
+            words: [],
+            tips: [],
+          });
+        }
 
         return Response.json({
           verseKey,
@@ -102,3 +133,4 @@ export const Route = createFileRoute("/api/mistake-check-voice")({
     },
   },
 });
+
