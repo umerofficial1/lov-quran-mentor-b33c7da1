@@ -1,5 +1,8 @@
 const CACHE_NAME = "vwm-quran-audio-v1";
 
+// In-memory prefetch tracker so we don't refetch the same URL repeatedly.
+const inflight = new Set<string>();
+
 async function openCache(): Promise<Cache | null> {
   if (typeof caches === "undefined") return null;
   try {
@@ -40,6 +43,28 @@ export async function precacheAudio(
     onProgress?.(i + 1, total, url);
   }
   return { ok, failed };
+}
+
+/**
+ * Fire-and-forget prefetch of a single audio URL into the Cache API.
+ * Used to warm the NEXT ayah while the current one is playing so the
+ * transition is gapless.
+ */
+export async function prefetchAudio(url: string): Promise<void> {
+  if (inflight.has(url)) return;
+  const cache = await openCache();
+  if (!cache) return;
+  try {
+    const hit = await cache.match(url);
+    if (hit) return;
+    inflight.add(url);
+    const res = await fetch(url, { mode: "cors" });
+    if (res.ok) await cache.put(url, res.clone());
+  } catch {
+    /* ignore — best effort */
+  } finally {
+    inflight.delete(url);
+  }
 }
 
 /** Resolve to a playable URL: prefer cached blob (object URL) so playback works offline. */
