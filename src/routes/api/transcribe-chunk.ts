@@ -18,7 +18,7 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
           // so the client loop keeps going.
           return Response.json({ text: "" });
         }
-        if (audio.size > 5 * 1024 * 1024) {
+        if (audio.size > 24 * 1024 * 1024) {
           return new Response("chunk too large", { status: 413 });
         }
 
