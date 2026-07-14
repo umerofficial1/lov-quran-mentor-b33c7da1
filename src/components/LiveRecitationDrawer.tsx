@@ -215,7 +215,10 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             if (!res.ok) return;
             const j = (await res.json()) as { text?: string };
             const text = (j.text ?? "").trim();
-            if (text) setTranscript((prev) => (prev ? prev + " " + text : text));
+            // Each upload contains the FULL audio so far, so replace the
+            // transcript rather than appending. This keeps the word-by-word
+            // diff stable as later chunks refine earlier recognition.
+            if (text) setTranscript(text);
           } catch { /* ignore */ }
         },
       );
