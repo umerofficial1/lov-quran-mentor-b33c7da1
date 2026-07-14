@@ -28,7 +28,7 @@ const TAJWEED_SANITIZE = {
   ADD_ATTR: ["class"],
 };
 
-export function VerseCard({
+function VerseCardInner({
   v,
   prefs,
   isBookmarked,
