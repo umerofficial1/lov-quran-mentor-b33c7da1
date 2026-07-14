@@ -159,7 +159,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     const prev = prevStatusesRef.current;
     let newestWrong = -1;
     for (let i = 0; i < next.length; i++) {
-      if (next[i] === "wrong" && prev[i] !== "wrong") newestWrong = i;
+      if ((next[i] === "wrong" || next[i] === "skipped") && prev[i] !== next[i]) newestWrong = i;
     }
     if (newestWrong >= 0 && flat[newestWrong]) {
       setLiveMistake({
@@ -167,7 +167,6 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         verseNumber: flat[newestWrong].verseNumber,
         at: Date.now(),
       });
-      // Gentle haptic buzz on mobile
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         try { navigator.vibrate?.([40, 60, 40]); } catch { /* ignore */ }
       }
