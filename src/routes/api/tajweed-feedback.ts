@@ -12,6 +12,8 @@ const FeedbackSchema = z.object({
   summary_urdu: z.string(),
   tajweed_tips: z.array(z.string()),
   pronunciation_tips: z.array(z.string()),
+  tajweed_mistakes: z.array(z.string()).optional().default([]),
+  makharij_mistakes: z.array(z.string()).optional().default([]),
 });
 
 const InputSchema = z.object({
