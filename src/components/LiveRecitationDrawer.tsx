@@ -679,35 +679,38 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
         )}
 
         {/* Controls */}
-        <div className="border-t border-white/10 p-4 bg-madinah-surface/60 backdrop-blur-xl">
+        <div
+          className="border-t border-white/10 p-3 md:p-4 bg-madinah-surface/60 backdrop-blur-xl"
+          style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        >
           {error && <p className="text-xs text-red-400 mb-2 text-center">{error}</p>}
           <div className="flex items-center justify-center gap-3">
             {!recording ? (
               <button
                 onClick={startRecording}
                 disabled={starting || finished}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold shadow-[0_0_40px_rgba(31,182,176,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50"
+                className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(31,182,176,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50 min-h-14 touch-manipulation"
               >
-                {starting ? <Loader2 className="size-6 animate-spin" /> : <Mic className="size-6" />}
+                {starting ? <Loader2 className="size-5 md:size-6 animate-spin" /> : <Mic className="size-5 md:size-6" />}
                 <span>{starting ? "Starting…" : "Start Reciting"}</span>
               </button>
             ) : (
               <button
                 onClick={finishAndAnalyze}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white font-bold shadow-[0_0_40px_rgba(239,68,68,0.4)] hover:scale-[1.03] active:scale-95 transition"
+                className="inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(239,68,68,0.4)] hover:scale-[1.03] active:scale-95 transition min-h-14 touch-manipulation"
               >
-                <Square className="size-6 fill-white" />
+                <Square className="size-5 md:size-6 fill-white" />
                 <span>Stop & Analyze</span>
               </button>
             )}
           </div>
           {recording && (
-            <p className="text-center text-xs text-teal mt-2 animate-pulse">
+            <p className="text-center text-[11px] md:text-xs text-teal mt-2 animate-pulse">
               ● {voiceDetected ? "Awaaz mil gayi — lafz pehchan raha hoon…" : "Sun raha hoon — mic ke qareeb parhein…"}
             </p>
           )}
           {transcript && (
-            <p dir="rtl" className="mt-3 text-xs text-slate-400 font-arabic max-h-16 overflow-y-auto text-right">
+            <p dir="rtl" className="mt-2 md:mt-3 text-[11px] md:text-xs text-slate-400 font-arabic max-h-14 md:max-h-16 overflow-y-auto text-right">
               {transcript}
             </p>
           )}
