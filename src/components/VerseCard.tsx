@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 import { toCleanText } from "@/lib/clean-html";
 import { Bookmark, BookmarkCheck, Play, Pause } from "lucide-react";
 import type { QuranPrefs } from "@/hooks/use-quran-prefs";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { useAudioPlayer, useCurrentVerseKey } from "@/hooks/use-audio-player";
 import { TafsirButton } from "@/components/TafsirPanel";
 import { WordByWord } from "@/components/WordByWord";
 
@@ -28,7 +28,7 @@ const TAJWEED_SANITIZE = {
   ADD_ATTR: ["class"],
 };
 
-export function VerseCard({
+function VerseCardInner({
   v,
   prefs,
   isBookmarked,
@@ -46,8 +46,9 @@ export function VerseCard({
   onPlayFrom?: (verseKey: string) => void;
 }) {
   const audio = useAudioPlayer();
-  const isCurrent = audio.currentKey === v.verse_key;
-  const isCurrentPlaying = isCurrent && audio.playing;
+  const { currentKey, playing } = useCurrentVerseKey();
+  const isCurrent = currentKey === v.verse_key;
+  const isCurrentPlaying = isCurrent && playing;
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export function VerseCard({
     <article
       ref={ref}
       id={`v-${v.verse_key.replace(":", "-")}`}
-      className={`verse-card rounded-2xl bg-white/5 backdrop-blur-xl border p-6 transition-all scroll-mt-24 ${
+      className={`verse-card cv-auto rounded-2xl bg-white/5 backdrop-blur-xl border p-6 transition-all scroll-mt-24 ${
         isCurrent ? "border-amber-400/70 shadow-[0_0_0_2px_rgba(201,162,76,0.25)] bg-amber-400/[0.04] is-focused" : "border-white/10 hover:border-amber-400/20"
       }`}
     >
@@ -169,3 +170,17 @@ export function VerseCard({
     </article>
   );
 }
+
+// Memoize so unrelated parent re-renders don't rerender every ayah.
+// Compares by the fields the card actually reads.
+export const VerseCard = memo(VerseCardInner, (a, b) => {
+  return (
+    a.v === b.v &&
+    a.prefs === b.prefs &&
+    a.isBookmarked === b.isBookmarked &&
+    a.showSurahInHeader === b.showSurahInHeader &&
+    a.onToggleBookmark === b.onToggleBookmark &&
+    a.onVisible === b.onVisible &&
+    a.onPlayFrom === b.onPlayFrom
+  );
+});

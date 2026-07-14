@@ -59,6 +59,12 @@ type AudioAPI = {
 };
 
 const Ctx = createContext<AudioAPI | null>(null);
+// Lightweight context for high-frequency read of "which verse is playing".
+// VerseCard subscribes only to this, avoiding re-renders on every timeupdate tick.
+const CurrentKeyCtx = createContext<{ currentKey: string | null; playing: boolean }>({
+  currentKey: null,
+  playing: false,
+});
 
 const PREFS_KEY = "vwm.audio.prefs.v2";
 type Prefs = {
@@ -549,7 +555,17 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     cacheQueue,
   };
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  const keyValue = useMemo(() => ({ currentKey, playing }), [currentKey, playing]);
+
+  return (
+    <Ctx.Provider value={value}>
+      <CurrentKeyCtx.Provider value={keyValue}>{children}</CurrentKeyCtx.Provider>
+    </Ctx.Provider>
+  );
+}
+
+export function useCurrentVerseKey() {
+  return useContext(CurrentKeyCtx);
 }
 
 export function useAudioPlayer(): AudioAPI {

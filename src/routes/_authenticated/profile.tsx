@@ -266,7 +266,7 @@ function ProfilePage() {
               <div className="size-28 rounded-full bg-gradient-to-br from-[#1FB6B0] to-[#C9A24C] p-[3px]">
                 <div className="size-full rounded-full bg-[#070C1F] overflow-hidden flex items-center justify-center">
                   {signedAvatar ? (
-                    <img src={signedAvatar} alt="" className="size-full object-cover" />
+                    <img src={signedAvatar} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
                   ) : (
                     <span className="text-4xl font-display text-white">{initial}</span>
                   )}

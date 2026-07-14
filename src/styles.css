@@ -143,6 +143,22 @@
   .font-indopak { font-family: "Noto Naskh Arabic", "Scheherazade New", "Amiri", serif; }
 
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
+
+  /* Respect user's reduced-motion preference for lower CPU + no jank */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Skip painting/layout of off-screen verse rows — huge CPU win on long surahs */
+@utility cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px;
 }
 
 /* ==== Premium utilities ==== */
