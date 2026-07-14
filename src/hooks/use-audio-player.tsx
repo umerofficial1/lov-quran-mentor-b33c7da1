@@ -555,7 +555,17 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     cacheQueue,
   };
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  const keyValue = useMemo(() => ({ currentKey, playing }), [currentKey, playing]);
+
+  return (
+    <Ctx.Provider value={value}>
+      <CurrentKeyCtx.Provider value={keyValue}>{children}</CurrentKeyCtx.Provider>
+    </Ctx.Provider>
+  );
+}
+
+export function useCurrentVerseKey() {
+  return useContext(CurrentKeyCtx);
 }
 
 export function useAudioPlayer(): AudioAPI {
