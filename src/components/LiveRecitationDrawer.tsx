@@ -390,10 +390,12 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   // Stats live
   const liveCorrect = statuses.filter((s) => s === "match").length;
   const liveWrong = statuses.filter((s) => s === "wrong").length;
+  const liveSkipped = statuses.filter((s) => s === "skipped").length;
   const liveAttempted = liveCorrect + liveWrong;
   const liveAcc = liveAttempted > 0 ? Math.round((liveCorrect / liveAttempted) * 100) : 0;
-  const wordsDone = liveCorrect + liveWrong;
+  const wordsDone = liveCorrect + liveWrong + liveSkipped;
   const wordsRemaining = Math.max(0, flat.length - wordsDone);
+  const completionPct = flat.length > 0 ? Math.round((wordsDone / flat.length) * 100) : 0;
   const elapsedSec = Math.max(1, Math.round(elapsedMs / 1000));
   const wpm = wordsDone > 0 ? Math.round((wordsDone / elapsedSec) * 60) : 0;
   const etaSec = wpm > 0 ? Math.round((wordsRemaining / wpm) * 60) : 0;
