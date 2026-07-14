@@ -10,6 +10,7 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
       POST: async ({ request }) => {
         const form = await request.formData();
         const audio = form.get("audio");
+        const quranContext = String(form.get("quranContext") ?? "").trim().slice(0, 4000);
         if (!(audio instanceof Blob)) {
           return new Response("bad request", { status: 400 });
         }
@@ -42,17 +43,28 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
         fd.append("model", "openai/gpt-4o-transcribe");
         fd.append("file", audio, `chunk.${ext}`);
         fd.append("language", "ar");
+        if (quranContext) {
+          fd.append(
+            "prompt",
+            `تلاوة من القرآن الكريم. اكتب الكلمات العربية المنطوقة فقط كما في هذا السياق القرآني، ولا تضف علامات ترقيم عند الصمت: ${quranContext}`,
+          );
+        }
 
         const r = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
           method: "POST",
-          headers: { Authorization: `Bearer ${key}` },
+          headers: {
+            "Lovable-API-Key": key,
+            "X-Lovable-AIG-SDK": "direct-audio",
+          },
           body: fd,
         });
 
         if (!r.ok) {
-          // Don't 500 the client — return empty text so the live loop survives
-          // transient upstream hiccups.
-          return Response.json({ text: "" });
+          const detail = await r.text().catch(() => "");
+          return Response.json(
+            { error: detail || "Transcription is temporarily unavailable" },
+            { status: r.status },
+          );
         }
         const j = await r.json();
         return Response.json({ text: String(j.text ?? "") });
