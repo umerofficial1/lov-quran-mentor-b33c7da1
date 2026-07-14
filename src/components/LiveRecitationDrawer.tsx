@@ -616,13 +616,13 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
         {/* Report */}
         {finished && (
-          <div className="border-t border-white/10 p-5 bg-white/[0.02] max-h-[45vh] overflow-y-auto">
-            <div className="flex items-center gap-3 mb-4">
-              <Trophy className={`size-6 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
-              <h3 className="text-lg text-pearl font-bold">Final Score</h3>
-              <span className={`ml-auto text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
+          <div className="border-t border-white/10 p-4 md:p-5 bg-white/[0.02] max-h-[40vh] md:max-h-[45vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
+              <Trophy className={`size-5 md:size-6 shrink-0 ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`} />
+              <h3 className="text-base md:text-lg text-pearl font-bold">Final Score</h3>
+              <span className={`ml-auto text-2xl md:text-3xl font-bold ${finalAcc >= 80 ? "text-teal" : finalAcc >= 50 ? "text-gold" : "text-red-400"}`}>{finalAcc}%</span>
             </div>
-            <div className="grid grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               <StatCard label="Correct" value={finalCorrect} color="bg-emerald-500/10 text-emerald-300 border-emerald-500/30" />
               <StatCard label="Mistakes" value={finalWrong} color="bg-red-500/10 text-red-300 border-red-500/30" />
               <StatCard label="Skipped" value={finalSkipped} color="bg-orange-500/10 text-orange-300 border-orange-500/30" />
