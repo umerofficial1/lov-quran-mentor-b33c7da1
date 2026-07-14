@@ -7,14 +7,17 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AudioPlayerProvider } from "@/hooks/use-audio-player";
 import { AudioPlayerBar } from "@/components/AudioPlayerBar";
 import { AnnouncementsBanner } from "@/components/AnnouncementsBanner";
-import { FeedbackWidget } from "@/components/FeedbackWidget";
+// FeedbackWidget is non-critical; defer its bundle until after hydration.
+const FeedbackWidget = lazy(() =>
+  import("@/components/FeedbackWidget").then((m) => ({ default: m.FeedbackWidget })),
+);
 
 function NotFoundComponent() {
   return (
