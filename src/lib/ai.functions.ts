@@ -230,15 +230,24 @@ export const listeningTest = createServerFn({ method: "POST" })
     const r = await generateText({
       model: gateway(MODEL),
       system:
-        "You are testing whether the student correctly identified an ayah after listening. Compare their written answer to the correct ayah. Score 0-100. Return a JSON object with fields: score (0-100), verdict (correct|close|incorrect), notes (short string).",
-      output: Output.object({
-        schema: z.object({
-          score: z.number(),
-          verdict: z.enum(["correct", "close", "incorrect"]),
-          notes: z.string(),
-        }),
-      }),
+        'You are testing whether the student correctly identified an ayah after listening. Compare their written answer to the correct ayah. Reply ONLY with a JSON object (no markdown, no prose). Schema: {"score":0-100,"verdict":"correct"|"close"|"incorrect","notes":string}.',
       prompt: `Correct ayah ${data.verseKey}: ${arabic}\nStudent wrote: ${data.answer}`,
     });
-    return { verseKey: data.verseKey, correct: arabic, ...r.output };
+    const clean = r.text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    const first = clean.indexOf("{"); const last = clean.lastIndexOf("}");
+    const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
+    let out: { score: number; verdict: "correct" | "close" | "incorrect"; notes: string } = {
+      score: 0, verdict: "incorrect", notes: "",
+    };
+    try {
+      const parsed = JSON.parse(jsonStr) as Partial<typeof out>;
+      out = {
+        score: Math.max(0, Math.min(100, Number(parsed.score) || 0)),
+        verdict: (["correct", "close", "incorrect"] as const).includes(parsed.verdict as "correct" | "close" | "incorrect")
+          ? (parsed.verdict as "correct" | "close" | "incorrect")
+          : "incorrect",
+        notes: String(parsed.notes ?? ""),
+      };
+    } catch { /* keep defaults */ }
+    return { verseKey: data.verseKey, correct: arabic, ...out };
   });
