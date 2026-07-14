@@ -220,27 +220,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       );
       recorderRef.current = recorder;
 
-      // SECONDARY (opportunistic): Web Speech runs in parallel when supported for
-      // *interim* words — instant visual feel even before the server chunk lands.
-      // If Arabic isn't supported, it just fails silently and the server path carries on.
-      if (isSpeechRecognitionSupported()) {
-        try {
-          const handle = startLiveSpeech({
-            onTranscript: (text, isFinal) => {
-              // Only use interim results — final text comes from server for accuracy.
-              if (!isFinal && text) {
-                setTranscript((prev) => {
-                  // Show interim after committed server text
-                  const committed = prev.split("  ⟶  ")[0] ?? prev;
-                  return `${committed}  ⟶  ${text}`;
-                });
-              }
-            },
-            onError: () => { /* silent — server path is primary */ },
-          }, "ar-SA");
-          speechRef.current = handle;
-        } catch { /* ignore */ }
-      }
+      // (Web Speech disabled — Arabic recognition is unreliable across browsers
+      // and its interim text corrupted the word-by-word diff. Server chunks only.)
 
       setRecording(true);
       setStartedAt(Date.now());
