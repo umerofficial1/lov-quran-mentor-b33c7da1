@@ -16,6 +16,7 @@ import { ayahAudioUrl, RECITERS } from "@/lib/reciters";
 import { releaseMicrophoneStream, requestMicrophoneStream } from "@/lib/microphone";
 import { diffAyah } from "@/lib/ayah-diff";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
+import { mergeArabicTranscript } from "@/lib/ayah-diff";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 export const Route = createFileRoute("/learn")({
@@ -475,7 +476,8 @@ function MistakeTool() {
     if (blob.size < 1024) return;
     const fd = new FormData();
     fd.append("audio", blob, "chunk.wav");
-    if (expected) fd.append("quranContext", expected);
+    const priorWords = transcriptRef.current.trim().split(/\s+/).slice(-12).join(" ");
+    if (priorWords) fd.append("quranContext", priorWords);
     try {
       const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
       const result = await r.json() as { text?: string; error?: string };
@@ -485,9 +487,7 @@ function MistakeTool() {
       }
       const clean = (result.text ?? "").trim().replace(/^[\s.,،۔…!?؟]+$|^[\s]+$/g, "");
       if (!clean) return;
-      // Recorder sends the complete recitation so far; replace instead of
-      // appending the same words on every update.
-      transcriptRef.current = clean;
+      transcriptRef.current = mergeArabicTranscript(transcriptRef.current, clean);
       setLiveTranscript(transcriptRef.current);
       setError(null);
     } catch {

@@ -130,10 +130,10 @@ export async function startLiveWavRecorder(
   const mutedOutput = context.createGain();
   mutedOutput.gain.value = 0;
 
-  // Cumulative PCM store — keeps the ENTIRE recording so each upload contains
-  // full context. gpt-4o-transcribe returns noise on isolated <1s Arabic clips
-  // but is accurate over the full utterance. Cap at ~4 min to bound memory.
-  const MAX_SECONDS = 240;
+  // Rolling PCM store. Every upload is a complete, independently decodable WAV;
+  // only a small tail overlaps clips so words crossing a boundary are retained.
+  const MAX_PENDING_SECONDS = 15;
+  const OVERLAP_SECONDS = 0.45;
   const pcm: Float32Array[] = [];
   let totalSamples = 0;
   let stopped = false;
@@ -146,8 +146,8 @@ export async function startLiveWavRecorder(
     pcm.push(chunk);
     totalSamples += chunk.length;
     dirty = true;
-    // Drop oldest audio if we exceed the cap.
-    const capSamples = MAX_SECONDS * context.sampleRate;
+    // Bound memory if the network is temporarily slower than recording.
+    const capSamples = MAX_PENDING_SECONDS * context.sampleRate;
     while (totalSamples > capSamples && pcm.length > 1) {
       totalSamples -= pcm[0].length;
       pcm.shift();
@@ -160,13 +160,21 @@ export async function startLiveWavRecorder(
   const flush = async () => {
     if (inFlight || !dirty) return;
     dirty = false;
-    // Merge all captured PCM into one Float32Array.
+    // Snapshot pending audio and retain only a short boundary overlap.
     const merged = new Float32Array(totalSamples);
     let writeAt = 0;
     for (const c of pcm) {
       merged.set(c, writeAt);
       writeAt += c.length;
     }
+    const overlapSamples = Math.min(
+      merged.length,
+      Math.round(context.sampleRate * OVERLAP_SECONDS),
+    );
+    const overlap = new Float32Array(merged.subarray(merged.length - overlapSamples));
+    pcm.length = 0;
+    if (overlap.length) pcm.push(overlap);
+    totalSamples = overlap.length;
     const chunk = encodeMonoWav(merged, context.sampleRate);
     if (!chunk || chunk.blob.size < 4096) return;
     inFlight = true;

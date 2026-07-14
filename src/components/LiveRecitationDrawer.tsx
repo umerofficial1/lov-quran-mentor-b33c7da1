@@ -4,7 +4,7 @@ import type { QuranVerse } from "@/components/VerseCard";
 import { requestMicrophoneStream, releaseMicrophoneStream } from "@/lib/microphone";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
 import type { LiveSpeechHandle } from "@/lib/live-speech";
-import { arabicWordsMatch, normalizeArabic, tokenize } from "@/lib/ayah-diff";
+import { arabicWordsMatch, mergeArabicTranscript, normalizeArabic, tokenize } from "@/lib/ayah-diff";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -224,9 +224,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             fd.append("audio", blob, "chunk.wav");
             fd.append(
               "quranContext",
-              flat
-                .slice(Math.max(0, currentIdxRef.current - 12), currentIdxRef.current + 70)
-                .map((word) => word.display)
+              tokenize(transcriptRef.current)
+                .slice(-12)
                 .join(" "),
             );
             const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
@@ -240,8 +239,9 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             // transcript rather than appending. This keeps the word-by-word
             // diff stable as later chunks refine earlier recognition.
             if (text) {
-              transcriptRef.current = text;
-              setTranscript(text);
+              const merged = mergeArabicTranscript(transcriptRef.current, text);
+              transcriptRef.current = merged;
+              setTranscript(merged);
               setError(null);
             }
           } catch {

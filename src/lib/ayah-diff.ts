@@ -53,6 +53,32 @@ export function tokenize(input: string): string[] {
   return norm ? norm.split(" ").filter(Boolean) : [];
 }
 
+export function mergeArabicTranscript(previous: string, incoming: string): string {
+  const left = previous.trim().split(/\s+/).filter(Boolean);
+  const right = incoming.trim().split(/\s+/).filter(Boolean);
+  if (!left.length) return right.join(" ");
+  if (!right.length) return left.join(" ");
+
+  // Rolling audio clips overlap slightly. Remove the repeated boundary words
+  // while using tolerant Quranic/STT spelling comparison.
+  const maxOverlap = Math.min(10, left.length, right.length);
+  let overlap = 0;
+  for (let size = maxOverlap; size > 0; size--) {
+    let matches = true;
+    for (let i = 0; i < size; i++) {
+      if (!arabicWordsMatch(normalizeArabic(left[left.length - size + i]), normalizeArabic(right[i]))) {
+        matches = false;
+        break;
+      }
+    }
+    if (matches) {
+      overlap = size;
+      break;
+    }
+  }
+  return [...left, ...right.slice(overlap)].join(" ");
+}
+
 export type LiveStatus = "pending" | "match" | "wrong" | "missing";
 
 export interface LiveWord {
