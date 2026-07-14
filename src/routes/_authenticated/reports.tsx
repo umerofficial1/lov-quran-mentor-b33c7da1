@@ -584,3 +584,51 @@ function GoalCard({
     </div>
   );
 }
+
+function StartLiveRecitationCard({ lastSurahId }: { lastSurahId: number }) {
+  const [selected, setSelected] = useState<number>(lastSurahId || 1);
+  useEffect(() => { if (lastSurahId) setSelected(lastSurahId); }, [lastSurahId]);
+  const s = SURAHS.find((x) => x.n === selected) ?? SURAHS[0];
+  return (
+    <section className="mb-8 rounded-3xl border border-[#1FB6B0]/40 bg-gradient-to-br from-[#1FB6B0]/[0.14] via-[#0F1E3D]/60 to-[#C9A24C]/[0.08] p-5 md:p-6">
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[#1FB6B0] font-bold flex items-center gap-2">
+            <Mic2 className="size-3.5" /> Live Recitation
+          </p>
+          <h2 className="text-xl md:text-2xl font-display text-white mt-1">Start reciting with real-time AI feedback</h2>
+          <p className="text-sm text-white/70 mt-1.5 leading-relaxed max-w-xl">
+            Your microphone streams to our speech engine ayah by ayah. Get instant word-level accuracy, pronunciation
+            score and tajweed advice — all saved to your journey.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row md:flex-col gap-2 md:min-w-[240px]">
+          <label className="relative">
+            <span className="sr-only">Choose a Surah</span>
+            <select
+              value={selected}
+              onChange={(e) => setSelected(Number(e.target.value))}
+              className="w-full appearance-none rounded-xl border border-white/15 bg-[#070C1F] px-3 py-2.5 pr-8 text-sm text-white focus:border-[#1FB6B0] focus:outline-none"
+              aria-label="Choose a Surah to recite"
+            >
+              {SURAHS.map((sr) => (
+                <option key={sr.n} value={sr.n}>
+                  {sr.n}. {sr.nameAr}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Link
+            to="/quran/$surahId"
+            params={{ surahId: String(s.n) }}
+            search={{ live: 1 }}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1FB6B0] hover:bg-[#1FB6B0]/90 text-[#070C1F] font-bold text-sm px-4 py-2.5 transition-colors"
+          >
+            <Mic2 className="size-4" />
+            Start Live Recite
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
