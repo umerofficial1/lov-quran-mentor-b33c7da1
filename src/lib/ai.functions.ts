@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { generateText, Output } from "ai";
+import { generateText } from "ai";
 
 const MODEL = "google/gemini-2.5-flash";
 
@@ -97,20 +97,43 @@ export const generateQuiz = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const gateway = getGateway();
-    const { output } = await generateText({
+    const { text } = await generateText({
       model: gateway(MODEL),
-      output: Output.object({ schema: QuizSchema }),
       system:
-        "You are an Islamic studies teacher. Create multiple-choice quiz questions grounded in mainstream Sunni scholarship. Cite Surah:Ayah when relevant. Each question has exactly 4 choices. answerIndex is 0-based.",
+        'You are an Islamic studies teacher. Create multiple-choice quiz questions grounded in mainstream Sunni scholarship. Cite Surah:Ayah when relevant. Reply ONLY with a single JSON object (no markdown fences, no prose). Schema: {"questions":[{"question":string,"choices":string[4],"answerIndex":number 0-3,"explanation":string}]}. Exactly 4 choices per question.',
       prompt: `Topic: ${data.topic}. Difficulty: ${data.difficulty}. Count: ${data.count}. Return JSON only.`,
     });
-    // Normalize
+
+    // Lenient extract + parse — avoids AI_NoObjectGeneratedError from strict schema mode.
+    const clean = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    const first = clean.indexOf("{");
+    const last = clean.lastIndexOf("}");
+    const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch {
+      throw new Error("AI did not return valid JSON");
+    }
+    const check = QuizSchema.safeParse(parsed);
+    const questions = check.success
+      ? check.data.questions
+      : Array.isArray((parsed as { questions?: unknown }).questions)
+        ? ((parsed as { questions: unknown[] }).questions.filter(
+            (q): q is { question: string; choices: string[]; answerIndex: number; explanation: string } =>
+              !!q && typeof q === "object" &&
+              typeof (q as { question?: unknown }).question === "string" &&
+              Array.isArray((q as { choices?: unknown }).choices),
+          ))
+        : [];
+
     return {
       topic: data.topic,
-      questions: output.questions.slice(0, data.count).map((q) => ({
-        ...q,
-        choices: q.choices.slice(0, 4),
-        answerIndex: Math.max(0, Math.min(3, q.answerIndex)),
+      questions: questions.slice(0, data.count).map((q) => ({
+        question: q.question,
+        choices: (q.choices ?? []).slice(0, 4).map(String),
+        answerIndex: Math.max(0, Math.min(3, Number(q.answerIndex) || 0)),
+        explanation: String(q.explanation ?? ""),
       })),
     };
   });
@@ -207,15 +230,24 @@ export const listeningTest = createServerFn({ method: "POST" })
     const r = await generateText({
       model: gateway(MODEL),
       system:
-        "You are testing whether the student correctly identified an ayah after listening. Compare their written answer to the correct ayah. Score 0-100. Return a JSON object with fields: score (0-100), verdict (correct|close|incorrect), notes (short string).",
-      output: Output.object({
-        schema: z.object({
-          score: z.number(),
-          verdict: z.enum(["correct", "close", "incorrect"]),
-          notes: z.string(),
-        }),
-      }),
+        'You are testing whether the student correctly identified an ayah after listening. Compare their written answer to the correct ayah. Reply ONLY with a JSON object (no markdown, no prose). Schema: {"score":0-100,"verdict":"correct"|"close"|"incorrect","notes":string}.',
       prompt: `Correct ayah ${data.verseKey}: ${arabic}\nStudent wrote: ${data.answer}`,
     });
-    return { verseKey: data.verseKey, correct: arabic, ...r.output };
+    const clean = r.text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    const first = clean.indexOf("{"); const last = clean.lastIndexOf("}");
+    const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
+    let out: { score: number; verdict: "correct" | "close" | "incorrect"; notes: string } = {
+      score: 0, verdict: "incorrect", notes: "",
+    };
+    try {
+      const parsed = JSON.parse(jsonStr) as Partial<typeof out>;
+      out = {
+        score: Math.max(0, Math.min(100, Number(parsed.score) || 0)),
+        verdict: (["correct", "close", "incorrect"] as const).includes(parsed.verdict as "correct" | "close" | "incorrect")
+          ? (parsed.verdict as "correct" | "close" | "incorrect")
+          : "incorrect",
+        notes: String(parsed.notes ?? ""),
+      };
+    } catch { /* keep defaults */ }
+    return { verseKey: data.verseKey, correct: arabic, ...out };
   });
