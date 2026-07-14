@@ -170,3 +170,17 @@ function VerseCardInner({
     </article>
   );
 }
+
+// Memoize so unrelated parent re-renders don't rerender every ayah.
+// Compares by the fields the card actually reads.
+export const VerseCard = memo(VerseCardInner, (a, b) => {
+  return (
+    a.v === b.v &&
+    a.prefs === b.prefs &&
+    a.isBookmarked === b.isBookmarked &&
+    a.showSurahInHeader === b.showSurahInHeader &&
+    a.onToggleBookmark === b.onToggleBookmark &&
+    a.onVisible === b.onVisible &&
+    a.onPlayFrom === b.onPlayFrom
+  );
+});
