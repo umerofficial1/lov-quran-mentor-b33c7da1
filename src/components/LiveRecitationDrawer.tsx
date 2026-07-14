@@ -70,6 +70,8 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
   const [voiceDetected, setVoiceDetected] = useState(false);
 
   const prevStatusesRef = useRef<WordStatus[]>([]);
+  const transcriptRef = useRef("");
+  const currentIdxRef = useRef(0);
   const recorderRef = useRef<LiveWavRecorder | null>(null);
   const speechRef = useRef<LiveSpeechHandle | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -83,6 +85,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       prevStatusesRef.current = new Array(flat.length).fill("pending");
       setCurrentIdx(0);
       setTranscript("");
+      transcriptRef.current = "";
       setFeedback(null);
       setFinished(false);
       setError(null);
@@ -90,6 +93,10 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
       setVoiceDetected(false);
     }
   }, [open, flat.length]);
+
+  useEffect(() => {
+    currentIdxRef.current = currentIdx;
+  }, [currentIdx]);
 
   // Cleanup on close.
   useEffect(() => {
@@ -217,7 +224,10 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             fd.append("audio", blob, "chunk.wav");
             fd.append(
               "quranContext",
-              verses.map((verse) => verse.text_uthmani ?? "").join(" "),
+              flat
+                .slice(Math.max(0, currentIdxRef.current - 12), currentIdxRef.current + 70)
+                .map((word) => word.display)
+                .join(" "),
             );
             const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
             const j = (await res.json()) as { text?: string; error?: string };
@@ -230,6 +240,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
             // transcript rather than appending. This keeps the word-by-word
             // diff stable as later chunks refine earlier recognition.
             if (text) {
+              transcriptRef.current = text;
               setTranscript(text);
               setError(null);
             }
@@ -283,6 +294,15 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
 
   async function finishAndAnalyze() {
     await stopRecording();
+    const finalTranscript = transcriptRef.current.trim();
+    if (!finalTranscript) {
+      setError(
+        voiceDetected
+          ? "Awaaz mili thi lekin alfaaz clear samajh nahi aaye. Mic ke qareeb ahista parh kar dobara try karein."
+          : "Mic ko awaaz nahi mili. Device ka microphone check karke dobara parhein.",
+      );
+      return;
+    }
     setFinished(true);
     // Mark remaining pending as missing.
     setStatuses((prev) =>
@@ -318,7 +338,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
           correct,
           wrong,
           missed,
-          transcript: transcript.slice(0, 6000),
+          transcript: finalTranscript.slice(0, 6000),
           mistakes,
         }),
       });
@@ -403,6 +423,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setStatuses(new Array(flat.length).fill("pending"));
     setCurrentIdx(0);
     setTranscript("");
+    transcriptRef.current = "";
     setFinished(false);
     setFeedback(null);
   }
