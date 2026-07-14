@@ -147,6 +147,12 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
             pronunciation_tips: Array.isArray(anyObj.pronunciation_tips)
               ? (anyObj.pronunciation_tips.filter((x) => typeof x === "string") as string[])
               : heuristicFallback(data.accuracy, data.mistakes.length).pronunciation_tips,
+            tajweed_mistakes: Array.isArray(anyObj.tajweed_mistakes)
+              ? (anyObj.tajweed_mistakes.filter((x) => typeof x === "string") as string[])
+              : [],
+            makharij_mistakes: Array.isArray(anyObj.makharij_mistakes)
+              ? (anyObj.makharij_mistakes.filter((x) => typeof x === "string") as string[])
+              : [],
           };
           return Response.json(coerced);
         } catch (err) {
