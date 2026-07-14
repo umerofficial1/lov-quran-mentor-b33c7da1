@@ -109,11 +109,18 @@ export const generateQuiz = createServerFn({ method: "POST" })
     const first = clean.indexOf("{");
     const last = clean.lastIndexOf("}");
     const jsonStr = first >= 0 && last > first ? clean.slice(first, last + 1) : clean;
-    let parsed: unknown;
+    let parsed: unknown = {};
     try {
       parsed = JSON.parse(jsonStr);
     } catch {
-      throw new Error("AI did not return valid JSON");
+      // try to salvage by trimming to last complete question object
+      try {
+        const trimmed = jsonStr.replace(/,\s*\{[^{}]*$/, "").replace(/,\s*$/, "");
+        const closed = trimmed.endsWith("]}") ? trimmed : trimmed.replace(/\]?\s*\}?\s*$/, "") + "]}";
+        parsed = JSON.parse(closed);
+      } catch {
+        parsed = { questions: [] };
+      }
     }
     const check = QuizSchema.safeParse(parsed);
     const questions = check.success
