@@ -17,13 +17,15 @@ interface FlatWord {
   normalized: string; // for matching
 }
 
-type WordStatus = "pending" | "current" | "match" | "wrong" | "missing";
+type WordStatus = "pending" | "current" | "match" | "wrong" | "skipped" | "missing";
 
 interface Feedback {
   overall: "excellent" | "good" | "needs_work";
   summary_urdu: string;
   tajweed_tips: string[];
   pronunciation_tips: string[];
+  tajweed_mistakes?: string[];
+  makharij_mistakes?: string[];
 }
 
 interface Props {
