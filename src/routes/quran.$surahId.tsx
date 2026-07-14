@@ -17,6 +17,9 @@ import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { LiveRecitationDrawer } from "@/components/LiveRecitationDrawer";
 
 export const Route = createFileRoute("/quran/$surahId")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    live: search.live === "1" || search.live === 1 ? 1 : undefined,
+  }),
   head: ({ params }) => {
     const s = SURAHS.find((x) => x.n === Number(params.surahId));
     const label = s ? `Surah ${s.n} — ${s.nameAr}` : `Surah ${params.surahId}`;
