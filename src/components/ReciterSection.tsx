@@ -96,15 +96,6 @@ const misriQurra: Reciter[] = [
     gradient: "from-stone-800 to-amber-900",
   },
   {
-    id: "shahat",
-    name: "Al-Shahat Muhammad Anwar",
-    nameUr: "الشحات محمد أنور",
-    origin: "Egypt • مجوّد",
-    hadrServer: "https://server11.mp3quran.net/shhat/",
-    mashqServer: "https://server11.mp3quran.net/shhat_mjwd/",
-    gradient: "from-stone-800 to-amber-900",
-  },
-  {
     id: "abdulbary",
     name: "Abdel Bary Mohammad",
     nameUr: "عبد الباری محمد",
