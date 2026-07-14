@@ -199,27 +199,28 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setError(null);
     setStarting(true);
     try {
-      // Ask for mic first so we own permission + can show waveform later if needed.
-      const stream = await requestMicrophoneStream();
-      streamRef.current = stream;
-
       // PRIMARY: Web Speech API — instant streaming transcript, no chunk latency.
+      // It owns the mic itself — don't grab a separate MediaStream (causes conflicts on Chrome).
       if (isSpeechRecognitionSupported()) {
         const handle = startLiveSpeech({
           onTranscript: (text) => {
-            // Replace transcript wholesale — Web Speech gives cumulative text.
             setTranscript(text);
           },
           onError: (err) => {
-            // 'no-speech' / 'aborted' are common and transient — ignore.
             if (err === "not-allowed" || err === "service-not-allowed") {
               setError("Mic ki ijazat nahi mili. Browser settings mein microphone allow karein.");
+            } else if (err === "network") {
+              setError("Speech recognition network error. Internet check karein.");
+            } else if (err === "language-not-supported") {
+              setError("Yeh browser Arabic recognition support nahi karta. Chrome desktop try karein.");
             }
           },
         }, "ar-SA");
         speechRef.current = handle;
       } else {
         // FALLBACK: 1-second WAV chunks → server transcription (slower but works everywhere).
+        const stream = await requestMicrophoneStream();
+        streamRef.current = stream;
         const { recorder } = await startLiveWavRecorder(
           async () => stream,
           async (blob) => {
