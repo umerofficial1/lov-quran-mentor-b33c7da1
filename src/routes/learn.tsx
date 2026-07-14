@@ -465,19 +465,19 @@ function MistakeTool() {
   }, [verseKey]);
 
   const sendChunk = async (blob: Blob) => {
-    if (blob.size < 2048) return;
+    if (blob.size < 1024) return;
     const fd = new FormData();
     fd.append("audio", blob, "chunk.wav");
     try {
       const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
-      if (!r.ok) throw new Error(await r.text().catch(() => "Live transcription failed"));
+      if (!r.ok) return; // ignore transient chunk failures, keep listening
       const { text } = await r.json() as { text?: string };
       const clean = (text ?? "").trim();
       if (!clean) return;
       transcriptRef.current = (transcriptRef.current + " " + clean).trim();
       setLiveTranscript(transcriptRef.current);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Live transcription ruk gayi. Dobara try karein.");
+    } catch {
+      // network hiccup on one chunk — keep going, don't kill the session
     }
   };
 
