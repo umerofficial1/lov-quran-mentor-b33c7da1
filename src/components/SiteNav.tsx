@@ -18,7 +18,13 @@ export function SiteNav() {
   };
 
   return (
-    <nav className="sticky top-2 md:top-4 z-50 mx-2 md:mx-8 mt-2 md:mt-4 glass-panel !rounded-2xl md:!rounded-full transition-colors duration-500">
+    <nav
+      className="sticky top-2 md:top-4 z-50 mx-2 md:mx-8 mt-2 md:mt-4 rounded-2xl md:rounded-full border border-white/10 dark:border-white/10 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.45)] transition-colors duration-500"
+      style={{
+        background: "linear-gradient(135deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 20%, transparent) 100%)",
+        backdropFilter: "blur(28px) saturate(160%)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-3 md:px-6 py-2 md:py-0 md:h-14 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-2 gap-y-1 md:gap-4">
         <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label="Ayatica — Read, Reflect, Live">
           <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0B1730] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
