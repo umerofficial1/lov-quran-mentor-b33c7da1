@@ -19,10 +19,9 @@ export function SiteNav() {
 
   return (
     <nav
-      className="sticky top-2 md:top-4 z-50 mx-2 md:mx-8 mt-2 md:mt-4 rounded-2xl md:rounded-full border border-white/10 dark:border-white/10 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.45)] transition-colors duration-500"
+      className="sticky top-2 md:top-4 z-50 mx-2 md:mx-8 mt-2 md:mt-4 rounded-2xl md:rounded-full border border-white/10 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.45)] backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-500"
       style={{
-        background: "linear-gradient(135deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 20%, transparent) 100%)",
-        backdropFilter: "blur(28px) saturate(160%)",
+        background: "linear-gradient(135deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 15%, transparent) 100%)",
       }}
     >
       <div className="max-w-7xl mx-auto px-3 md:px-6 py-2 md:py-0 md:h-14 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-2 gap-y-1 md:gap-4">
