@@ -186,17 +186,17 @@ function ScrollableNav({ user }: { user: boolean }) {
         ref={scrollRef}
         className={`flex w-full flex-wrap justify-center md:flex-nowrap items-center gap-1 text-sm md:overflow-x-auto scroll-smooth md:snap-x md:snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-0 md:px-8 md:justify-center ${fadeMask}`}
       >
-        <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
-        <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
-        <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
-        <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
-        {user && <NavLink to="/reports" icon={<Mic className="size-4" />} label="Recite" />}
-        <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
-        <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
-        <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
-        {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
-        {user && <NavLink to="/profile" icon={<UserIcon className="size-4" />} label="Profile" />}
-        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-4" />} label="Admin" />}
+        <NavLink to="/" icon={<Home className="size-5 md:size-4" />} label="Home" />
+        <NavLink to="/quran" icon={<BookOpen className="size-5 md:size-4" />} label="Quran" />
+        <NavLink to="/search" icon={<Search className="size-5 md:size-4" />} label="Search" />
+        <NavLink to="/chat" icon={<MessageSquare className="size-5 md:size-4" />} label="AI Mentor" />
+        {user && <NavLink to="/reports" icon={<Mic className="size-5 md:size-4" />} label="Recite" />}
+        <NavLink to="/learn" icon={<Sparkles className="size-5 md:size-4" />} label="Learn" />
+        <NavLink to="/reciters" icon={<Mic2 className="size-5 md:size-4" />} label="Qurra" />
+        <NavLink to="/tools" icon={<Compass className="size-5 md:size-4" />} label="Tools" />
+        {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-5 md:size-4" />} label="Dashboard" />}
+        {user && <NavLink to="/profile" icon={<UserIcon className="size-5 md:size-4" />} label="Profile" />}
+        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-5 md:size-4" />} label="Admin" />}
       </div>
     </div>
   );
