@@ -184,7 +184,7 @@ function ScrollableNav({ user }: { user: boolean }) {
       )}
       <div
         ref={scrollRef}
-        className={`flex w-full items-center gap-1 text-sm overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-0 md:px-8 md:justify-center ${fadeMask}`}
+        className={`flex w-full flex-wrap justify-center md:flex-nowrap items-center gap-1 text-sm md:overflow-x-auto scroll-smooth md:snap-x md:snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-0 md:px-8 md:justify-center md:${fadeMask}`}
       >
         <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
         <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
