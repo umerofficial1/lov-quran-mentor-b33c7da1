@@ -18,8 +18,8 @@ export function SiteNav() {
   };
 
   return (
-    <nav className="sticky top-4 z-50 mx-4 md:mx-8 mt-4 rounded-full glass-panel !rounded-full transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-5 md:px-6 h-14 flex items-center justify-between gap-4">
+    <nav className="sticky top-2 md:top-4 z-50 mx-2 md:mx-8 mt-2 md:mt-4 glass-panel !rounded-2xl md:!rounded-full transition-colors duration-500">
+      <div className="max-w-7xl mx-auto px-3 md:px-6 py-2 md:py-0 md:h-14 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-2 gap-y-1 md:gap-4">
         <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label="Ayatica — Read, Reflect, Live">
           <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0B1730] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
             <svg viewBox="0 0 40 40" className="w-6 h-6" aria-hidden="true">
@@ -56,7 +56,6 @@ export function SiteNav() {
             </span>
           </span>
         </Link>
-        <ScrollableNav user={!!user} />
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={toggle}
@@ -88,6 +87,7 @@ export function SiteNav() {
             </Link>
           )}
         </div>
+        <ScrollableNav user={!!user} />
       </div>
     </nav>
   );
@@ -161,13 +161,13 @@ function ScrollableNav({ user }: { user: boolean }) {
           : "";
 
   return (
-    <div className="relative flex-1 min-w-0 mx-1 md:mx-2">
+    <div className="relative order-3 md:order-none basis-full md:basis-auto flex-1 min-w-0 mx-0 md:mx-2 border-t border-white/10 md:border-0 pt-1 md:pt-0">
       {canLeft && (
         <button
           type="button"
           onClick={() => scrollBy(-1)}
           aria-label="Scroll nav left"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden md:grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
           <ChevronLeft className="size-4" />
         </button>
@@ -177,14 +177,14 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(1)}
           aria-label="Scroll nav right"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden md:grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
           <ChevronRight className="size-4" />
         </button>
       )}
       <div
         ref={scrollRef}
-        className={`flex items-center gap-1 text-sm overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-8 md:px-2 md:justify-center ${fadeMask}`}
+        className={`flex w-full items-center gap-1 text-sm overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-0 md:px-8 md:justify-center md:${fadeMask}`}
       >
         <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
         <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
