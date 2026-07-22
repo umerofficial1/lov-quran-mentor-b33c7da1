@@ -6,6 +6,7 @@ import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recor
 import type { LiveSpeechHandle } from "@/lib/live-speech";
 import { arabicWordsMatch, mergeArabicTranscript, normalizeArabic, tokenize } from "@/lib/ayah-diff";
 import { supabase } from "@/integrations/supabase/client";
+import { authFetch } from "@/lib/auth-fetch";
 import { toast } from "sonner";
 
 // Flatten verses into a global word sequence for cross-ayah live diffing.
@@ -229,7 +230,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
                 .map((word) => word.display)
                 .join(" "),
             );
-            const res = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+            const res = await authFetch("/api/transcribe-chunk", { method: "POST", body: fd });
             const j = (await res.json()) as { text?: string; error?: string };
             if (!res.ok) {
               setError(j.error || "Voice samajhne mein masla hua. Dobara parhein.");
@@ -330,7 +331,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
     setAnalyzing(true);
     let aiAdvice: string | null = null;
     try {
-      const res = await fetch("/api/tajweed-feedback", {
+      const res = await authFetch("/api/tajweed-feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

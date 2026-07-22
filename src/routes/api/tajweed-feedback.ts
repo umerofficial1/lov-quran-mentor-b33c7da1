@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { requireAuthRequest } from "@/lib/require-auth-request.server";
 
 // Session-level tajweed / pronunciation feedback for the live recitation drawer.
 // Client already computes per-word diff; we just ask the AI for Urdu
@@ -80,6 +81,8 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await requireAuthRequest(request);
+        if (unauth) return unauth;
         let raw: unknown;
         try {
           raw = await request.json();

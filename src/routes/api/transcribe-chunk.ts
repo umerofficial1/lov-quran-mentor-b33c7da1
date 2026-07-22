@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireAuthRequest } from "@/lib/require-auth-request.server";
 
 // Streaming-style chunk transcription for the live recitation coach.
 // Client posts short self-contained audio segments (one per MediaRecorder
@@ -8,6 +9,8 @@ export const Route = createFileRoute("/api/transcribe-chunk")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await requireAuthRequest(request);
+        if (unauth) return unauth;
         const form = await request.formData();
         const audio = form.get("audio");
         const quranContext = String(form.get("quranContext") ?? "").trim().slice(0, 4000);
