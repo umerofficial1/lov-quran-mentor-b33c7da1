@@ -5,7 +5,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { RECITERS, CATEGORIES, type Reciter } from "@/data/reciters";
-import { Play, Volume2, MapPin, Calendar, Award, X } from "lucide-react";
+import { Youtube, Volume2, MapPin, Calendar, Award, X, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/reciters")({
   head: () => ({
@@ -94,7 +94,7 @@ function RecitersPage() {
               <div className="flex flex-wrap gap-3 text-[10px] uppercase tracking-wider text-white/50">
                 <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{r.country}</span>
                 <span className="inline-flex items-center gap-1"><Calendar className="size-3" />{r.era}</span>
-                <span className="inline-flex items-center gap-1"><Play className="size-3 text-[#C9A24C]" />{r.videos.length} videos</span>
+                <span className="inline-flex items-center gap-1"><Youtube className="size-3 text-[#C9A24C]" />YouTube</span>
                 {r.audio && <span className="inline-flex items-center gap-1"><Volume2 className="size-3 text-[#1FB6B0]" />114 surahs</span>}
               </div>
             </button>
@@ -111,13 +111,12 @@ function RecitersPage() {
 }
 
 function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => void }) {
-  const [videoIdx, setVideoIdx] = useState(0);
   const [surahNum, setSurahNum] = useState(1);
 
-  const activeVideo = reciter.videos[videoIdx];
   const audioSrc = reciter.audio
     ? `${reciter.audio.server}/${reciter.audio.folder}/${String(surahNum).padStart(3, "0")}.mp3`
     : null;
+  const ytSearch = `https://www.youtube.com/results?search_query=${encodeURIComponent(reciter.youtubeQuery)}`;
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
@@ -155,36 +154,26 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
             <p className="mt-5 text-sm text-white/75 leading-relaxed">{reciter.bio}</p>
           </div>
 
-          {/* Video player */}
+          {/* YouTube search link */}
           <div className="p-6 md:p-8">
             <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#C9A24C] mb-3">Video Recitations</h3>
-            <div className="aspect-video rounded-2xl overflow-hidden bg-black shadow-lg mb-4">
-              <iframe
-                key={activeVideo.id}
-                src={`https://www.youtube-nocookie.com/embed/${activeVideo.id}?rel=0&modestbranding=1`}
-                title={activeVideo.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {reciter.videos.map((v, i) => (
-                <button
-                  key={v.id}
-                  onClick={() => setVideoIdx(i)}
-                  className={`px-3 py-2 rounded-lg text-xs font-medium transition ${
-                    i === videoIdx
-                      ? "bg-[#C9A24C] text-[#070C1F]"
-                      : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10"
-                  }`}
-                >
-                  <span className="opacity-70 mr-1">{i + 1}.</span>
-                  {v.title}
-                </button>
-              ))}
-            </div>
+            <a
+              href={ytSearch}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 rounded-2xl bg-[#0B1730] border border-[#C9A24C]/30 hover:border-[#C9A24C] p-5 transition group"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <Youtube className="size-8 text-[#C9A24C] shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white">Watch on YouTube</p>
+                  <p className="text-xs text-white/60 truncate">Search: "{reciter.youtubeQuery}"</p>
+                </div>
+              </div>
+              <ExternalLink className="size-4 text-white/50 group-hover:text-[#C9A24C] shrink-0" />
+            </a>
           </div>
+
 
           {/* Audio player */}
           {reciter.audio && (
