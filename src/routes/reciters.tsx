@@ -94,7 +94,7 @@ function RecitersPage() {
               <div className="flex flex-wrap gap-3 text-[10px] uppercase tracking-wider text-white/50">
                 <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{r.country}</span>
                 <span className="inline-flex items-center gap-1"><Calendar className="size-3" />{r.era}</span>
-                <span className="inline-flex items-center gap-1"><Play className="size-3 text-[#C9A24C]" />{r.videos.length} videos</span>
+                <span className="inline-flex items-center gap-1"><Youtube className="size-3 text-[#C9A24C]" />YouTube</span>
                 {r.audio && <span className="inline-flex items-center gap-1"><Volume2 className="size-3 text-[#1FB6B0]" />114 surahs</span>}
               </div>
             </button>
