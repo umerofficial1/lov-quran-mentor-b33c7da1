@@ -18,6 +18,7 @@ import { diffAyah } from "@/lib/ayah-diff";
 import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recorder";
 import { mergeArabicTranscript } from "@/lib/ayah-diff";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { authFetch } from "@/lib/auth-fetch";
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -334,7 +335,7 @@ function ListenTool() {
       const ext = blob.type.includes("mp4") ? "mp4" : blob.type.includes("wav") ? "wav" : blob.type.includes("mpeg") ? "mp3" : "webm";
       fd.append("audio", blob, `recording.${ext}`);
       fd.append("verseKey", `${surah}:${ayah}`);
-      const res = await fetch("/api/mistake-check-voice", { method: "POST", body: fd });
+      const res = await authFetch("/api/mistake-check-voice", { method: "POST", body: fd });
       if (!res.ok) throw new Error(await res.text().catch(() => "Voice check failed"));
       setData(await res.json());
     } catch (cause) {
@@ -479,7 +480,7 @@ function MistakeTool() {
     const shortContext = expected.trim().split(/\s+/).slice(0, 30).join(" ");
     if (shortContext) fd.append("quranContext", shortContext);
     try {
-      const r = await fetch("/api/transcribe-chunk", { method: "POST", body: fd });
+      const r = await authFetch("/api/transcribe-chunk", { method: "POST", body: fd });
       const result = await r.json() as { text?: string; error?: string };
       if (!r.ok) {
         setError(result.error || "Voice process nahi hui. Dobara parhein.");
@@ -541,7 +542,7 @@ function MistakeTool() {
     }
     setAnalyzing(true);
     try {
-      const res = await fetch("/api/mistake-check-text", {
+      const res = await authFetch("/api/mistake-check-text", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transcript: finalTranscript, verseKey }),
