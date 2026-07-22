@@ -28,7 +28,7 @@ function Home() {
       <SiteNav />
 
       {/* ============ HERO ============ */}
-      <section className="relative min-h-[86vh] flex flex-col items-center justify-center px-6 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-16 pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,_#0F1E3D_0%,_#070C1F_70%)] pointer-events-none" />
         <div
           className="absolute inset-0 opacity-[0.05] pointer-events-none"
