@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireAuthRequest } from "@/lib/require-auth-request.server";
 
 // Streaming-style chunk transcription for the live recitation coach.
 // Client posts short self-contained audio segments (one per MediaRecorder
