@@ -146,6 +146,7 @@ function RecitersPage() {
 
 function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => void }) {
   const [surahNum, setSurahNum] = useState(1);
+  const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
 
   const audioSrc = reciter.audio
     ? `${reciter.audio.server}/${reciter.audio.folder}/${String(surahNum).padStart(3, "0")}.mp3`
@@ -201,6 +202,34 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                 All videos <ExternalLink className="size-3" />
               </a>
             </div>
+            {selectedVideo && (
+              <div className="mb-4 overflow-hidden rounded-xl border border-[#C9A24C]/40 bg-black">
+                <div className="relative aspect-video">
+                  <iframe
+                    key={selectedVideo.id}
+                    src={`https://www.youtube-nocookie.com/embed/${selectedVideo.id}?autoplay=1&rel=0`}
+                    title={`${reciter.name} — ${selectedVideo.title}`}
+                    className="absolute inset-0 size-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                  <p className="min-w-0 truncate text-xs font-semibold text-white">
+                    {selectedVideo.title}
+                  </p>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${selectedVideo.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex shrink-0 items-center gap-1 text-[11px] text-[#C9A24C] hover:text-white transition"
+                  >
+                    YouTube <ExternalLink className="size-3" />
+                  </a>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {POPULAR_SURAHS.map((s, index) => {
                 const videoId = RECITER_VIDEO_IDS[reciter.id]?.[index];
@@ -210,14 +239,9 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                 const thumb = videoId
                   ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
                   : null;
-                return (
-                  <a
-                    key={s.name}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#C9A24C]/60 bg-[#0B1730] transition"
-                  >
+                const cardClassName = "group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#C9A24C]/60 bg-[#0B1730] text-left transition";
+                const cardContent = (
+                  <>
                     <div className="relative aspect-video bg-black">
                       {thumb && (
                         <img
@@ -238,11 +262,33 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                       <p className="text-[11px] font-semibold text-white truncate">Surah {s.name}</p>
                       <p className="text-[9px] text-white/50 truncate" dir="rtl" style={{ fontFamily: "'Scheherazade New', serif" }}>{s.arabic}</p>
                     </div>
+                  </>
+                );
+
+                return videoId ? (
+                  <button
+                    key={s.name}
+                    type="button"
+                    onClick={() => setSelectedVideo({ id: videoId, title: `Surah ${s.name}` })}
+                    className={cardClassName}
+                    aria-label={`Play ${reciter.name} reciting Surah ${s.name}`}
+                  >
+                    {cardContent}
+                  </button>
+                ) : (
+                  <a
+                    key={s.name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cardClassName}
+                  >
+                    {cardContent}
                   </a>
                 );
               })}
             </div>
-            <p className="text-[10px] text-white/40 mt-3">Tap any surah to play its verified video on YouTube.</p>
+            <p className="text-[10px] text-white/40 mt-3">Tap any surah to play the video here, or open it directly on YouTube.</p>
           </div>
 
 
