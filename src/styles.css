@@ -113,7 +113,12 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    overflow-x: hidden;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
   }
   body {
     color: var(--foreground);
@@ -123,8 +128,12 @@
     background-attachment: fixed;
     min-height: 100vh;
     min-height: 100dvh;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
+    width: 100%;
+    overflow-x: clip;
+    overflow-y: visible;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
     transition: background-color 400ms ease, color 400ms ease;
   }
   /* Prevent long unbroken tokens (URLs, Arabic tashkeel runs) from forcing horizontal scroll */

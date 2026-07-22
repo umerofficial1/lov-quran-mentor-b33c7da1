@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="min-h-dvh text-[#EEF2FB] font-ui selection:bg-[#1FB6B0]/30">
+    <div className="min-h-dvh w-full overflow-x-clip touch-pan-y text-[#EEF2FB] font-ui selection:bg-[#1FB6B0]/30">
       <SiteNav />
 
       {/* ============ HERO ============ */}
