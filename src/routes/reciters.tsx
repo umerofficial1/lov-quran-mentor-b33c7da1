@@ -27,6 +27,17 @@ const SURAHS: Record<string, string> = {
   "93": "Ad-Duha",
 };
 
+// Popular surahs commonly recited on YouTube — thumbnails from well-known
+// public Quran recitation videos (used only as a visual cue for the search card).
+const POPULAR_SURAHS: { name: string; arabic: string; sampleThumbId: string }[] = [
+  { name: "Al-Fatiha",  arabic: "الفاتحة", sampleThumbId: "vX4a5uuWjMs" },
+  { name: "Al-Baqarah", arabic: "البقرة",  sampleThumbId: "h6cS1_Yqf1w" },
+  { name: "Ya-Sin",     arabic: "يس",      sampleThumbId: "vp5nOjmBaR8" },
+  { name: "Ar-Rahman",  arabic: "الرحمن",  sampleThumbId: "OjxYpQK7Bcs" },
+  { name: "Al-Waqi'ah", arabic: "الواقعة", sampleThumbId: "hXStI5ni8Ss" },
+  { name: "Al-Mulk",    arabic: "الملك",   sampleThumbId: "8vLxTqM1v_M" },
+];
+
 function RecitersPage() {
   const [category, setCategory] = useState<string>("all");
   const [active, setActive] = useState<Reciter | null>(null);
