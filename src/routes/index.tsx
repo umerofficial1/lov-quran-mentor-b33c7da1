@@ -74,7 +74,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30 text-[10px] tracking-[0.4em] uppercase">
+        <div className="hidden md:block mt-20 text-white/30 text-[10px] tracking-[0.4em] uppercase pointer-events-none">
           Scroll for today's ayah
         </div>
       </section>
