@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { RECITERS, CATEGORIES, type Reciter } from "@/data/reciters";
+import { SURAHS as ALL_SURAHS } from "@/lib/surahs";
 import { Youtube, Volume2, MapPin, Calendar, Award, X, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/reciters")({
