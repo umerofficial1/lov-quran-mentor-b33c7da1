@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { requireAuthRequest } from "@/lib/require-auth-request.server";
 
 
 // Text-based mistake analysis. The client accumulates a live transcript
