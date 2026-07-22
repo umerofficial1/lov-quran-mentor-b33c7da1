@@ -15,6 +15,42 @@ type Reciter = {
   gradient: string;
 };
 
+const RECITER_YOUTUBE_IDS: Record<string, string> = {
+  husary: "d5C7GxDx5oE",
+  minshawi: "dNhnrnjXoO0",
+  abdulbasit: "VAjg6Q4tIQU",
+  mustafa: "JC1t0idtqH0",
+  albanna: "CoebIXuyE4U",
+  tablawi: "Hybqkn90ers",
+  jibreel: "z8wDrDBlILM",
+  rifai: "gUgsxtaHC4A",
+  shahat: "FmOUvWoojWY",
+  lahoni: "g-k9OBYkSRU",
+  sudais: "IdaPmyk3fsc",
+  shuraim: "421SLuFXG2I",
+  muaiqly: "oQ9i7XxLe5w",
+  balilah: "S0I_s8sXq_A",
+  dossari: "tjoVMa__clM",
+  ghamdi: "ORTInr_Hxx4",
+  ayyub: "oxGB4TwLgHQ",
+  budair: "PItAQkmGplA",
+  juhany: "DUSWJa3iCW8",
+  hudhaify: "mvq5XTYllYg",
+  bukhatir: "q1V274nCBN8",
+  talib: "GzRHLgkNEV8",
+  basfar: "esl76Cl9m0s",
+  ajamy: "RzGC1YlzU2U",
+  shatri: "Qo3hOIl5NjQ",
+  afasy: "X2YnP50cwNU",
+  qatami: "8e-J-gwIzE4",
+  abkr: "fugFWK9XwHI",
+  jaleel: "zrEiTxp9pdk",
+  frs_a: "m3eu4jSCZMY",
+  utaybi: "QMdiQn69mWw",
+  matrood: "EzlnaH8oJbI",
+  ali_jaber: "6V8T2POscdI",
+};
+
 const misriQurra: Reciter[] = [
   {
     id: "husary",
@@ -343,7 +379,7 @@ function ReciterCard({
             <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
           </button>
           <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(r.name + " Quran recitation")}`}
+            href={`https://www.youtube.com/watch?v=${RECITER_YOUTUBE_IDS[r.id]}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-gold-leaf/10 text-gold-leaf py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-leaf hover:text-white transition-colors"
