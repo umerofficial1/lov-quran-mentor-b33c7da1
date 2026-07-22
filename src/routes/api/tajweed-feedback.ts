@@ -81,6 +81,8 @@ export const Route = createFileRoute("/api/tajweed-feedback")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await requireAuthRequest(request);
+        if (unauth) return unauth;
         let raw: unknown;
         try {
           raw = await request.json();
