@@ -100,7 +100,7 @@ export function SiteNav() {
 
 function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   const base =
-    "group/nav shrink-0 snap-start whitespace-nowrap px-2.5 md:px-3 py-2 rounded-full transition-all inline-flex items-center gap-1.5 md:gap-2 uppercase tracking-widest text-[11px] font-medium";
+    "group/nav shrink-0 snap-start whitespace-nowrap px-2 md:px-3 py-1.5 md:py-2 rounded-full transition-all inline-flex items-center gap-1.5 uppercase tracking-widest text-[10px] md:text-[11px] font-medium";
   return (
     <Link
       to={to}
@@ -111,11 +111,11 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
       activeOptions={{ exact: to === "/" }}
     >
       {icon}
-      <span className="hidden md:inline">{label}</span>
-      <span className="md:hidden text-[10px]">{label}</span>
+      <span>{label}</span>
     </Link>
   );
 }
+
 
 function ScrollableNav({ user }: { user: boolean }) {
   const { roles } = useUserRoles();
