@@ -100,7 +100,7 @@ export function SiteNav() {
 
 function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   const base =
-    "group/nav shrink-0 snap-start whitespace-nowrap px-2.5 md:px-3 py-2 rounded-full transition-all inline-flex items-center gap-1.5 md:gap-2 uppercase tracking-widest text-[11px] font-medium";
+    "group/nav shrink-0 snap-start whitespace-nowrap px-2 md:px-3 py-1.5 md:py-2 rounded-full transition-all inline-flex items-center gap-1.5 uppercase tracking-widest text-[10px] md:text-[11px] font-medium";
   return (
     <Link
       to={to}
@@ -111,11 +111,11 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
       activeOptions={{ exact: to === "/" }}
     >
       {icon}
-      <span className="hidden md:inline">{label}</span>
-      <span className="md:hidden text-[10px]">{label}</span>
+      <span>{label}</span>
     </Link>
   );
 }
+
 
 function ScrollableNav({ user }: { user: boolean }) {
   const { roles } = useUserRoles();
@@ -172,9 +172,9 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(-1)}
           aria-label="Scroll nav left"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden md:grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
-          <ChevronLeft className="size-4" />
+          <ChevronLeft className="size-3.5 md:size-4" />
         </button>
       )}
       {canRight && (
@@ -182,28 +182,29 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(1)}
           aria-label="Scroll nav right"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden md:grid place-items-center size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
         >
-          <ChevronRight className="size-4" />
+          <ChevronRight className="size-3.5 md:size-4" />
         </button>
       )}
       <div
         ref={scrollRef}
-        className={`flex w-full flex-wrap justify-center items-center gap-1 text-sm scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-2 ${fadeMask}`}
+        className={`flex w-full flex-nowrap items-center gap-1 text-sm overflow-x-auto scroll-smooth snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-7 md:px-8 ${fadeMask}`}
       >
-        <NavLink to="/" icon={<Home className="size-5 md:size-4" />} label="Home" />
-        <NavLink to="/quran" icon={<BookOpen className="size-5 md:size-4" />} label="Quran" />
-        <NavLink to="/hadith" icon={<ScrollText className="size-5 md:size-4" />} label="Hadith" />
-        <NavLink to="/search" icon={<Search className="size-5 md:size-4" />} label="Search" />
-        <NavLink to="/chat" icon={<MessageSquare className="size-5 md:size-4" />} label="AI Mentor" />
-        {user && <NavLink to="/reports" icon={<Mic className="size-5 md:size-4" />} label="Recite" />}
-        <NavLink to="/learn" icon={<Sparkles className="size-5 md:size-4" />} label="Learn" />
-        <NavLink to="/reciters" icon={<Mic2 className="size-5 md:size-4" />} label="Qurra" />
-        <NavLink to="/tools" icon={<Compass className="size-5 md:size-4" />} label="Tools" />
-        {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-5 md:size-4" />} label="Dashboard" />}
-        {user && <NavLink to="/profile" icon={<UserIcon className="size-5 md:size-4" />} label="Profile" />}
-        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-5 md:size-4" />} label="Admin" />}
+        <NavLink to="/" icon={<Home className="size-4" />} label="Home" />
+        <NavLink to="/quran" icon={<BookOpen className="size-4" />} label="Quran" />
+        <NavLink to="/hadith" icon={<ScrollText className="size-4" />} label="Hadith" />
+        <NavLink to="/search" icon={<Search className="size-4" />} label="Search" />
+        <NavLink to="/chat" icon={<MessageSquare className="size-4" />} label="AI Mentor" />
+        {user && <NavLink to="/reports" icon={<Mic className="size-4" />} label="Recite" />}
+        <NavLink to="/learn" icon={<Sparkles className="size-4" />} label="Learn" />
+        <NavLink to="/reciters" icon={<Mic2 className="size-4" />} label="Qurra" />
+        <NavLink to="/tools" icon={<Compass className="size-4" />} label="Tools" />
+        {user && <NavLink to="/dashboard" icon={<LayoutDashboard className="size-4" />} label="Dashboard" />}
+        {user && <NavLink to="/profile" icon={<UserIcon className="size-4" />} label="Profile" />}
+        {user && isAdmin && <NavLink to="/admin" icon={<Shield className="size-4" />} label="Admin" />}
       </div>
     </div>
   );
 }
+
