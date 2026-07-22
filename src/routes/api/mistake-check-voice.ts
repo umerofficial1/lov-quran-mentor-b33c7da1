@@ -23,6 +23,8 @@ export const Route = createFileRoute("/api/mistake-check-voice")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await requireAuthRequest(request);
+        if (unauth) return unauth;
         const form = await request.formData();
         const audio = form.get("audio");
         const verseKey = String(form.get("verseKey") ?? "");
