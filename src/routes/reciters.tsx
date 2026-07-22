@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
 import { RECITERS, CATEGORIES, type Reciter } from "@/data/reciters";
+import { SURAHS as ALL_SURAHS } from "@/lib/surahs";
 import { Youtube, Volume2, MapPin, Calendar, Award, X, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/reciters")({
@@ -227,9 +228,9 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                   onChange={e => setSurahNum(Number(e.target.value))}
                   className="flex-1 bg-[#0B1730] border border-white/15 rounded-lg px-4 py-3 text-sm text-white focus:border-[#1FB6B0] outline-none"
                 >
-                  {Array.from({ length: 114 }, (_, i) => i + 1).map(n => (
-                    <option key={n} value={n}>
-                      {String(n).padStart(3, "0")} — Surah {SURAHS[String(n)] ?? `#${n}`}
+                  {ALL_SURAHS.map(s => (
+                    <option key={s.n} value={s.n}>
+                      {String(s.n).padStart(3, "0")} — {s.nameAr} · {SURAHS[String(s.n)] ?? s.nameUr}
                     </option>
                   ))}
                 </select>
