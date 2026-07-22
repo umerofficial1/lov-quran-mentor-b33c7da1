@@ -16,13 +16,16 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecitersRouteImport } from './routes/reciters'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as HadithRouteImport } from './routes/hadith'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuranIndexRouteImport } from './routes/quran.index'
+import { Route as HadithIndexRouteImport } from './routes/hadith.index'
 import { Route as QuranBookmarksRouteImport } from './routes/quran.bookmarks'
 import { Route as QuranSurahIdRouteImport } from './routes/quran.$surahId'
+import { Route as HadithBookIdRouteImport } from './routes/hadith.$bookId'
 import { Route as CoursesLevelRouteImport } from './routes/courses.$level'
 import { Route as ApiTranscribeChunkRouteImport } from './routes/api/transcribe-chunk'
 import { Route as ApiTajweedFeedbackRouteImport } from './routes/api/tajweed-feedback'
@@ -77,6 +80,11 @@ const LearnRoute = LearnRouteImport.update({
   path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HadithRoute = HadithRouteImport.update({
+  id: '/hadith',
+  path: '/hadith',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -101,6 +109,11 @@ const QuranIndexRoute = QuranIndexRouteImport.update({
   path: '/quran/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HadithIndexRoute = HadithIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HadithRoute,
+} as any)
 const QuranBookmarksRoute = QuranBookmarksRouteImport.update({
   id: '/quran/bookmarks',
   path: '/quran/bookmarks',
@@ -110,6 +123,11 @@ const QuranSurahIdRoute = QuranSurahIdRouteImport.update({
   id: '/quran/$surahId',
   path: '/quran/$surahId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HadithBookIdRoute = HadithBookIdRouteImport.update({
+  id: '/$bookId',
+  path: '/$bookId',
+  getParentRoute: () => HadithRoute,
 } as any)
 const CoursesLevelRoute = CoursesLevelRouteImport.update({
   id: '/courses/$level',
@@ -209,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/hadith': typeof HadithRouteWithChildren
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/reciters': typeof RecitersRoute
@@ -229,8 +248,10 @@ export interface FileRoutesByFullPath {
   '/api/tajweed-feedback': typeof ApiTajweedFeedbackRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
+  '/hadith/$bookId': typeof HadithBookIdRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/bookmarks': typeof QuranBookmarksRoute
+  '/hadith/': typeof HadithIndexRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -262,8 +283,10 @@ export interface FileRoutesByTo {
   '/api/tajweed-feedback': typeof ApiTajweedFeedbackRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
+  '/hadith/$bookId': typeof HadithBookIdRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/bookmarks': typeof QuranBookmarksRoute
+  '/hadith': typeof HadithIndexRoute
   '/quran': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -277,6 +300,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
+  '/hadith': typeof HadithRouteWithChildren
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/reciters': typeof RecitersRoute
@@ -297,8 +321,10 @@ export interface FileRoutesById {
   '/api/tajweed-feedback': typeof ApiTajweedFeedbackRoute
   '/api/transcribe-chunk': typeof ApiTranscribeChunkRoute
   '/courses/$level': typeof CoursesLevelRoute
+  '/hadith/$bookId': typeof HadithBookIdRoute
   '/quran/$surahId': typeof QuranSurahIdRoute
   '/quran/bookmarks': typeof QuranBookmarksRoute
+  '/hadith/': typeof HadithIndexRoute
   '/quran/': typeof QuranIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -312,6 +338,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
+    | '/hadith'
     | '/learn'
     | '/mcp'
     | '/reciters'
@@ -332,8 +359,10 @@ export interface FileRouteTypes {
     | '/api/tajweed-feedback'
     | '/api/transcribe-chunk'
     | '/courses/$level'
+    | '/hadith/$bookId'
     | '/quran/$surahId'
     | '/quran/bookmarks'
+    | '/hadith/'
     | '/quran/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -365,8 +394,10 @@ export interface FileRouteTypes {
     | '/api/tajweed-feedback'
     | '/api/transcribe-chunk'
     | '/courses/$level'
+    | '/hadith/$bookId'
     | '/quran/$surahId'
     | '/quran/bookmarks'
+    | '/hadith'
     | '/quran'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -379,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/chat'
+    | '/hadith'
     | '/learn'
     | '/mcp'
     | '/reciters'
@@ -399,8 +431,10 @@ export interface FileRouteTypes {
     | '/api/tajweed-feedback'
     | '/api/transcribe-chunk'
     | '/courses/$level'
+    | '/hadith/$bookId'
     | '/quran/$surahId'
     | '/quran/bookmarks'
+    | '/hadith/'
     | '/quran/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -414,6 +448,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
+  HadithRoute: typeof HadithRouteWithChildren
   LearnRoute: typeof LearnRoute
   McpRoute: typeof McpRoute
   RecitersRoute: typeof RecitersRoute
@@ -490,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hadith': {
+      id: '/hadith'
+      path: '/hadith'
+      fullPath: '/hadith'
+      preLoaderRoute: typeof HadithRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -525,6 +567,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuranIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hadith/': {
+      id: '/hadith/'
+      path: '/'
+      fullPath: '/hadith/'
+      preLoaderRoute: typeof HadithIndexRouteImport
+      parentRoute: typeof HadithRoute
+    }
     '/quran/bookmarks': {
       id: '/quran/bookmarks'
       path: '/quran/bookmarks'
@@ -538,6 +587,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/quran/$surahId'
       preLoaderRoute: typeof QuranSurahIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/hadith/$bookId': {
+      id: '/hadith/$bookId'
+      path: '/$bookId'
+      fullPath: '/hadith/$bookId'
+      preLoaderRoute: typeof HadithBookIdRouteImport
+      parentRoute: typeof HadithRoute
     }
     '/courses/$level': {
       id: '/courses/$level'
@@ -687,11 +743,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface HadithRouteChildren {
+  HadithBookIdRoute: typeof HadithBookIdRoute
+  HadithIndexRoute: typeof HadithIndexRoute
+}
+
+const HadithRouteChildren: HadithRouteChildren = {
+  HadithBookIdRoute: HadithBookIdRoute,
+  HadithIndexRoute: HadithIndexRoute,
+}
+
+const HadithRouteWithChildren =
+  HadithRoute._addFileChildren(HadithRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
+  HadithRoute: HadithRouteWithChildren,
   LearnRoute: LearnRoute,
   McpRoute: McpRoute,
   RecitersRoute: RecitersRoute,
