@@ -27,6 +27,17 @@ const SURAHS: Record<string, string> = {
   "93": "Ad-Duha",
 };
 
+// Popular surahs commonly recited on YouTube — thumbnails from well-known
+// public Quran recitation videos (used only as a visual cue for the search card).
+const POPULAR_SURAHS: { name: string; arabic: string; sampleThumbId: string }[] = [
+  { name: "Al-Fatiha",  arabic: "الفاتحة", sampleThumbId: "vX4a5uuWjMs" },
+  { name: "Al-Baqarah", arabic: "البقرة",  sampleThumbId: "h6cS1_Yqf1w" },
+  { name: "Ya-Sin",     arabic: "يس",      sampleThumbId: "vp5nOjmBaR8" },
+  { name: "Ar-Rahman",  arabic: "الرحمن",  sampleThumbId: "OjxYpQK7Bcs" },
+  { name: "Al-Waqi'ah", arabic: "الواقعة", sampleThumbId: "hXStI5ni8Ss" },
+  { name: "Al-Mulk",    arabic: "الملك",   sampleThumbId: "8vLxTqM1v_M" },
+];
+
 function RecitersPage() {
   const [category, setCategory] = useState<string>("all");
   const [active, setActive] = useState<Reciter | null>(null);
@@ -154,24 +165,55 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
             <p className="mt-5 text-sm text-white/75 leading-relaxed">{reciter.bio}</p>
           </div>
 
-          {/* YouTube search link */}
+          {/* Video Recitations — curated surah searches */}
           <div className="p-6 md:p-8">
-            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#C9A24C] mb-3">Video Recitations</h3>
-            <a
-              href={ytSearch}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-2xl bg-[#0B1730] border border-[#C9A24C]/30 hover:border-[#C9A24C] p-5 transition group"
-            >
-              <div className="flex items-center gap-4 min-w-0">
-                <Youtube className="size-8 text-[#C9A24C] shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white">Watch on YouTube</p>
-                  <p className="text-xs text-white/60 truncate">Search: "{reciter.youtubeQuery}"</p>
-                </div>
-              </div>
-              <ExternalLink className="size-4 text-white/50 group-hover:text-[#C9A24C] shrink-0" />
-            </a>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#C9A24C]">Video Recitations</h3>
+              <a
+                href={ytSearch}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-[11px] text-white/70 hover:text-[#C9A24C] transition"
+              >
+                All videos <ExternalLink className="size-3" />
+              </a>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {POPULAR_SURAHS.map(s => {
+                const q = `${reciter.name} Surah ${s.name}`;
+                const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+                const thumb = `https://i.ytimg.com/vi/${s.sampleThumbId}/hqdefault.jpg`;
+                return (
+                  <a
+                    key={s.name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#C9A24C]/60 bg-[#0B1730] transition"
+                  >
+                    <div className="relative aspect-video bg-black">
+                      <img
+                        src={thumb}
+                        alt=""
+                        loading="lazy"
+                        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                        <div className="w-11 h-11 rounded-full bg-[#C9A24C] flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                          <Youtube className="size-5 text-black" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2.5">
+                      <p className="text-[11px] font-semibold text-white truncate">Surah {s.name}</p>
+                      <p className="text-[9px] text-white/50 truncate" dir="rtl" style={{ fontFamily: "'Scheherazade New', serif" }}>{s.arabic}</p>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-white/40 mt-3">Tap any surah to open live YouTube results for {reciter.name}.</p>
           </div>
 
 
