@@ -342,13 +342,15 @@ function ReciterCard({
             <span>{isPlaying ? "⏸" : "▶"}</span>
             <span dir="rtl">{isPlaying ? "روک دیں" : `سورۃ ${surah.nameUr}`}</span>
           </button>
-          <Link
-            to="/reciters"
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(r.name + " Quran recitation")}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full bg-gold-leaf/10 text-gold-leaf py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-leaf hover:text-white transition-colors"
           >
             <span>🎥</span>
-            <span dir="rtl">ویڈیو تلاوت دیکھیں</span>
-          </Link>
+            <span dir="rtl">یوٹیوب پر ویڈیو تلاوت</span>
+          </a>
         </div>
       </div>
     </article>
