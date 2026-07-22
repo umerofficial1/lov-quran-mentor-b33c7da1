@@ -140,6 +140,7 @@ export const RECITERS: Reciter[] = [
     category: "egyptian",
     style: "Mujawwad",
     bio: "The 'Sultan of Reciters.' President Nasser's personal reciter. His mastery of maqamat (musical modes) in Mujawwad has never been equalled.",
+    audio: { server: "https://server8.mp3quran.net", folder: "mustafa" },
     youtubeQuery: "Mustafa Ismail Quran Mujawwad",
   },
   {
