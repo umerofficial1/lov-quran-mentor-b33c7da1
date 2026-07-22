@@ -19,6 +19,8 @@ import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recor
 import { mergeArabicTranscript } from "@/lib/ayah-diff";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { authFetch } from "@/lib/auth-fetch";
+import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -140,17 +142,28 @@ function TranslationCompareTool() {
     <div className="space-y-4">
       <ToolHeader title="Translation comparison" desc="Paste a Surah:Ayah reference to compare 5 translations plus AI-generated notes on nuance." />
       <form
-        onSubmit={(e) => { e.preventDefault(); run({ verseKey }); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const v = verseKey.trim();
+          if (!/^\d+:\d+$/.test(v)) {
+            toast.error("Enter a valid reference like 2:255");
+            return;
+          }
+          run({ verseKey: v });
+        }}
         className="flex gap-2"
       >
         <input
           value={verseKey}
           onChange={(e) => setVerseKey(e.target.value)}
           placeholder="e.g. 2:255"
+          inputMode="text"
+          pattern="\d+:\d+"
           className="flex-1 rounded-xl bg-black/30 border border-white/10 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/40"
         />
         <SubmitBtn loading={loading}>Compare</SubmitBtn>
       </form>
+
       <ErrorBox error={error} />
       {data && (
         <div className="space-y-4">
