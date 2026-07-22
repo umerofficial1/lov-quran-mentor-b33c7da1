@@ -11,10 +11,12 @@ import { Youtube, Volume2, MapPin, Calendar, Award, X, ExternalLink } from "luci
 export const Route = createFileRoute("/reciters")({
   head: () => ({
     meta: [
-      { title: "Qurra Library — Famous Reciters of the Holy Quran | Ayatica" },
-      { name: "description", content: "Watch and listen to the world's greatest Quran reciters — Imams of Makkah & Madinah, legendary Egyptian Qurra like Abdul Basit, Minshawi, Hussary, and modern voices. Embedded videos and full audio recitations." },
+      { title: "Quran Reciters & Tilawat Videos | Verse Wise Mentor" },
+      { name: "description", content: "Watch verified Quran recitation videos and listen to full surahs by renowned Imams and Qurra, including Sudais, Minshawi, and Abdul Basit." },
       { property: "og:title", content: "Qurra Library — Famous Reciters of the Holy Quran" },
       { property: "og:description", content: "Curated tilawaat from Sudais, Mishary, Abdul Basit, Minshawi and more — video and audio, all in one place." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: () => <RequireAuth><RecitersPage /></RequireAuth>,
