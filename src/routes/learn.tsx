@@ -19,6 +19,8 @@ import { startLiveWavRecorder, type LiveWavRecorder } from "@/lib/live-wav-recor
 import { mergeArabicTranscript } from "@/lib/ayah-diff";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { authFetch } from "@/lib/auth-fetch";
+import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/learn")({
   validateSearch: (search: Record<string, unknown>) => ({
