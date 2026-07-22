@@ -29,6 +29,8 @@ export const Route = createFileRoute("/api/mistake-check-text")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await requireAuthRequest(request);
+        if (unauth) return unauth;
         let payload: { transcript?: unknown; verseKey?: unknown };
         try {
           payload = await request.json();
