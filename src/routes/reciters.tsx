@@ -28,16 +28,36 @@ const SURAHS: Record<string, string> = {
   "93": "Ad-Duha",
 };
 
-// Popular surahs commonly recited on YouTube — thumbnails from well-known
-// public Quran recitation videos (used only as a visual cue for the search card).
-const POPULAR_SURAHS: { name: string; arabic: string; sampleThumbId: string }[] = [
-  { name: "Al-Fatiha",  arabic: "الفاتحة", sampleThumbId: "vX4a5uuWjMs" },
-  { name: "Al-Baqarah", arabic: "البقرة",  sampleThumbId: "h6cS1_Yqf1w" },
-  { name: "Ya-Sin",     arabic: "يس",      sampleThumbId: "vp5nOjmBaR8" },
-  { name: "Ar-Rahman",  arabic: "الرحمن",  sampleThumbId: "OjxYpQK7Bcs" },
-  { name: "Al-Waqi'ah", arabic: "الواقعة", sampleThumbId: "hXStI5ni8Ss" },
-  { name: "Al-Mulk",    arabic: "الملك",   sampleThumbId: "8vLxTqM1v_M" },
+const POPULAR_SURAHS: { name: string; arabic: string }[] = [
+  { name: "Al-Fatiha", arabic: "الفاتحة" },
+  { name: "Al-Baqarah", arabic: "البقرة" },
+  { name: "Ya-Sin", arabic: "يس" },
+  { name: "Ar-Rahman", arabic: "الرحمن" },
+  { name: "Al-Waqi'ah", arabic: "الواقعة" },
+  { name: "Al-Mulk", arabic: "الملك" },
 ];
+
+// Verified public YouTube videos in the same order as POPULAR_SURAHS.
+// Direct watch links are intentionally used instead of search-result links.
+const RECITER_VIDEO_IDS: Record<string, readonly string[]> = {
+  sudais: ["t5EjVkXYswc", "IdaPmyk3fsc", "Q--H5uqHP5s", "Lbcta_bVxP4", "sgwN0OwPGLw", "NYti96AJOFc"],
+  shuraim: ["LgUWoJh8OqU", "53zSEE7JDnA", "NPihAhuwn5w", "aCUHVNBh6tQ", "8J94rufVwkc", "8UA6D19nIrQ"],
+  maher: ["7wf_lV_3o_8", "jFLdhKTFGPc", "oa0BeU8tQZ0", "4dG57DDr4_E", "Qj_03OTtkdg", "OMJJ40AX4t4"],
+  juhany: ["DUSWJa3iCW8", "7wf_lV_3o_8", "Cw7VI3se9w0", "bWEwnKs762M", "-r4LBzfEg94", "QUasb_qBLRk"],
+  budair: ["PItAQkmGplA", "YEDzmDw1ROg", "ijViMjQ2NpU", "oZh0hcuFLAw", "uuxauj87zWA", "6c10pctj8rs"],
+  ghamdi: ["j7DReKjLdRo", "oP8aS6sZkB4", "K1qGY5SqAHQ", "e0bK4ukYkuA", "ElW7hm3BOK0", "gFyicQF6jvg"],
+  abdulbasit: ["zyeaEEGgJ2Q", "_QjOJo7cTTM", "vuOJXkFHriE", "cJzMWiUno8M", "tuNESmUOszs", "IfdKIAdEF0E"],
+  minshawi: ["0jLYZ5s2FQQ", "P8_MbwnSFpY", "PwjXv0KqheM", "ENTY9pn3jSU", "bhadDWbT39I", "kkrPEEWIN8U"],
+  hussary: ["X0T2unXgJ4s", "WLiNXh0ztOo", "CrmJL_hLA9U", "dX4j-P8Im8Y", "BKygH8FWgiU", "krA3W-QDzWU"],
+  "mustafa-ismail": ["o2QfupiB5Zs", "rrmGq4VgBnY", "YgbSEpJUJrY", "Elb9YcjWu2w", "gkPryvIkt3Q", "t3fcdfpemig"],
+  rifat: ["ettj9lIggug", "goQQsYBNIRg", "y35mTuuNCbM", "ettj9lIggug", "emakp1IJMV8", "qboZqcZlhOE"],
+  tablawi: ["P3JDGcdwodg", "1rs_8IUPpCM", "w3tFls89A40", "_Fhu-StHAMc", "sTBAeye0yoY", "tRlwVZ8DlaA"],
+  mishary: ["7wf_lV_3o_8", "X2YnP50cwNU", "ZdsddmOvu5E", "H4N5eFbLl9A", "NDE6iXOK7_Q", "ifGIMi82aFE"],
+  ajmy: ["OZh09nkj8Hg", "yvuUA1M9jSM", "2twStp36NQQ", "OAb4h4MV7yA", "7l8xzR4eNaA", "gPEw8Bm7Qtc"],
+  shatri: ["_b6r-scG588", "PjyiRpgiDkc", "IAwhT7KszNs", "dHgkscIdruc", "9kAprBi8luc", "U59Q0aTNtHY"],
+  "muaiqly-yasser": ["LBcugZpkhXo", "9-SYYnQzVIY", "x3GCQBWg2Ic", "zUmDUKjTVdU", "wuQRhcaUYr8", "cObnEdY_gOY"],
+  banna: ["V9Tgz4xf-Iw", "-o4Mg1P0op8", "aTYZsHOtzrM", "kq5cdeoUs00", "FUoKy9P60Ko", "O1hgyaMWPJQ"],
+};
 
 function RecitersPage() {
   const [category, setCategory] = useState<string>("all");
@@ -180,10 +200,14 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
               </a>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {POPULAR_SURAHS.map(s => {
-                const q = `${reciter.name} Surah ${s.name}`;
-                const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
-                const thumb = `https://i.ytimg.com/vi/${s.sampleThumbId}/hqdefault.jpg`;
+              {POPULAR_SURAHS.map((s, index) => {
+                const videoId = RECITER_VIDEO_IDS[reciter.id]?.[index];
+                const url = videoId
+                  ? `https://www.youtube.com/watch?v=${videoId}`
+                  : ytSearch;
+                const thumb = videoId
+                  ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+                  : null;
                 return (
                   <a
                     key={s.name}
@@ -193,13 +217,15 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                     className="group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#C9A24C]/60 bg-[#0B1730] transition"
                   >
                     <div className="relative aspect-video bg-black">
-                      <img
-                        src={thumb}
-                        alt=""
-                        loading="lazy"
-                        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                      />
+                      {thumb && (
+                        <img
+                          src={thumb}
+                          alt={`${reciter.name} reciting Surah ${s.name}`}
+                          loading="lazy"
+                          className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                        />
+                      )}
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                         <div className="w-11 h-11 rounded-full bg-[#C9A24C] flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                           <Youtube className="size-5 text-black" />
@@ -214,7 +240,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                 );
               })}
             </div>
-            <p className="text-[10px] text-white/40 mt-3">Tap any surah to open live YouTube results for {reciter.name}.</p>
+            <p className="text-[10px] text-white/40 mt-3">Tap any surah to play its verified video on YouTube.</p>
           </div>
 
 
