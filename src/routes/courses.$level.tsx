@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { SiteNav } from "@/components/SiteNav";
 import { MobileNav } from "@/components/MobileNav";
 import { ArrowRight, BookOpen, Mic, Sparkles, GraduationCap, Brain, ScanSearch, Languages, CalendarRange, Ear } from "lucide-react";
@@ -195,7 +194,7 @@ export const Route = createFileRoute("/courses/$level")({
     return null;
   },
   notFoundComponent: CourseNotFound,
-  component: () => (<RequireAuth><CoursePage /></RequireAuth>),
+  component: () => (<CoursePage />),
 });
 
 function CoursePage() {

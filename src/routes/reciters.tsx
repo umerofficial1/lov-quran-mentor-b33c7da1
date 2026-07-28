@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { RequireAuth } from "@/components/RequireAuth";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
@@ -19,7 +18,7 @@ export const Route = createFileRoute("/reciters")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: () => <RequireAuth><RecitersPage /></RequireAuth>,
+  component: () => <RecitersPage />,
 });
 
 const SURAHS: Record<string, string> = {

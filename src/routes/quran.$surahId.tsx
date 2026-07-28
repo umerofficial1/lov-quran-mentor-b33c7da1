@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useParams, useSearch } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SURAHS } from "@/lib/surahs";
@@ -32,7 +31,7 @@ export const Route = createFileRoute("/quran/$surahId")({
       ],
     };
   },
-  component: () => (<RequireAuth><SurahReader /></RequireAuth>),
+  component: () => (<SurahReader />),
 });
 
 function SurahReader() {

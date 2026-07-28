@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/tools")({
       { property: "og:description", content: "Everyday Islamic tools — prayer, qibla, dhikr and du'a — in one place." },
     ],
   }),
-  component: () => (<RequireAuth><ToolsPage /></RequireAuth>),
+  component: () => (<ToolsPage />),
 });
 
 type Coords = { lat: number; lng: number };
