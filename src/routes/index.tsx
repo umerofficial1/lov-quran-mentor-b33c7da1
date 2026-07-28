@@ -17,7 +17,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "A cinematic, scholarly Quran learning platform. AI tajweed voice coach, trilingual translations, tafsir library, hifz tracker and daily practice." },
       { property: "og:title", content: "Verse Wise Mentor — AI-guided Quran learning" },
       { property: "og:description", content: "Recitation, tafsir, hifz and Islamic tools in Arabic, English & Urdu — refined by AI, guided by tradition." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/" }],
   }),
   component: Home,
 });
@@ -127,7 +129,7 @@ function Home() {
 
         <aside className="lg:col-span-4 space-y-6">
           <div className="bg-[#0F1E3D]/50 border-l-2 border-[#1FB6B0] p-6 backdrop-blur-sm">
-            <h3 className="text-[#1FB6B0] font-semibold text-[11px] uppercase tracking-[0.35em] mb-4">Scholarly Assistant</h3>
+            <h2 className="text-[#1FB6B0] font-semibold text-[11px] uppercase tracking-[0.35em] mb-4">Scholarly Assistant</h2>
             <p className="text-white/70 text-sm leading-relaxed mb-6 italic font-display">
               "Assalamu alaikum. Ayat al-Kursi anchors today's practice — shall I walk through its recitation, tafsir, and root words?"
             </p>

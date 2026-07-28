@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
@@ -11,7 +10,7 @@ import { SURAHS } from "@/lib/surahs";
 export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
-      { title: "Search the Quran — Arabic, English & Urdu · Verse Wise Mentor" },
+      { title: "Search the Quran — Verse Wise Mentor" },
       {
         name: "description",
         content:
@@ -22,9 +21,11 @@ export const Route = createFileRoute("/search")({
         property: "og:description",
         content: "Search the Holy Quran in Arabic, English and Urdu with topic and root-word lookup.",
       },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/search" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/search" }],
   }),
-  component: () => (<RequireAuth><SearchPage /></RequireAuth>),
+  component: () => (<SearchPage />),
 });
 
 type Hit = {

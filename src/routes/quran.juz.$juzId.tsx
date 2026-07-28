@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SiteNav } from "@/components/SiteNav";
@@ -24,7 +23,7 @@ export const Route = createFileRoute("/quran/juz/$juzId")({
       { property: "og:title", content: `Juz ${params.juzId} — Verse Wise Mentor` },
     ],
   }),
-  component: () => (<RequireAuth><JuzReader /></RequireAuth>),
+  component: () => (<JuzReader />),
 });
 
 function JuzReader() {

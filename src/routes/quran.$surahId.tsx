@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useParams, useSearch } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SURAHS } from "@/lib/surahs";
@@ -17,9 +16,8 @@ import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { LiveRecitationDrawer } from "@/components/LiveRecitationDrawer";
 
 export const Route = createFileRoute("/quran/$surahId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    live: search.live === "1" || search.live === 1 ? 1 : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { live?: 1 } =>
+    search.live === "1" || search.live === 1 ? { live: 1 } : {},
   head: ({ params }) => {
     const s = SURAHS.find((x) => x.n === Number(params.surahId));
     const label = s ? `Surah ${s.n} — ${s.nameAr}` : `Surah ${params.surahId}`;
@@ -29,10 +27,12 @@ export const Route = createFileRoute("/quran/$surahId")({
         { name: "description", content: `Read ${label} in Uthmani and IndoPak script with English and Urdu translation, verse-by-verse audio, sajdah indicators and bookmarks.` },
         { property: "og:title", content: `${label} — Verse Wise Mentor` },
         { property: "og:description", content: `Recite ${label} with adjustable script, font size and translation.` },
+        { property: "og:url", content: `https://lov-quran-mentor.lovable.app/quran/${params.surahId}` },
       ],
+      links: [{ rel: "canonical", href: `https://lov-quran-mentor.lovable.app/quran/${params.surahId}` }],
     };
   },
-  component: () => (<RequireAuth><SurahReader /></RequireAuth>),
+  component: () => (<SurahReader />),
 });
 
 function SurahReader() {

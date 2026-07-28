@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { RequireAuth } from "@/components/RequireAuth";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileNav } from "@/components/MobileNav";
@@ -17,9 +16,11 @@ export const Route = createFileRoute("/reciters")({
       { property: "og:description", content: "Curated tilawaat from Sudais, Mishary, Abdul Basit, Minshawi and more — video and audio, all in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/reciters" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/reciters" }],
   }),
-  component: () => <RequireAuth><RecitersPage /></RequireAuth>,
+  component: () => <RecitersPage />,
 });
 
 const SURAHS: Record<string, string> = {

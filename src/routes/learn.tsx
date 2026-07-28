@@ -32,7 +32,7 @@ export const Route = createFileRoute("/learn")({
   }),
   head: () => ({
     meta: [
-      { title: "AI Learn — Quiz, Memorization Coach & Translation Compare · Verse Wise Mentor" },
+      { title: "AI Quran Learning Tools — Verse Wise Mentor" },
       {
         name: "description",
         content:
@@ -40,7 +40,9 @@ export const Route = createFileRoute("/learn")({
       },
       { property: "og:title", content: "AI Learn — Verse Wise Mentor" },
       { property: "og:description", content: "Seven AI-guided tools to learn, memorize and revise the Quran." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/learn" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/learn" }],
   }),
   component: () => (<RequireAuth><LearnPage /></RequireAuth>),
 });

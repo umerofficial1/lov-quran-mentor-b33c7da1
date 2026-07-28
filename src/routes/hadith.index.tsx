@@ -4,6 +4,16 @@ import { HADITH_BOOKS } from "@/lib/hadith";
 import { BookOpen, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/hadith/")({
+  head: () => ({
+    meta: [
+      { title: "Hadees-e-Nabvi ﷺ — Sahih Hadith with Urdu Translation" },
+      { name: "description", content: "Read authentic hadith collections — Bukhari, Muslim, Tirmidhi and more — in Arabic with Urdu translation and an AI mentor for every book." },
+      { property: "og:title", content: "Hadees-e-Nabvi ﷺ — Sahih Hadith with Urdu Translation" },
+      { property: "og:description", content: "Authentic hadith books in Arabic with Urdu translation and an AI mentor." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/hadith" },
+    ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/hadith" }],
+  }),
   component: HadithIndex,
 });
 

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { SURAHS } from "@/lib/surahs";
 
-const BASE_URL = "https://verse-wise-mentor.lovable.app";
+const BASE_URL = "https://lov-quran-mentor.lovable.app";
 
 interface SitemapEntry {
   path: string;
@@ -21,6 +21,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/learn", changefreq: "monthly", priority: "0.7" },
           { path: "/search", changefreq: "monthly", priority: "0.6" },
           { path: "/tools", changefreq: "monthly", priority: "0.6" },
+          { path: "/reciters", changefreq: "monthly", priority: "0.7" },
+          { path: "/hadith", changefreq: "weekly", priority: "0.8" },
         ];
 
         // Every surah page
