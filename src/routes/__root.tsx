@@ -106,6 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Verse Wise Mentor" },
       { name: "twitter:description", content: "AI-guided Quran learning in Arabic, English and Urdu." },
       { property: "og:site_name", content: "Verse Wise Mentor" },
+      { name: "google-site-verification", content: "VyY_N3bh1QzoRfCdtKERZojkYsOAQiFKFOl1OCe5k8s" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
