@@ -96,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Verse Wise Mentor — AI-guided Quran learning in Arabic, English & Urdu" },
+      { title: "Verse Wise Mentor — AI-guided Quran learning" },
       { name: "description", content: "A cinematic, scholarly Quran learning platform with AI tajweed feedback, tafsir, hifz tracking and trilingual translations." },
       { name: "theme-color", content: "#070C1F" },
       { property: "og:title", content: "Verse Wise Mentor" },
@@ -105,6 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Verse Wise Mentor" },
       { name: "twitter:description", content: "AI-guided Quran learning in Arabic, English and Urdu." },
+      { property: "og:site_name", content: "Verse Wise Mentor" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -121,6 +122,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=Scheherazade+New:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;600&family=Noto+Naskh+Arabic:wght@400&family=Amiri:wght@400;700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://lov-quran-mentor.lovable.app/#org",
+              name: "Verse Wise Mentor",
+              url: "https://lov-quran-mentor.lovable.app",
+              description: "AI-guided Quran and hadith learning in Arabic, English and Urdu.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://lov-quran-mentor.lovable.app/#website",
+              name: "Verse Wise Mentor",
+              url: "https://lov-quran-mentor.lovable.app",
+              publisher: { "@id": "https://lov-quran-mentor.lovable.app/#org" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://lov-quran-mentor.lovable.app/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
       },
     ],
   }),

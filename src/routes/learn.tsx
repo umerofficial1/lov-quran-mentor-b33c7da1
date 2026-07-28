@@ -32,7 +32,7 @@ export const Route = createFileRoute("/learn")({
   }),
   head: () => ({
     meta: [
-      { title: "AI Learn — Quiz, Memorization Coach & Translation Compare · Verse Wise Mentor" },
+      { title: "AI Quran Learning Tools — Verse Wise Mentor" },
       {
         name: "description",
         content:

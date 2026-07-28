@@ -10,7 +10,7 @@ import { SURAHS } from "@/lib/surahs";
 export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
-      { title: "Search the Quran — Arabic, English & Urdu · Verse Wise Mentor" },
+      { title: "Search the Quran — Verse Wise Mentor" },
       {
         name: "description",
         content:

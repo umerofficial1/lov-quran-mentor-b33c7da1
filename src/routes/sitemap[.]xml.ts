@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { SURAHS } from "@/lib/surahs";
 
-const BASE_URL = "https://verse-wise-mentor.lovable.app";
+const BASE_URL = "https://lov-quran-mentor.lovable.app";
 
 interface SitemapEntry {
   path: string;

@@ -28,7 +28,9 @@ export const Route = createFileRoute("/quran/$surahId")({
         { name: "description", content: `Read ${label} in Uthmani and IndoPak script with English and Urdu translation, verse-by-verse audio, sajdah indicators and bookmarks.` },
         { property: "og:title", content: `${label} — Verse Wise Mentor` },
         { property: "og:description", content: `Recite ${label} with adjustable script, font size and translation.` },
+        { property: "og:url", content: `https://lov-quran-mentor.lovable.app/quran/${params.surahId}` },
       ],
+      links: [{ rel: "canonical", href: `https://lov-quran-mentor.lovable.app/quran/${params.surahId}` }],
     };
   },
   component: () => (<SurahReader />),
