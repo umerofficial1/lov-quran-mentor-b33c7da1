@@ -15,7 +15,9 @@ export const Route = createFileRoute("/quran/")({
       { name: "description", content: "All 114 surahs of the Quran with Arabic, English and Urdu translations, world-class reciters and bookmarks." },
       { property: "og:title", content: "Read the Quran — Verse Wise Mentor" },
       { property: "og:description", content: "The complete Quran with translation, audio and personal bookmarks." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/quran" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/quran" }],
   }),
   component: () => (<QuranIndex />),
 });

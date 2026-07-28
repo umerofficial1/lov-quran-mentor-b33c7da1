@@ -40,7 +40,9 @@ export const Route = createFileRoute("/learn")({
       },
       { property: "og:title", content: "AI Learn — Verse Wise Mentor" },
       { property: "og:description", content: "Seven AI-guided tools to learn, memorize and revise the Quran." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/learn" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/learn" }],
   }),
   component: () => (<RequireAuth><LearnPage /></RequireAuth>),
 });

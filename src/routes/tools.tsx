@@ -14,7 +14,9 @@ export const Route = createFileRoute("/tools")({
       { name: "description", content: "Live prayer times, accurate Qibla direction, tasbeeh counter and a daily du'a — calculated from your location, private by default." },
       { property: "og:title", content: "Prayer Times, Qibla & Tasbeeh — Verse Wise Mentor" },
       { property: "og:description", content: "Everyday Islamic tools — prayer, qibla, dhikr and du'a — in one place." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/tools" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/tools" }],
   }),
   component: () => (<ToolsPage />),
 });

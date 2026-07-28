@@ -16,7 +16,9 @@ export const Route = createFileRoute("/reciters")({
       { property: "og:description", content: "Curated tilawaat from Sudais, Mishary, Abdul Basit, Minshawi and more — video and audio, all in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/reciters" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/reciters" }],
   }),
   component: () => <RecitersPage />,
 });

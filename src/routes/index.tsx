@@ -17,7 +17,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "A cinematic, scholarly Quran learning platform. AI tajweed voice coach, trilingual translations, tafsir library, hifz tracker and daily practice." },
       { property: "og:title", content: "Verse Wise Mentor — AI-guided Quran learning" },
       { property: "og:description", content: "Recitation, tafsir, hifz and Islamic tools in Arabic, English & Urdu — refined by AI, guided by tradition." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/" }],
   }),
   component: Home,
 });

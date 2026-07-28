@@ -21,7 +21,9 @@ export const Route = createFileRoute("/search")({
         property: "og:description",
         content: "Search the Holy Quran in Arabic, English and Urdu with topic and root-word lookup.",
       },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/search" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/search" }],
   }),
   component: () => (<SearchPage />),
 });

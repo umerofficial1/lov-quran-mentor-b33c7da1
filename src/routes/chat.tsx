@@ -17,7 +17,9 @@ export const Route = createFileRoute("/chat")({
       { name: "description", content: "Ask an AI Quran mentor about tajweed, tafsir, hifz technique and Islamic questions — grounded in classical scholarship." },
       { property: "og:title", content: "AI Mentor — Verse Wise Mentor" },
       { property: "og:description", content: "Trilingual AI teacher for Quran, tafsir and Islamic knowledge." },
+      { property: "og:url", content: "https://lov-quran-mentor.lovable.app/chat" },
     ],
+    links: [{ rel: "canonical", href: "https://lov-quran-mentor.lovable.app/chat" }],
   }),
   component: () => (<RequireAuth><ChatPage /></RequireAuth>),
 });
