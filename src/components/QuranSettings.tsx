@@ -143,7 +143,7 @@ export function QuranSettings({
 
             {/* Auto scroll */}
             <Toggle
-              icon={<PlayCircle className="size-4 text-teal-300" />}
+              icon={<PlayCircle className="size-4 text-emerald-300" />}
               label="Auto scroll"
               hint="Slowly scroll the page while you read"
               checked={prefs.autoScroll}

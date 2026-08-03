@@ -102,7 +102,7 @@ export function AdminDashboard() {
         <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Analytics</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Stat icon={<Users className="size-4 text-amber-300" />} label="Users" v={analytics?.users} />
-          <Stat icon={<Sparkles className="size-4 text-teal-300" />} label="Active today" v={analytics?.activeToday} />
+          <Stat icon={<Sparkles className="size-4 text-emerald-300" />} label="Active today" v={analytics?.activeToday} />
           <Stat icon={<BookOpen className="size-4 text-emerald-300" />} label="Bookmarks" v={analytics?.bookmarks} />
           <Stat icon={<BookOpen className="size-4 text-emerald-300" />} label="Hifz entries" v={analytics?.hifzEntries} />
           <Stat icon={<MessageSquareText className="size-4 text-rose-300" />} label="Feedback total" v={analytics?.feedback} />
@@ -123,10 +123,10 @@ export function AdminDashboard() {
         </form>
 
         <form onSubmit={(e) => { e.preventDefault(); wrap(() => linkFn({ data: { parentEmail, childEmail } }), `Linked ${parentEmail} → ${childEmail}`); setParentEmail(""); setChildEmail(""); }} className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-3">
-          <h3 className="text-white font-bold flex items-center gap-2"><Link2 className="size-4 text-teal-300" /> Link parent → child</h3>
+          <h3 className="text-white font-bold flex items-center gap-2"><Link2 className="size-4 text-emerald-300" /> Link parent → child</h3>
           <input type="email" required value={parentEmail} onChange={(e) => setParentEmail(e.target.value)} placeholder="Parent email" className={inputCls} />
           <input type="email" required value={childEmail} onChange={(e) => setChildEmail(e.target.value)} placeholder="Child (student) email" className={inputCls} />
-          <button className="w-full rounded-xl bg-teal-400 text-black font-bold py-2 text-sm hover:bg-teal-300">Link</button>
+          <button className="w-full rounded-xl bg-emerald-400 text-black font-bold py-2 text-sm hover:bg-emerald-300">Link</button>
         </form>
       </div>
 

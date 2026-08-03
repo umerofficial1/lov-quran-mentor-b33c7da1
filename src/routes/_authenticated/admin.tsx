@@ -671,7 +671,7 @@ function AnalyticsTab() {
 // ---------- Logs ----------
 
 const KIND_STYLE: Record<string, string> = {
-  session: "bg-teal-500/10 text-teal-200 border-teal-400/30",
+  session: "bg-emerald-500/10 text-emerald-200 border-emerald-400/30",
   feedback: "bg-amber-500/10 text-amber-200 border-amber-400/30",
   announcement: "bg-sky-500/10 text-sky-200 border-sky-400/30",
   role: "bg-rose-500/10 text-rose-200 border-rose-400/30",

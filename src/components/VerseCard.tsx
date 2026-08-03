@@ -101,7 +101,7 @@ function VerseCardInner({
           {v.sajdah_number != null && (
             <span
               title={`Sajdah (${v.sajdah_type ?? "recommended"})`}
-              className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 border border-teal-400/40 text-teal-200 text-[10px] px-2 py-0.5 font-bold uppercase tracking-widest"
+              className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 text-[10px] px-2 py-0.5 font-bold uppercase tracking-widest"
             >
               ۩ Sajdah
             </span>

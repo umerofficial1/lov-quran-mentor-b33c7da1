@@ -77,7 +77,7 @@ const misriQurra: Reciter[] = [
     origin: "Egypt • صوت الذہب",
     hadrServer: "https://server7.mp3quran.net/basit/",
     mashqServer: "https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/",
-    gradient: "from-emerald-800 to-teal-700",
+    gradient: "from-emerald-800 to-emerald-700",
   },
   {
     id: "mustafa",
@@ -104,7 +104,7 @@ const misriQurra: Reciter[] = [
     origin: "Egypt",
     hadrServer: "https://server12.mp3quran.net/tblawi/",
     mashqServer: "https://server12.mp3quran.net/tblawi/Al-Mojawwad/",
-    gradient: "from-teal-800 to-emerald-deep",
+    gradient: "from-emerald-800 to-emerald-deep",
   },
   {
     id: "jibreel",
@@ -163,7 +163,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "ماہر المعیقلی",
     origin: "Imam, Masjid Al-Haram",
     hadrServer: "https://server12.mp3quran.net/maher/",
-    gradient: "from-emerald-700 to-teal-800",
+    gradient: "from-emerald-700 to-emerald-800",
   },
   {
     id: "balilah",
@@ -187,7 +187,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "سعد الغامدی",
     origin: "Imam, Madinah",
     hadrServer: "https://server7.mp3quran.net/s_gmd/",
-    gradient: "from-teal-700 to-emerald-800",
+    gradient: "from-emerald-700 to-emerald-800",
   },
   {
     id: "ayyub",
@@ -196,7 +196,7 @@ const imameKaaba: Reciter[] = [
     origin: "Imam, Masjid An-Nabawi",
     hadrServer: "https://server8.mp3quran.net/ayyub/",
     mashqServer: "https://server16.mp3quran.net/ayyoub2/Rewayat-Hafs-A-n-Assem/",
-    gradient: "from-emerald-800 to-teal-900",
+    gradient: "from-emerald-800 to-emerald-900",
   },
   {
     id: "budair",
@@ -212,7 +212,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "عبد اللہ عواد الجہنی",
     origin: "Imam, Masjid Al-Haram",
     hadrServer: "https://server13.mp3quran.net/jhn/",
-    gradient: "from-emerald-800 to-teal-900",
+    gradient: "from-emerald-800 to-emerald-900",
   },
   {
     id: "hudhaify",
@@ -236,7 +236,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "صالح الطالب",
     origin: "Imam, Masjid Al-Haram",
     hadrServer: "https://server9.mp3quran.net/tlb/",
-    gradient: "from-teal-800 to-emerald-900",
+    gradient: "from-emerald-800 to-emerald-900",
   },
   {
     id: "basfar",
@@ -268,7 +268,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "مشاری راشد العفاسی",
     origin: "Imam, Grand Mosque of Kuwait",
     hadrServer: "https://server8.mp3quran.net/afs/",
-    gradient: "from-emerald-deep to-teal-800",
+    gradient: "from-emerald-deep to-emerald-800",
   },
   {
     id: "qatami",
@@ -284,7 +284,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "إدریس أبکر",
     origin: "Saudi Arabia",
     hadrServer: "https://server6.mp3quran.net/abkr/",
-    gradient: "from-teal-700 to-emerald-deep",
+    gradient: "from-emerald-700 to-emerald-deep",
   },
   {
     id: "jaleel",
@@ -316,7 +316,7 @@ const imameKaaba: Reciter[] = [
     nameUr: "عبد اللہ المطرود",
     origin: "Saudi Arabia",
     hadrServer: "https://server8.mp3quran.net/mtrod/",
-    gradient: "from-teal-800 to-emerald-800",
+    gradient: "from-emerald-800 to-emerald-800",
   },
   {
     id: "ali_jaber",

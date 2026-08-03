@@ -104,7 +104,7 @@ export function AudioPlayerBar() {
           <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-400">
             <span>{fmt(p.currentTime)}</span>
             {p.buffering && (
-              <span className="inline-flex items-center gap-1 text-teal-300">
+              <span className="inline-flex items-center gap-1 text-emerald-300">
                 <Loader2 className="size-3 animate-spin" /> Buffering…
               </span>
             )}
@@ -115,12 +115,12 @@ export function AudioPlayerBar() {
         {/* Progress strip during caching */}
         {p.caching.active && (
           <div className="px-4 pb-2">
-            <div className="flex items-center gap-2 text-[11px] text-teal-300">
+            <div className="flex items-center gap-2 text-[11px] text-emerald-300">
               <Loader2 className="size-3 animate-spin" /> Caching {p.caching.done}/{p.caching.total}
             </div>
             <div className="h-1 mt-1 rounded-full bg-white/10 overflow-hidden">
               <div
-                className="h-full bg-teal-400 transition-all"
+                className="h-full bg-emerald-400 transition-all"
                 style={{ width: `${(p.caching.done / Math.max(1, p.caching.total)) * 100}%` }}
               />
             </div>
@@ -235,7 +235,7 @@ export function AudioPlayerBar() {
             {/* Toggles + actions */}
             <section className="flex flex-wrap items-center gap-2">
               <label className="inline-flex items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-xs text-white cursor-pointer">
-                <ScrollText className="size-3.5 text-teal-300" />
+                <ScrollText className="size-3.5 text-emerald-300" />
                 Auto scroll
                 <input
                   type="checkbox"
@@ -247,7 +247,7 @@ export function AudioPlayerBar() {
               <button
                 onClick={() => void p.cacheQueue()}
                 disabled={p.caching.active}
-                className="inline-flex items-center gap-2 rounded-lg bg-teal-500/15 border border-teal-400/40 text-teal-200 px-3 py-2 text-xs font-bold hover:bg-teal-500/25 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 px-3 py-2 text-xs font-bold hover:bg-emerald-500/25 disabled:opacity-60"
               >
                 {p.caching.active ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />}
                 Cache for offline

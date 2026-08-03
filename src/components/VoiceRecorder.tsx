@@ -195,7 +195,7 @@ export function VoiceRecorder() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => r.download(rec.id)}
-                    className="inline-flex items-center gap-1 rounded-lg bg-teal-500/15 border border-teal-400/40 text-teal-200 px-3 py-2 text-xs font-bold hover:bg-teal-500/25"
+                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 px-3 py-2 text-xs font-bold hover:bg-emerald-500/25"
                     aria-label="Download recording"
                   >
                     <Download className="size-3.5" /> Download

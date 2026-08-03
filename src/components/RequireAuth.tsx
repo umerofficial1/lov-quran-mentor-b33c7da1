@@ -31,8 +31,8 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full rounded-2xl border border-white/10 bg-[#0B2420]/70 p-8 text-center space-y-4">
-        <div className="mx-auto w-12 h-12 rounded-full bg-teal-500/15 flex items-center justify-center">
-          <LogIn className="size-5 text-teal-300" />
+        <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/15 flex items-center justify-center">
+          <LogIn className="size-5 text-emerald-300" />
         </div>
         <h2 className="text-xl font-semibold text-pearl">Sign in required</h2>
         <p className="text-sm text-pearl/70">
@@ -41,7 +41,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
         <Link
           to="/auth"
           search={{ next: location.href }}
-          className="inline-flex items-center gap-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-[#04100D] px-4 py-2 text-sm font-medium"
+          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-[#04100D] px-4 py-2 text-sm font-medium"
         >
           <LogIn className="size-4" /> Sign in / Create account
         </Link>
