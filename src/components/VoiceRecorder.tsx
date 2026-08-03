@@ -45,7 +45,7 @@ export function VoiceRecorder() {
     if (history.length > maxBars) history.splice(0, history.length - maxBars);
 
     ctx.clearRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(201,162,76,0.9)";
+    ctx.fillStyle = "rgba(224,177,90,0.9)";
     const barW = 2;
     const gap = 2;
     for (let i = 0; i < history.length; i++) {

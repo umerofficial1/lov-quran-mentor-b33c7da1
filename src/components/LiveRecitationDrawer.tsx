@@ -690,7 +690,7 @@ export function LiveRecitationDrawer({ open, onClose, surahId, surahName, verses
               <button
                 onClick={startRecording}
                 disabled={starting || finished}
-                className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(31,182,176,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50 min-h-14 touch-manipulation"
+                className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-full bg-gradient-to-br from-teal to-teal-deep text-white font-bold text-sm md:text-base shadow-[0_0_40px_rgba(47,212,167,0.4)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-50 min-h-14 touch-manipulation"
               >
                 {starting ? <Loader2 className="size-5 md:size-6 animate-spin" /> : <Mic className="size-5 md:size-6" />}
                 <span>{starting ? "Starting…" : "Start Reciting"}</span>

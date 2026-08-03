@@ -83,7 +83,7 @@ function VerseCardInner({
       ref={ref}
       id={`v-${v.verse_key.replace(":", "-")}`}
       className={`verse-card cv-auto rounded-2xl bg-white/5 backdrop-blur-xl border p-6 transition-all scroll-mt-24 ${
-        isCurrent ? "border-amber-400/70 shadow-[0_0_0_2px_rgba(201,162,76,0.25)] bg-amber-400/[0.04] is-focused" : "border-white/10 hover:border-amber-400/20"
+        isCurrent ? "border-amber-400/70 shadow-[0_0_0_2px_rgba(224,177,90,0.25)] bg-amber-400/[0.04] is-focused" : "border-white/10 hover:border-amber-400/20"
       }`}
     >
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -111,7 +111,7 @@ function VerseCardInner({
               onClick={() => (isCurrentPlaying ? audio.pause() : onPlayFrom(v.verse_key))}
               className={`size-9 grid place-items-center rounded-full border transition-all ${
                 isCurrentPlaying
-                  ? "bg-amber-400 text-black border-amber-300 shadow-[0_0_18px_rgba(201,162,76,0.55)] animate-pulse"
+                  ? "bg-amber-400 text-black border-amber-300 shadow-[0_0_18px_rgba(224,177,90,0.55)] animate-pulse"
                   : isCurrent
                     ? "bg-amber-400/25 text-amber-200 border-amber-300/60"
                     : "bg-white/5 text-slate-300 border-white/15 hover:text-amber-300 hover:border-amber-400/40 hover:bg-amber-400/10"

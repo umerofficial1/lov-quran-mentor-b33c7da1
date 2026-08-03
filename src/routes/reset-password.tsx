@@ -53,7 +53,7 @@ function ResetPasswordPage() {
       <SiteNav />
       <main className="max-w-md mx-auto px-6 py-16">
         <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl">
-          <h1 className="font-display text-3xl text-[#EEF2FB] mb-2">Set a new password</h1>
+          <h1 className="font-display text-3xl text-[#E9F5F0] mb-2">Set a new password</h1>
           <p className="text-white/60 text-sm mb-8">
             Choose a strong password of at least 8 characters.
           </p>
@@ -63,7 +63,7 @@ function ResetPasswordPage() {
               Waiting for the recovery link to be verified…
               <br />
               If this doesn't finish, request a new reset from the{" "}
-              <Link to="/auth" className="text-[#C9A24C] underline">
+              <Link to="/auth" className="text-[#E0B15A] underline">
                 sign-in page
               </Link>
               .
@@ -79,7 +79,7 @@ function ResetPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="New password"
-                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-[#C9A24C]/50"
+                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-[#E0B15A]/50"
               />
               <input
                 type="password"
@@ -88,13 +88,13 @@ function ResetPasswordPage() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="Confirm new password"
-                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-[#C9A24C]/50"
+                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-[#E0B15A]/50"
               />
               {err && <p className="text-sm text-red-400">{err}</p>}
               <button
                 type="submit"
                 disabled={busy}
-                className="w-full py-3 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] font-semibold transition-all disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] font-semibold transition-all disabled:opacity-50"
               >
                 {busy ? "Saving…" : "Update password"}
               </button>

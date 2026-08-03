@@ -72,12 +72,12 @@ function RecitersPage() {
   );
 
   return (
-    <div className="min-h-dvh bg-[#070C1F] text-[#EEF2FB]">
+    <div className="min-h-dvh bg-[#04100D] text-[#E9F5F0]">
       <SiteNav />
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-10 pb-32">
         {/* Hero */}
         <header className="text-center mb-12">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-[#C9A24C] mb-3">Qurra — القراء</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-[#E0B15A] mb-3">Qurra — القراء</p>
           <h1 className="font-display text-4xl md:text-6xl font-semibold mb-4" style={{ backgroundImage: "linear-gradient(135deg,#F4E4A6,#D4AF37,#0F6D4F)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             Voices of the Holy Quran
           </h1>
@@ -94,8 +94,8 @@ function RecitersPage() {
               onClick={() => setCategory(c.id)}
               className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest transition-all border ${
                 category === c.id
-                  ? "bg-[#C9A24C] text-[#070C1F] border-[#C9A24C] shadow-[0_0_20px_rgba(201,162,76,0.35)]"
-                  : "bg-white/5 border-white/10 text-white/70 hover:border-[#C9A24C]/40 hover:text-[#C9A24C]"
+                  ? "bg-[#E0B15A] text-[#04100D] border-[#E0B15A] shadow-[0_0_20px_rgba(224,177,90,0.35)]"
+                  : "bg-white/5 border-white/10 text-white/70 hover:border-[#E0B15A]/40 hover:text-[#E0B15A]"
               }`}
             >
               {c.label}
@@ -109,18 +109,18 @@ function RecitersPage() {
             <button
               key={r.id}
               onClick={() => setActive(r)}
-              className="group relative text-left rounded-2xl bg-gradient-to-br from-[#0F1E3D] to-[#0B1730] border border-white/10 hover:border-[#C9A24C]/50 p-6 transition-all hover:shadow-[0_0_30px_rgba(201,162,76,0.2)] hover:-translate-y-1"
+              className="group relative text-left rounded-2xl bg-gradient-to-br from-[#0B2420] to-[#071A17] border border-white/10 hover:border-[#E0B15A]/50 p-6 transition-all hover:shadow-[0_0_30px_rgba(224,177,90,0.2)] hover:-translate-y-1"
             >
-              <div className="absolute top-4 right-4 text-[10px] tracking-widest uppercase text-[#C9A24C]/80">
+              <div className="absolute top-4 right-4 text-[10px] tracking-widest uppercase text-[#E0B15A]/80">
                 {r.style}
               </div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="shrink-0 w-14 h-14 rounded-full bg-[#0B1730] border border-[#C9A24C]/40 flex items-center justify-center text-2xl font-display text-[#C9A24C]">
+                <div className="shrink-0 w-14 h-14 rounded-full bg-[#071A17] border border-[#E0B15A]/40 flex items-center justify-center text-2xl font-display text-[#E0B15A]">
                   {r.name.split(" ").slice(-1)[0][0]}
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-display text-lg leading-tight text-white">{r.name.replace("Sheikh ", "")}</h3>
-                  <p className="text-2xl text-[#1FB6B0] mt-1" style={{ fontFamily: "'Scheherazade New', serif" }} dir="rtl">
+                  <p className="text-2xl text-[#2FD4A7] mt-1" style={{ fontFamily: "'Scheherazade New', serif" }} dir="rtl">
                     {r.arabicName}
                   </p>
                 </div>
@@ -129,8 +129,8 @@ function RecitersPage() {
               <div className="flex flex-wrap gap-3 text-[10px] uppercase tracking-wider text-white/50">
                 <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{r.country}</span>
                 <span className="inline-flex items-center gap-1"><Calendar className="size-3" />{r.era}</span>
-                <span className="inline-flex items-center gap-1"><Youtube className="size-3 text-[#C9A24C]" />YouTube</span>
-                {r.audio && <span className="inline-flex items-center gap-1"><Volume2 className="size-3 text-[#1FB6B0]" />114 surahs</span>}
+                <span className="inline-flex items-center gap-1"><Youtube className="size-3 text-[#E0B15A]" />YouTube</span>
+                {r.audio && <span className="inline-flex items-center gap-1"><Volume2 className="size-3 text-[#2FD4A7]" />114 surahs</span>}
               </div>
             </button>
           ))}
@@ -158,7 +158,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
       <div className="min-h-dvh flex items-start justify-center p-4 py-10">
         <div
-          className="relative w-full max-w-4xl bg-gradient-to-br from-[#0F1E3D] to-[#070C1F] border border-[#C9A24C]/30 rounded-3xl shadow-2xl overflow-hidden"
+          className="relative w-full max-w-4xl bg-gradient-to-br from-[#0B2420] to-[#04100D] border border-[#E0B15A]/30 rounded-3xl shadow-2xl overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           <button
@@ -172,18 +172,18 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
           {/* Header */}
           <div className="p-6 md:p-8 border-b border-white/10">
             <div className="flex items-start gap-4">
-              <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#0B1730] border-2 border-[#C9A24C]/50 flex items-center justify-center text-3xl font-display text-[#C9A24C]">
+              <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#071A17] border-2 border-[#E0B15A]/50 flex items-center justify-center text-3xl font-display text-[#E0B15A]">
                 {reciter.name.split(" ").slice(-1)[0][0]}
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="font-display text-2xl md:text-3xl text-white">{reciter.name}</h2>
-                <p className="text-3xl text-[#1FB6B0] mt-1" style={{ fontFamily: "'Scheherazade New', serif" }} dir="rtl">
+                <p className="text-3xl text-[#2FD4A7] mt-1" style={{ fontFamily: "'Scheherazade New', serif" }} dir="rtl">
                   {reciter.arabicName}
                 </p>
                 <div className="flex flex-wrap gap-3 mt-3 text-[10px] uppercase tracking-widest text-white/60">
                   <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{reciter.country}</span>
                   <span className="inline-flex items-center gap-1"><Calendar className="size-3" />{reciter.era}</span>
-                  <span className="inline-flex items-center gap-1"><Award className="size-3 text-[#C9A24C]" />{reciter.style}</span>
+                  <span className="inline-flex items-center gap-1"><Award className="size-3 text-[#E0B15A]" />{reciter.style}</span>
                 </div>
               </div>
             </div>
@@ -193,18 +193,18 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
           {/* Video Recitations — curated surah searches */}
           <div className="p-6 md:p-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#C9A24C]">Video Recitations</h3>
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#E0B15A]">Video Recitations</h3>
               <a
                 href={ytSearch}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[11px] text-white/70 hover:text-[#C9A24C] transition"
+                className="inline-flex items-center gap-1.5 text-[11px] text-white/70 hover:text-[#E0B15A] transition"
               >
                 All videos <ExternalLink className="size-3" />
               </a>
             </div>
             {selectedVideo && (
-              <div className="mb-4 overflow-hidden rounded-xl border border-[#C9A24C]/40 bg-black">
+              <div className="mb-4 overflow-hidden rounded-xl border border-[#E0B15A]/40 bg-black">
                 <div className="relative aspect-video">
                   <iframe
                     key={selectedVideo.id}
@@ -224,7 +224,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                     href={`https://www.youtube.com/watch?v=${selectedVideo.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex shrink-0 items-center gap-1 text-[11px] text-[#C9A24C] hover:text-white transition"
+                    className="inline-flex shrink-0 items-center gap-1 text-[11px] text-[#E0B15A] hover:text-white transition"
                   >
                     YouTube <ExternalLink className="size-3" />
                   </a>
@@ -240,7 +240,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                 const thumb = videoId
                   ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
                   : null;
-                const cardClassName = "group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#C9A24C]/60 bg-[#0B1730] text-left transition";
+                const cardClassName = "group relative overflow-hidden rounded-xl border border-white/10 hover:border-[#E0B15A]/60 bg-[#071A17] text-left transition";
                 const cardContent = (
                   <>
                     <div className="relative aspect-video bg-black">
@@ -254,7 +254,7 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
                         />
                       )}
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                        <div className="w-11 h-11 rounded-full bg-[#C9A24C] flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                        <div className="w-11 h-11 rounded-full bg-[#E0B15A] flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                           <Youtube className="size-5 text-black" />
                         </div>
                       </div>
@@ -296,12 +296,12 @@ function ReciterModal({ reciter, onClose }: { reciter: Reciter; onClose: () => v
           {/* Audio player */}
           {reciter.audio && (
             <div className="p-6 md:p-8 border-t border-white/10 bg-black/20">
-              <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#1FB6B0] mb-3">Full Mushaf Audio — Choose Surah</h3>
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-[#2FD4A7] mb-3">Full Mushaf Audio — Choose Surah</h3>
               <div className="flex items-center gap-3 mb-4">
                 <select
                   value={surahNum}
                   onChange={e => setSurahNum(Number(e.target.value))}
-                  className="flex-1 bg-[#0B1730] border border-white/15 rounded-lg px-4 py-3 text-sm text-white focus:border-[#1FB6B0] outline-none"
+                  className="flex-1 bg-[#071A17] border border-white/15 rounded-lg px-4 py-3 text-sm text-white focus:border-[#2FD4A7] outline-none"
                 >
                   {ALL_SURAHS.map(s => (
                     <option key={s.n} value={s.n}>

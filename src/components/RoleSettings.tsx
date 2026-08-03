@@ -75,7 +75,7 @@ export function RoleSettings() {
                   disabled={isBusy}
                   className={`w-full text-left rounded-2xl border p-4 transition-all min-h-[6.5rem] ${
                     on
-                      ? "border-[#C9A24C]/60 bg-[#C9A24C]/10 shadow-[0_0_20px_rgba(201,162,76,0.15)]"
+                      ? "border-[#E0B15A]/60 bg-[#E0B15A]/10 shadow-[0_0_20px_rgba(224,177,90,0.15)]"
                       : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
                   } disabled:opacity-60`}
                   aria-pressed={on}
@@ -87,7 +87,7 @@ export function RoleSettings() {
                     {isBusy ? (
                       <Loader2 className="size-4 text-white/60 animate-spin" />
                     ) : on ? (
-                      <Check className="size-4 text-[#C9A24C]" />
+                      <Check className="size-4 text-[#E0B15A]" />
                     ) : (
                       <span className="text-[10px] uppercase tracking-widest text-white/40">Off</span>
                     )}

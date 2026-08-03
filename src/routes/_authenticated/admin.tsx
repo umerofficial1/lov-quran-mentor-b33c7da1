@@ -92,7 +92,7 @@ function AdminPanel() {
           <Forbidden reason="This area is restricted to admins." />
         ) : (
           <div className="grid md:grid-cols-[220px_1fr] gap-6">
-            <nav className="md:sticky md:top-24 h-max rounded-2xl bg-[#0F1E3D]/60 border border-white/10 p-2 overflow-x-auto">
+            <nav className="md:sticky md:top-24 h-max rounded-2xl bg-[#0B2420]/60 border border-white/10 p-2 overflow-x-auto">
               <ul className="flex md:flex-col gap-1 min-w-max md:min-w-0">
                 {NAV.map((n) => (
                   <li key={n.id}>
@@ -100,7 +100,7 @@ function AdminPanel() {
                       onClick={() => setSection(n.id)}
                       className={`w-full text-left px-3 py-2 rounded-xl text-sm inline-flex items-center gap-2 transition ${
                         section === n.id
-                          ? "bg-[#C9A24C]/15 text-[#EEF2FB] border border-[#C9A24C]/30"
+                          ? "bg-[#E0B15A]/15 text-[#E9F5F0] border border-[#E0B15A]/30"
                           : "text-slate-300 hover:bg-white/5 border border-transparent"
                       }`}
                     >
@@ -134,7 +134,7 @@ function AdminPanel() {
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl bg-[#0F1E3D]/60 border border-white/10 p-5 ${className}`}>
+    <div className={`rounded-2xl bg-[#0B2420]/60 border border-white/10 p-5 ${className}`}>
       {children}
     </div>
   );
@@ -227,7 +227,7 @@ function MiniBarChart({ data }: { data: { label: string; value: number }[] }) {
       {data.map((d) => (
         <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
           <div
-            className="w-full rounded-t bg-gradient-to-t from-[#C9A24C] to-[#F4E4A6] min-h-[2px]"
+            className="w-full rounded-t bg-gradient-to-t from-[#E0B15A] to-[#F4E4A6] min-h-[2px]"
             style={{ height: `${(d.value / max) * 100}%` }}
             title={`${d.label}: ${d.value}m`}
           />
@@ -284,7 +284,7 @@ function UsersTab() {
             </select>
             <button
               onClick={() => wrap(() => grantFn({ data: { email, role } }), "Role granted")}
-              className="px-4 py-2 rounded-lg bg-[#C9A24C] text-[#070C1F] text-sm font-bold hover:bg-[#B38F40]"
+              className="px-4 py-2 rounded-lg bg-[#E0B15A] text-[#04100D] text-sm font-bold hover:bg-[#B38F40]"
             >Grant</button>
           </div>
         </Card>
@@ -488,7 +488,7 @@ function AnnouncementsTab() {
               <option value="teachers">Teachers</option>
               <option value="parents">Parents</option>
             </select>
-            <button onClick={submit} className="px-4 py-2 rounded-lg bg-[#C9A24C] text-[#070C1F] text-sm font-bold hover:bg-[#B38F40]">
+            <button onClick={submit} className="px-4 py-2 rounded-lg bg-[#E0B15A] text-[#04100D] text-sm font-bold hover:bg-[#B38F40]">
               Publish
             </button>
           </div>
@@ -552,7 +552,7 @@ function FeedbackTab() {
         <div className="flex gap-1">
           {(["open", "resolved", "all"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1 rounded-full text-xs border ${filter === f ? "bg-[#C9A24C] text-[#070C1F] border-[#C9A24C]" : "bg-white/5 text-slate-300 border-white/10"}`}>
+              className={`px-3 py-1 rounded-full text-xs border ${filter === f ? "bg-[#E0B15A] text-[#04100D] border-[#E0B15A]" : "bg-white/5 text-slate-300 border-white/10"}`}>
               {f}
             </button>
           ))}
@@ -625,7 +625,7 @@ function ReportsTab() {
       <h2 className="text-lg font-bold text-white">Reports</h2>
       <Card>
         <p className="text-sm text-slate-300">Export a snapshot of key platform metrics as CSV.</p>
-        <button onClick={download} className="mt-3 px-4 py-2 rounded-lg bg-[#C9A24C] text-[#070C1F] text-sm font-bold hover:bg-[#B38F40]">
+        <button onClick={download} className="mt-3 px-4 py-2 rounded-lg bg-[#E0B15A] text-[#04100D] text-sm font-bold hover:bg-[#B38F40]">
           Download CSV
         </button>
       </Card>
@@ -693,7 +693,7 @@ function LogsTab() {
         <div className="flex gap-1 flex-wrap">
           {["all", "session", "feedback", "announcement", "role", "signup"].map((k) => (
             <button key={k} onClick={() => setKind(k)}
-              className={`px-3 py-1 rounded-full text-xs border ${kind === k ? "bg-[#C9A24C] text-[#070C1F] border-[#C9A24C]" : "bg-white/5 text-slate-300 border-white/10"}`}>
+              className={`px-3 py-1 rounded-full text-xs border ${kind === k ? "bg-[#E0B15A] text-[#04100D] border-[#E0B15A]" : "bg-white/5 text-slate-300 border-white/10"}`}>
               {k}
             </button>
           ))}

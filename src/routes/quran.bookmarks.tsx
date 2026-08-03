@@ -52,7 +52,7 @@ function BookmarksPage() {
       <SiteNav />
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10">
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-[#C9A24C] font-bold">
+          <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-[#E0B15A] font-bold">
             <Star className="size-3.5" /> Your library
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mt-2">Bookmarks &amp; Favorites</h1>
@@ -69,14 +69,14 @@ function BookmarksPage() {
 
         {!loading && rows.length === 0 && (
           <div className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center">
-            <BookmarkCheck className="size-8 text-[#C9A24C] mx-auto" />
+            <BookmarkCheck className="size-8 text-[#E0B15A] mx-auto" />
             <p className="text-white font-bold mt-3">No bookmarks yet</p>
             <p className="text-slate-400 text-sm mt-1">
               Tap the bookmark icon on any ayah while reading to save it here.
             </p>
             <Link
               to="/quran"
-              className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-xl bg-[#C9A24C] text-[#070C1F] text-sm font-bold hover:brightness-110 transition"
+              className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-xl bg-[#E0B15A] text-[#04100D] text-sm font-bold hover:brightness-110 transition"
             >
               Browse the Quran <ChevronRight className="size-4" />
             </Link>
@@ -89,9 +89,9 @@ function BookmarksPage() {
             return (
               <div
                 key={r.id}
-                className="group flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#C9A24C]/40 hover:bg-white/10 p-4 transition-all"
+                className="group flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#E0B15A]/40 hover:bg-white/10 p-4 transition-all"
               >
-                <div className="size-12 rounded-xl bg-gradient-to-br from-[#C9A24C]/25 to-[#1FB6B0]/20 border border-white/10 grid place-items-center text-[#C9A24C] font-bold shrink-0">
+                <div className="size-12 rounded-xl bg-gradient-to-br from-[#E0B15A]/25 to-[#2FD4A7]/20 border border-white/10 grid place-items-center text-[#E0B15A] font-bold shrink-0">
                   {r.surah}:{r.ayah}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -106,7 +106,7 @@ function BookmarksPage() {
                   to="/quran/$surahId"
                   params={{ surahId: String(r.surah) }}
                   hash={`v-${r.surah}-${r.ayah}`}
-                  className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-bold hover:text-[#C9A24C] hover:border-[#C9A24C]/40 transition"
+                  className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-bold hover:text-[#E0B15A] hover:border-[#E0B15A]/40 transition"
                 >
                   Open <ChevronRight className="size-3.5" />
                 </Link>

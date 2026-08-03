@@ -159,7 +159,7 @@ function AuthPage() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-3 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] font-semibold transition-all disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] font-semibold transition-all disabled:opacity-50"
             >
               {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
             </button>
@@ -178,7 +178,7 @@ function AuthPage() {
                   if (error) setErr(error.message);
                   else setErr("Check your inbox for a reset link.");
                 }}
-                className="text-xs text-white/50 hover:text-[#C9A24C] transition-colors"
+                className="text-xs text-white/50 hover:text-[#E0B15A] transition-colors"
               >
                 Forgot password?
               </button>
@@ -189,7 +189,7 @@ function AuthPage() {
             {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
             <button
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="text-[#C9A24C] font-semibold hover:text-[#E0BC6A]"
+              className="text-[#E0B15A] font-semibold hover:text-[#E0BC6A]"
             >
               {mode === "signin" ? "Sign up" : "Sign in"}
             </button>

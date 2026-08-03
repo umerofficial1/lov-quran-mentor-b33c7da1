@@ -32,7 +32,7 @@ export function QuranSettings({
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Reader settings"
-        className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 size-12 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(201,162,76,0.35)] grid place-items-center hover:scale-105 transition"
+        className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 size-12 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(224,177,90,0.35)] grid place-items-center hover:scale-105 transition"
       >
         <Settings2 className="size-5" />
       </button>
@@ -43,7 +43,7 @@ export function QuranSettings({
           onClick={() => setOpen(false)}
         >
           <div
-            className="w-full max-w-lg rounded-3xl bg-[#0F1E3D] border border-white/10 p-6 space-y-6 max-h-[92vh] overflow-y-auto"
+            className="w-full max-w-lg rounded-3xl bg-[#0B2420] border border-white/10 p-6 space-y-6 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
