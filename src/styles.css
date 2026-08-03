@@ -70,24 +70,29 @@
 
   --glass-bg: rgba(11, 36, 32, 0.55);
   --glass-border: rgba(233, 245, 240, 0.10);
-  --glass-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  --glass-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+  --glow-primary: 0 0 0 1px rgba(47, 212, 167, 0.25), 0 18px 48px -18px rgba(47, 212, 167, 0.45);
+  --glow-accent: 0 0 0 1px rgba(224, 177, 90, 0.25), 0 18px 48px -18px rgba(224, 177, 90, 0.40);
+  --gradient-primary: linear-gradient(135deg, #2FD4A7 0%, #0F7A63 100%);
+  --gradient-accent: linear-gradient(135deg, #F3DCA8 0%, #E0B15A 100%);
   --body-gradient:
-    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(47, 212, 167, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 100% 100%, rgba(224, 177, 90, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 100% at 50% 40%, #0B2420 0%, #04100D 70%);
+    radial-gradient(ellipse 70% 55% at 50% -5%, rgba(47, 212, 167, 0.16) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 100% 105%, rgba(224, 177, 90, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 0% 60%, rgba(15, 122, 99, 0.14) 0%, transparent 62%),
+    radial-gradient(ellipse 120% 100% at 50% 40%, #0B2420 0%, #04100D 72%);
 }
 
 .light {
-  --background: #F6F1E4;
-  --foreground: #14213D;
-  --card: rgba(255, 255, 255, 0.72);
-  --card-foreground: #14213D;
+  --background: #F4F1E6;
+  --foreground: #08251E;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-foreground: #08251E;
   --popover: #FFFFFF;
-  --popover-foreground: #14213D;
+  --popover-foreground: #08251E;
   --primary: #0F7A63;
   --primary-foreground: #FFFFFF;
   --secondary: rgba(8, 40, 34, 0.06);
-  --secondary-foreground: #14213D;
+  --secondary-foreground: #08251E;
   --muted: rgba(8, 40, 34, 0.04);
   --muted-foreground: rgba(8, 40, 34, 0.62);
   --accent: #A9832E;
@@ -96,16 +101,21 @@
   --destructive-foreground: #ffffff;
   --border: rgba(8, 40, 34, 0.10);
   --input: rgba(8, 40, 34, 0.12);
-  --ring: #A9832E;
+  --ring: #0F7A63;
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg: rgba(255, 255, 255, 0.62);
   --glass-border: rgba(8, 40, 34, 0.10);
-  --glass-shadow: 0 10px 40px -18px rgba(8, 40, 34, 0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  --glass-shadow: 0 10px 40px -18px rgba(8, 40, 34, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
+  --glow-primary: 0 0 0 1px rgba(15, 122, 99, 0.20), 0 18px 44px -20px rgba(15, 122, 99, 0.40);
+  --glow-accent: 0 0 0 1px rgba(169, 131, 46, 0.22), 0 18px 44px -20px rgba(169, 131, 46, 0.35);
+  --gradient-primary: linear-gradient(135deg, #17A184 0%, #0F7A63 100%);
+  --gradient-accent: linear-gradient(135deg, #E0B15A 0%, #A9832E 100%);
   --body-gradient:
-    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(14, 122, 122, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 100% 100%, rgba(224, 177, 90, 0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 100% at 50% 40%, #FBF6E9 0%, #F1E9D3 70%);
+    radial-gradient(ellipse 70% 55% at 50% -5%, rgba(15, 122, 99, 0.14) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 100% 105%, rgba(224, 177, 90, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 100% at 50% 40%, #FCFAF1 0%, #EFEADA 72%);
 }
+
 
 @layer base {
   html {
