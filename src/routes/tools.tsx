@@ -109,7 +109,7 @@ function ToolsPage() {
           <button
             onClick={requestLocation}
             disabled={locating}
-            className="inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-[#1FB6B0] hover:bg-[#0E7A7A] text-[#070C1F] text-sm font-semibold transition-colors disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-[#2FD4A7] hover:bg-[#0F7A63] text-[#04100D] text-sm font-semibold transition-colors disabled:opacity-60"
           >
             <MapPin className="size-4" /> {locating ? "Locating…" : "Use my location"}
           </button>
@@ -119,12 +119,12 @@ function ToolsPage() {
               value={manualCity}
               onChange={(e) => setManualCity(e.target.value)}
               placeholder="Or enter a city (e.g. Karachi, London, Cairo)"
-              className="flex-1 min-h-11 px-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:border-[#C9A24C]/60"
+              className="flex-1 min-h-11 px-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:border-[#E0B15A]/60"
               aria-label="City name"
             />
             <button
               type="submit"
-              className="min-h-11 px-4 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] text-sm font-semibold transition-colors"
+              className="min-h-11 px-4 rounded-xl bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] text-sm font-semibold transition-colors"
             >
               Set city
             </button>

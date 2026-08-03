@@ -408,7 +408,7 @@ function ListenTool() {
       </div>
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={play}
-          className="inline-flex items-center gap-2 rounded-xl bg-teal-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
           <Play className="size-4" /> Play ayah
         </button>
         {!recording ? (
@@ -625,7 +625,7 @@ function MistakeTool() {
           </button>
         )}
         <button type="button" onClick={playCorrect}
-          className="inline-flex items-center gap-2 rounded-xl bg-teal-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 text-black px-4 py-2.5 font-bold text-sm hover:scale-[1.02] transition">
           <Play className="size-4" /> Play correct ayah
         </button>
         {recording && (
@@ -724,7 +724,7 @@ function MistakeTool() {
                     {w.heard && <span className="text-rose-300 text-xs">(aapne kaha: {w.heard})</span>}
                     <p className="text-slate-300 mt-0.5">{w.issue}</p>
                   </div>
-                  <button onClick={() => speak(w.issue)} className="shrink-0 text-teal-300 hover:text-teal-200 text-xs inline-flex items-center gap-1">
+                  <button onClick={() => speak(w.issue)} className="shrink-0 text-emerald-300 hover:text-emerald-200 text-xs inline-flex items-center gap-1">
                     <Ear className="size-3" /> Sunain
                   </button>
                 </div>

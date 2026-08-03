@@ -33,7 +33,7 @@ export function ParentDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl bg-gradient-to-br from-amber-400/10 to-teal-500/5 border border-amber-400/20 p-6">
+      <div className="rounded-3xl bg-gradient-to-br from-amber-400/10 to-emerald-500/5 border border-amber-400/20 p-6">
         <div className="flex items-center gap-3">
           <Baby className="size-6 text-amber-300" />
           <h2 className="text-lg font-bold text-white">Parent overview</h2>
@@ -59,7 +59,7 @@ export function ParentDashboard() {
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <Metric icon={<Flame className="size-4 text-amber-400" />} label="Streak" value={`${c.topStreak}d`} />
                 <Metric icon={<Sparkles className="size-4 text-amber-300" />} label="Avg" value={`${c.avgPercent}%`} />
-                <Metric icon={<Baby className="size-4 text-teal-300" />} label="Surahs" value={String(c.surahs)} />
+                <Metric icon={<Baby className="size-4 text-emerald-300" />} label="Surahs" value={String(c.surahs)} />
               </div>
             </div>
           ))}

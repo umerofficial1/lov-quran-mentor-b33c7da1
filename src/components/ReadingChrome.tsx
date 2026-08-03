@@ -72,7 +72,7 @@ export function ReadingChrome({
             <span className="text-white">{uniqueRead.toLocaleString()} / {totalAyahs.toLocaleString()}</span>
             <span className="text-slate-400">({percent.toFixed(2)}%)</span>
           </div>
-          <div className="flex items-center gap-2 text-teal-300">
+          <div className="flex items-center gap-2 text-emerald-300">
             <Clock className="size-3.5" />
             <span className="font-bold uppercase tracking-widest">Time</span>
             <span className="text-white">{formatDuration(stats.totalMs)}</span>
@@ -85,7 +85,7 @@ export function ReadingChrome({
           <div className="ml-auto min-w-[120px] flex-1 max-w-xs">
             <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-teal-400"
+                className="h-full bg-gradient-to-r from-amber-400 to-emerald-400"
                 style={{ width: `${percent}%` }}
               />
             </div>

@@ -21,7 +21,7 @@ export const Route = createFileRoute("/hadith/$bookId")({
     <div className="min-h-dvh grid place-items-center text-white">
       <div className="text-center">
         <p className="text-white/70">Book not found.</p>
-        <Link to="/hadith" className="mt-4 inline-block text-[#C9A24C] underline">Back to books</Link>
+        <Link to="/hadith" className="mt-4 inline-block text-[#E0B15A] underline">Back to books</Link>
       </div>
     </div>
   ),
@@ -80,13 +80,13 @@ function BookPage() {
     <div className="min-h-dvh flex flex-col">
       <SiteNav />
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
-        <Link to="/hadith" className="inline-flex items-center gap-1.5 text-xs text-white/60 hover:text-[#C9A24C] uppercase tracking-widest">
+        <Link to="/hadith" className="inline-flex items-center gap-1.5 text-xs text-white/60 hover:text-[#E0B15A] uppercase tracking-widest">
           <ArrowLeft className="size-3.5" /> All books
         </Link>
 
         <header className="mt-4 flex flex-col md:flex-row md:items-end md:justify-between gap-4 border-b border-white/10 pb-6">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.28em] text-[#C9A24C]/80">Kitab</div>
+            <div className="text-[10px] uppercase tracking-[0.28em] text-[#E0B15A]/80">Kitab</div>
             <h1 className="mt-1 font-display text-3xl md:text-4xl text-white leading-tight" dir="rtl" lang="ar">
               {book.titleAr}
             </h1>
@@ -94,7 +94,7 @@ function BookPage() {
           </div>
           <button
             onClick={() => openMentor()}
-            className="self-start md:self-auto inline-flex items-center gap-2 rounded-full bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] px-4 py-2 text-sm font-bold shadow-[0_0_24px_rgba(201,162,76,0.35)]"
+            className="self-start md:self-auto inline-flex items-center gap-2 rounded-full bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] px-4 py-2 text-sm font-bold shadow-[0_0_24px_rgba(224,177,90,0.35)]"
           >
             <Sparkles className="size-4" /> Ask AI Mentor
           </button>
@@ -115,7 +115,7 @@ function BookPage() {
                     onClick={() => setSection(id)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
                       section === id
-                        ? "bg-[#C9A24C]/15 text-[#C9A24C] border border-[#C9A24C]/30"
+                        ? "bg-[#E0B15A]/15 text-[#E0B15A] border border-[#E0B15A]/30"
                         : "text-white/80 hover:bg-white/5 border border-transparent"
                     }`}
                   >
@@ -147,10 +147,10 @@ function BookPage() {
             {merged.map((h) => (
               <article
                 key={h.n}
-                className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0F1E3D]/70 to-[#070C1F]/80 p-5 shadow-[0_8px_32px_-16px_rgba(0,0,0,0.4)]"
+                className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0B2420]/70 to-[#04100D]/80 p-5 shadow-[0_8px_32px_-16px_rgba(0,0,0,0.4)]"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] uppercase tracking-[0.28em] text-[#C9A24C]/80">
+                  <span className="text-[10px] uppercase tracking-[0.28em] text-[#E0B15A]/80">
                     Hadith #{h.n}
                   </span>
                   <button
@@ -159,7 +159,7 @@ function BookPage() {
                         `Hadith #${h.n} from ${book.title}:\n\nArabic: ${h.ar}\n\nTranslation: ${h.tr}`,
                       )
                     }
-                    className="inline-flex items-center gap-1.5 rounded-full bg-[#1FB6B0]/15 border border-[#1FB6B0]/40 text-[#1FB6B0] hover:bg-[#1FB6B0]/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[#2FD4A7]/15 border border-[#2FD4A7]/40 text-[#2FD4A7] hover:bg-[#2FD4A7]/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest"
                   >
                     <Sparkles className="size-3" /> Explain
                   </button>
@@ -201,7 +201,7 @@ function BookPage() {
       {!mentorOpen && (
         <button
           onClick={() => openMentor()}
-          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] px-5 py-3 font-bold shadow-[0_10px_30px_-6px_rgba(201,162,76,0.55)]"
+          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] px-5 py-3 font-bold shadow-[0_10px_30px_-6px_rgba(224,177,90,0.55)]"
           aria-label="Open AI Mentor"
         >
           <MessageCircle className="size-5" /> AI Mentor
@@ -274,10 +274,10 @@ function MentorDrawer({
         onClick={onClose}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
-      <aside className="relative w-full sm:w-[440px] h-full bg-[#0B1730] border-l border-white/10 flex flex-col shadow-2xl">
+      <aside className="relative w-full sm:w-[440px] h-full bg-[#071A17] border-l border-white/10 flex flex-col shadow-2xl">
         <header className="flex items-center justify-between px-4 py-3 border-b border-white/10">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-widest text-[#C9A24C]">AI Mentor</div>
+            <div className="text-[10px] uppercase tracking-widest text-[#E0B15A]">AI Mentor</div>
             <div className="text-sm font-semibold text-white truncate">{book.title}</div>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-white/70" aria-label="Close">
@@ -294,7 +294,7 @@ function MentorDrawer({
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
           {contextText && (
             <div className="rounded-lg bg-white/[0.04] border border-white/10 p-3 text-[11px] text-white/70 max-h-32 overflow-y-auto whitespace-pre-wrap">
-              <div className="text-[10px] uppercase tracking-widest text-[#1FB6B0] mb-1">Context</div>
+              <div className="text-[10px] uppercase tracking-widest text-[#2FD4A7] mb-1">Context</div>
               {contextText}
             </div>
           )}
@@ -309,7 +309,7 @@ function MentorDrawer({
                 <button
                   key={s}
                   onClick={() => submit(s)}
-                  className="w-full text-left rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#C9A24C]/40 px-3 py-2 text-[13px] text-white/85"
+                  className="w-full text-left rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#E0B15A]/40 px-3 py-2 text-[13px] text-white/85"
                 >
                   {s}
                 </button>
@@ -351,12 +351,12 @@ function MentorDrawer({
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about this hadith…"
             disabled={busy || !user}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#C9A24C]/40 disabled:opacity-50"
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#E0B15A]/40 disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={busy || !input.trim() || !user}
-            className="size-10 shrink-0 rounded-xl bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] grid place-items-center disabled:opacity-40"
+            className="size-10 shrink-0 rounded-xl bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] grid place-items-center disabled:opacity-40"
             aria-label="Send"
           >
             <Send className="size-4" />

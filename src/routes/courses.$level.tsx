@@ -200,17 +200,17 @@ export const Route = createFileRoute("/courses/$level")({
 function CoursePage() {
   const { level } = Route.useParams();
   const c = COURSES[level as LevelKey];
-  const toneBg = c.tone === "teal" ? "bg-[#1FB6B0] text-[#070C1F]" : "bg-[#C9A24C] text-[#070C1F]";
-  const toneText = c.tone === "teal" ? "text-[#1FB6B0]" : "text-[#C9A24C]";
+  const toneBg = c.tone === "teal" ? "bg-[#2FD4A7] text-[#04100D]" : "bg-[#E0B15A] text-[#04100D]";
+  const toneText = c.tone === "teal" ? "text-[#2FD4A7]" : "text-[#E0B15A]";
 
   return (
-    <div className="min-h-dvh pb-28 md:pb-16 bg-[#070C1F] text-white">
+    <div className="min-h-dvh pb-28 md:pb-16 bg-[#04100D] text-white">
       <SiteNav />
 
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-10">
         <Link
           to="/"
-          className="text-white/50 hover:text-[#C9A24C] text-[11px] uppercase tracking-[0.3em] transition-colors"
+          className="text-white/50 hover:text-[#E0B15A] text-[11px] uppercase tracking-[0.3em] transition-colors"
         >
           ← Back to home
         </Link>
@@ -248,19 +248,19 @@ function CoursePage() {
                   to={l.to}
                   params={l.params as never}
                   search={l.search as never}
-                  className="group grid grid-cols-[auto_1fr_auto] gap-5 items-center p-5 md:p-6 bg-[#0F1E3D]/60 border border-white/10 hover:border-[#C9A24C]/40 hover:bg-[#0F1E3D] transition-all"
+                  className="group grid grid-cols-[auto_1fr_auto] gap-5 items-center p-5 md:p-6 bg-[#0B2420]/60 border border-white/10 hover:border-[#E0B15A]/40 hover:bg-[#0B2420] transition-all"
                 >
-                  <span className="font-display text-2xl text-white/40 group-hover:text-[#C9A24C] w-10 text-center transition-colors">
+                  <span className="font-display text-2xl text-white/40 group-hover:text-[#E0B15A] w-10 text-center transition-colors">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span>
-                    <span className="flex items-center gap-2 text-[#EEF2FB] font-display text-lg">
+                    <span className="flex items-center gap-2 text-[#E9F5F0] font-display text-lg">
                       <span className={toneText}>{l.icon}</span>
                       {l.title}
                     </span>
                     <span className="block text-sm text-white/60 mt-1 leading-relaxed">{l.desc}</span>
                   </span>
-                  <span className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-white/60 group-hover:text-[#C9A24C] transition-colors">
+                  <span className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-white/60 group-hover:text-[#E0B15A] transition-colors">
                     {l.cta} <ArrowRight className="size-3" />
                   </span>
                 </Link>
@@ -277,7 +277,7 @@ function CoursePage() {
                 key={k}
                 to="/courses/$level"
                 params={{ level: k }}
-                className="text-[11px] uppercase tracking-[0.3em] text-white/60 hover:text-[#C9A24C] transition-colors inline-flex items-center gap-2 border border-white/10 px-4 py-2"
+                className="text-[11px] uppercase tracking-[0.3em] text-white/60 hover:text-[#E0B15A] transition-colors inline-flex items-center gap-2 border border-white/10 px-4 py-2"
               >
                 Continue to {COURSES[k].level} <ArrowRight className="size-3" />
               </Link>
@@ -292,10 +292,10 @@ function CoursePage() {
 
 function CourseNotFound() {
   return (
-    <div className="min-h-dvh bg-[#070C1F] text-white">
+    <div className="min-h-dvh bg-[#04100D] text-white">
       <SiteNav />
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <p className="text-[#C9A24C] text-[11px] uppercase tracking-[0.4em]">404</p>
+        <p className="text-[#E0B15A] text-[11px] uppercase tracking-[0.4em]">404</p>
         <h1 className="font-display text-4xl md:text-5xl mt-3">Course not found</h1>
         <p className="text-white/60 mt-4">Pick a level to continue.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -304,7 +304,7 @@ function CourseNotFound() {
               key={k}
               to="/courses/$level"
               params={{ level: k }}
-              className="px-5 py-2 bg-[#1FB6B0] text-[#070C1F] text-[11px] uppercase tracking-widest font-semibold hover:bg-[#0E7A7A] transition-colors"
+              className="px-5 py-2 bg-[#2FD4A7] text-[#04100D] text-[11px] uppercase tracking-widest font-semibold hover:bg-[#0F7A63] transition-colors"
             >
               {COURSES[k].level}
             </Link>

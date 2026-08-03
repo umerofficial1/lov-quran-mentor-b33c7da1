@@ -187,7 +187,7 @@ function ReportsPage() {
 
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-8">
         <header className="mb-8">
-          <p className="text-[11px] uppercase tracking-[0.32em] text-[#C9A24C] font-bold">Your Journey</p>
+          <p className="text-[11px] uppercase tracking-[0.32em] text-[#E0B15A] font-bold">Your Journey</p>
           <h1 className="text-3xl md:text-4xl font-display text-white mt-1">Recitation Reports</h1>
           <p className="text-sm text-white/60 mt-2 max-w-2xl">
             Track every live recitation session, watch your accuracy and pronunciation improve, and unlock
@@ -224,7 +224,7 @@ function ReportsPage() {
         {/* Recommendations */}
         <section className="mb-10">
           <h2 className="text-lg font-display text-white flex items-center gap-2 mb-3">
-            <Lightbulb className="size-5 text-[#C9A24C]" /> Learning recommendations
+            <Lightbulb className="size-5 text-[#E0B15A]" /> Learning recommendations
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {recommendations.map((r, i) => (
@@ -232,10 +232,10 @@ function ReportsPage() {
                 key={i}
                 className={`rounded-2xl border p-4 ${
                   r.tone === "teal"
-                    ? "border-[#1FB6B0]/30 bg-[#1FB6B0]/[0.06]"
+                    ? "border-[#2FD4A7]/30 bg-[#2FD4A7]/[0.06]"
                     : r.tone === "red"
                       ? "border-red-400/30 bg-red-400/[0.06]"
-                      : "border-[#C9A24C]/30 bg-[#C9A24C]/[0.06]"
+                      : "border-[#E0B15A]/30 bg-[#E0B15A]/[0.06]"
                 }`}
               >
                 <p className="text-sm font-bold text-white">{r.title}</p>
@@ -250,7 +250,7 @@ function ReportsPage() {
         <section className="mb-10">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-display text-white flex items-center gap-2">
-              <Award className="size-5 text-[#C9A24C]" /> Achievements
+              <Award className="size-5 text-[#E0B15A]" /> Achievements
             </h2>
             <span className="text-xs text-white/50">{achievements.length} unlocked</span>
           </div>
@@ -264,7 +264,7 @@ function ReportsPage() {
               </p>
               <Link
                 to="/quran"
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-[#2FD4A7] text-white text-sm font-bold hover:scale-[1.02] transition"
               >
                 <Mic2 className="size-4" /> Start reciting
               </Link>
@@ -274,13 +274,13 @@ function ReportsPage() {
               {achievements.map((row) => (
                 <div
                   key={row.id}
-                  className="rounded-2xl border border-[#C9A24C]/30 bg-gradient-to-br from-[#C9A24C]/[0.08] to-transparent p-4 flex items-start gap-3"
+                  className="rounded-2xl border border-[#E0B15A]/30 bg-gradient-to-br from-[#E0B15A]/[0.08] to-transparent p-4 flex items-start gap-3"
                 >
                   <div className="text-2xl" aria-hidden>{row.achievement?.icon ?? "🏅"}</div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-white truncate">{row.achievement?.title ?? "Achievement"}</p>
                     <p className="text-xs text-white/60 mt-0.5 line-clamp-2">{row.achievement?.description}</p>
-                    <p className="text-[10px] uppercase tracking-widest text-[#C9A24C]/80 mt-2">
+                    <p className="text-[10px] uppercase tracking-widest text-[#E0B15A]/80 mt-2">
                       Unlocked {fmtDate(row.unlocked_at)}
                     </p>
                   </div>
@@ -294,7 +294,7 @@ function ReportsPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-display text-white flex items-center gap-2">
-              <Zap className="size-5 text-[#1FB6B0]" /> Session history
+              <Zap className="size-5 text-[#2FD4A7]" /> Session history
             </h2>
             <span className="text-xs text-white/50">Last {Math.min(50, sessions.length)}</span>
           </div>
@@ -313,7 +313,7 @@ function ReportsPage() {
               </p>
               <Link
                 to="/quran"
-                className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition"
+                className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-[#2FD4A7] text-white text-sm font-bold hover:scale-[1.02] transition"
               >
                 <Mic2 className="size-4" /> Go to Quran
               </Link>
@@ -346,9 +346,9 @@ function StatTile({
 }) {
   const toneClass =
     tone === "teal"
-      ? "text-[#1FB6B0]"
+      ? "text-[#2FD4A7]"
       : tone === "gold"
-        ? "text-[#C9A24C]"
+        ? "text-[#E0B15A]"
         : tone === "red"
           ? "text-red-400"
           : "text-white";
@@ -366,9 +366,9 @@ function StatTile({
 function SessionCard({ s }: { s: SessionRow }) {
   const acc = Math.round(s.accuracy || 0);
   const pron = Math.round(s.pronunciation_score || 0);
-  const accTone = acc >= 80 ? "text-[#1FB6B0]" : acc >= 50 ? "text-[#C9A24C]" : "text-red-400";
+  const accTone = acc >= 80 ? "text-[#2FD4A7]" : acc >= 50 ? "text-[#E0B15A]" : "text-red-400";
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#C9A24C]/30 transition p-4 md:p-5">
+    <article className="rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#E0B15A]/30 transition p-4 md:p-5">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -380,7 +380,7 @@ function SessionCard({ s }: { s: SessionRow }) {
               {s.end_ayah !== s.start_ayah ? `–${s.end_ayah}` : ""}
             </span>
             {s.completed && (
-              <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#1FB6B0]/15 text-[#1FB6B0] border border-[#1FB6B0]/30">
+              <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#2FD4A7]/15 text-[#2FD4A7] border border-[#2FD4A7]/30">
                 Completed
               </span>
             )}
@@ -400,8 +400,8 @@ function SessionCard({ s }: { s: SessionRow }) {
       </div>
 
       {s.ai_advice && (
-        <div className="mt-4 rounded-xl bg-[#0F1E3D]/60 border border-white/10 p-3">
-          <p className="text-[10px] uppercase tracking-[0.24em] text-[#C9A24C] font-bold mb-1 flex items-center gap-1">
+        <div className="mt-4 rounded-xl bg-[#0B2420]/60 border border-white/10 p-3">
+          <p className="text-[10px] uppercase tracking-[0.24em] text-[#E0B15A] font-bold mb-1 flex items-center gap-1">
             <Sparkles className="size-3" /> AI Feedback
           </p>
           <p className="text-sm text-white/80 whitespace-pre-wrap">{s.ai_advice}</p>
@@ -422,9 +422,9 @@ function MiniStat({
 }) {
   const toneClass =
     tone === "teal"
-      ? "text-[#1FB6B0]"
+      ? "text-[#2FD4A7]"
       : tone === "gold"
-        ? "text-[#C9A24C]"
+        ? "text-[#E0B15A]"
         : tone === "red"
           ? "text-red-400"
           : "text-white/90";
@@ -487,11 +487,11 @@ function GoalsSection({
     <section className="mb-10">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-display text-white flex items-center gap-2">
-          <Target className="size-5 text-[#1FB6B0]" /> Goals
+          <Target className="size-5 text-[#2FD4A7]" /> Goals
         </h2>
         <button
           onClick={() => setEditing((v) => !v)}
-          className="text-xs text-[#C9A24C] hover:text-[#C9A24C]/80"
+          className="text-xs text-[#E0B15A] hover:text-[#E0B15A]/80"
         >
           {editing ? "Cancel" : "Edit goals"}
         </button>
@@ -514,9 +514,9 @@ function GoalsSection({
         />
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
-            <Flame className="size-4 text-[#C9A24C]" /> Streak
+            <Flame className="size-4 text-[#E0B15A]" /> Streak
           </div>
-          <p className="mt-1 text-2xl font-bold text-[#C9A24C]">{streak} day{streak === 1 ? "" : "s"}</p>
+          <p className="mt-1 text-2xl font-bold text-[#E0B15A]">{streak} day{streak === 1 ? "" : "s"}</p>
           <p className="text-[11px] text-white/50 mt-1">
             {activeDaysThisWeek}/7 active days this week
           </p>
@@ -528,31 +528,31 @@ function GoalsSection({
           <div>
             <label className="text-xs text-white/70 flex justify-between">
               <span>Daily practice target</span>
-              <span className="text-[#1FB6B0] font-bold">{dailyDraft} min</span>
+              <span className="text-[#2FD4A7] font-bold">{dailyDraft} min</span>
             </label>
             <input
               type="range" min={1} max={120} step={1}
               value={dailyDraft}
               onChange={(e) => setDailyDraft(Number(e.target.value))}
-              className="w-full mt-2 accent-[#1FB6B0]"
+              className="w-full mt-2 accent-[#2FD4A7]"
             />
           </div>
           <div>
             <label className="text-xs text-white/70 flex justify-between">
               <span>Weekly sessions target</span>
-              <span className="text-[#1FB6B0] font-bold">{weeklyDraft}</span>
+              <span className="text-[#2FD4A7] font-bold">{weeklyDraft}</span>
             </label>
             <input
               type="range" min={1} max={30} step={1}
               value={weeklyDraft}
               onChange={(e) => setWeeklyDraft(Number(e.target.value))}
-              className="w-full mt-2 accent-[#1FB6B0]"
+              className="w-full mt-2 accent-[#2FD4A7]"
             />
           </div>
           <button
             onClick={() => save.mutate()}
             disabled={save.isPending}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1FB6B0] text-white text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2FD4A7] text-white text-sm font-bold hover:scale-[1.02] transition disabled:opacity-50"
           >
             <Check className="size-4" /> {save.isPending ? "Saving…" : "Save goals"}
           </button>
@@ -568,16 +568,16 @@ function GoalCard({
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
-        <span className={done ? "text-[#1FB6B0]" : "text-white/70"}>{icon}</span>
+        <span className={done ? "text-[#2FD4A7]" : "text-white/70"}>{icon}</span>
         {label}
       </div>
       <div className="flex items-baseline justify-between mt-1">
-        <p className={`text-lg font-bold ${done ? "text-[#1FB6B0]" : "text-white"}`}>{value}</p>
+        <p className={`text-lg font-bold ${done ? "text-[#2FD4A7]" : "text-white"}`}>{value}</p>
         <p className="text-xs text-white/50">{pct}%</p>
       </div>
       <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${done ? "bg-[#1FB6B0]" : "bg-[#C9A24C]"}`}
+          className={`h-full rounded-full transition-all ${done ? "bg-[#2FD4A7]" : "bg-[#E0B15A]"}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -590,10 +590,10 @@ function StartLiveRecitationCard({ lastSurahId }: { lastSurahId: number }) {
   useEffect(() => { if (lastSurahId) setSelected(lastSurahId); }, [lastSurahId]);
   const s = SURAHS.find((x) => x.n === selected) ?? SURAHS[0];
   return (
-    <section className="mb-8 rounded-3xl border border-[#1FB6B0]/40 bg-gradient-to-br from-[#1FB6B0]/[0.14] via-[#0F1E3D]/60 to-[#C9A24C]/[0.08] p-5 md:p-6">
+    <section className="mb-8 rounded-3xl border border-[#2FD4A7]/40 bg-gradient-to-br from-[#2FD4A7]/[0.14] via-[#0B2420]/60 to-[#E0B15A]/[0.08] p-5 md:p-6">
       <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-[#1FB6B0] font-bold flex items-center gap-2">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[#2FD4A7] font-bold flex items-center gap-2">
             <Mic2 className="size-3.5" /> Live Recitation
           </p>
           <h2 className="text-xl md:text-2xl font-display text-white mt-1">Start reciting with real-time AI feedback</h2>
@@ -608,7 +608,7 @@ function StartLiveRecitationCard({ lastSurahId }: { lastSurahId: number }) {
             <select
               value={selected}
               onChange={(e) => setSelected(Number(e.target.value))}
-              className="w-full appearance-none rounded-xl border border-white/15 bg-[#070C1F] px-3 py-2.5 pr-8 text-sm text-white focus:border-[#1FB6B0] focus:outline-none"
+              className="w-full appearance-none rounded-xl border border-white/15 bg-[#04100D] px-3 py-2.5 pr-8 text-sm text-white focus:border-[#2FD4A7] focus:outline-none"
               aria-label="Choose a Surah to recite"
             >
               {SURAHS.map((sr) => (
@@ -622,7 +622,7 @@ function StartLiveRecitationCard({ lastSurahId }: { lastSurahId: number }) {
             to="/quran/$surahId"
             params={{ surahId: String(s.n) }}
             search={{ live: 1 }}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1FB6B0] hover:bg-[#1FB6B0]/90 text-[#070C1F] font-bold text-sm px-4 py-2.5 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2FD4A7] hover:bg-[#2FD4A7]/90 text-[#04100D] font-bold text-sm px-4 py-2.5 transition-colors"
           >
             <Mic2 className="size-4" />
             Start Live Recite

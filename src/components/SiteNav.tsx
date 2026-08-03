@@ -26,7 +26,7 @@ export function SiteNav() {
     >
       <div className="max-w-7xl mx-auto px-3 md:px-6 py-2 md:py-0 md:h-14 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-2 gap-y-1 md:gap-4">
         <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label="Ayatica — Read, Reflect, Live">
-          <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0B1730] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
+          <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#071A17] border border-[#D4AF37]/40 shadow-[0_0_16px_rgba(212,175,55,0.15)] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(212,175,55,0.45)] group-hover:scale-[1.05] group-hover:border-[#D4AF37]/70">
             <svg viewBox="0 0 40 40" className="w-6 h-6" aria-hidden="true">
               <defs>
                 <linearGradient id="ayatica-gold" x1="0" y1="0" x2="1" y2="1">
@@ -86,7 +86,7 @@ export function SiteNav() {
           ) : (
             <Link
               to="/auth"
-              className="px-5 py-2 rounded-full bg-[#C9A24C] hover:bg-[#B38F40] text-[#070C1F] text-sm font-semibold transition-all shadow-[0_0_20px_rgba(201,162,76,0.25)] inline-flex items-center gap-2"
+              className="px-5 py-2 rounded-full bg-[#E0B15A] hover:bg-[#B38F40] text-[#04100D] text-sm font-semibold transition-all shadow-[0_0_20px_rgba(224,177,90,0.25)] inline-flex items-center gap-2"
             >
               <UserIcon className="size-4" /> Sign in
             </Link>
@@ -106,8 +106,8 @@ function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label
       to={to}
       aria-label={label}
       title={label}
-      className={`${base} text-white/70 hover:text-[#C9A24C] hover:bg-white/5`}
-      activeProps={{ className: `${base} text-[#C9A24C] bg-white/10 ring-1 ring-[#C9A24C]/40` }}
+      className={`${base} text-white/70 hover:text-[#E0B15A] hover:bg-white/5`}
+      activeProps={{ className: `${base} text-[#E0B15A] bg-white/10 ring-1 ring-[#E0B15A]/40` }}
       activeOptions={{ exact: to === "/" }}
     >
       {icon}
@@ -172,7 +172,7 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(-1)}
           aria-label="Scroll nav left"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#071A17]/95 border border-white/15 text-white/80 hover:text-[#E0B15A] shadow-md"
         >
           <ChevronLeft className="size-3.5 md:size-4" />
         </button>
@@ -182,7 +182,7 @@ function ScrollableNav({ user }: { user: boolean }) {
           type="button"
           onClick={() => scrollBy(1)}
           aria-label="Scroll nav right"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#0B1730]/95 border border-white/15 text-white/80 hover:text-[#C9A24C] shadow-md"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 grid place-items-center size-6 md:size-7 rounded-full bg-[#071A17]/95 border border-white/15 text-white/80 hover:text-[#E0B15A] shadow-md"
         >
           <ChevronRight className="size-3.5 md:size-4" />
         </button>

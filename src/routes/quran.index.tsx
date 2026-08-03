@@ -58,7 +58,7 @@ function QuranIndex() {
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               to="/quran/bookmarks"
-              className="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200 hover:text-[#C9A24C] hover:border-[#C9A24C]/40 transition-all inline-flex items-center gap-2"
+              className="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200 hover:text-[#E0B15A] hover:border-[#E0B15A]/40 transition-all inline-flex items-center gap-2"
             >
               <Bookmark className="size-4" /> Bookmarks
             </Link>

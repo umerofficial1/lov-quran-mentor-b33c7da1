@@ -41,7 +41,7 @@ export function FeedbackWidget() {
       </button>
       {open && (
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm grid place-items-end md:place-items-center p-4" onClick={() => setOpen(false)}>
-          <form onClick={(e) => e.stopPropagation()} onSubmit={send} className="w-full max-w-md rounded-3xl bg-[#0F1E3D] border border-white/10 p-6 space-y-4">
+          <form onClick={(e) => e.stopPropagation()} onSubmit={send} className="w-full max-w-md rounded-3xl bg-[#0B2420] border border-white/10 p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-white font-bold">Send us feedback</h3>
               <button type="button" onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/10 text-slate-400"><X className="size-4" /></button>

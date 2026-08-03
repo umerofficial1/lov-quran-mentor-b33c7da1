@@ -73,7 +73,7 @@ function JuzReader() {
           </div>
         </div>
 
-        <div className="text-center mb-6 rounded-3xl bg-gradient-to-b from-teal-800/30 to-emerald-950/40 border border-white/10 p-8">
+        <div className="text-center mb-6 rounded-3xl bg-gradient-to-b from-emerald-800/30 to-emerald-950/40 border border-white/10 p-8">
           <p className="text-xs uppercase tracking-widest text-amber-400 font-bold">Part</p>
           <h1 className="text-5xl font-bold text-white mt-2">Juz {id}</h1>
           <p className="text-slate-400 mt-2">One of 30 parts of the Holy Quran</p>
@@ -115,7 +115,7 @@ function JuzReader() {
       <button
         onClick={() => setReciteOpen(true)}
         disabled={!verses.data?.length}
-        className="fixed bottom-24 md:bottom-8 right-5 z-40 group inline-flex items-center gap-2 pl-4 pr-5 py-3 rounded-full bg-gradient-to-br from-teal-500 to-emerald-700 text-white font-bold shadow-[0_0_30px_rgba(31,182,176,0.5)] hover:scale-105 active:scale-95 transition disabled:opacity-40"
+        className="fixed bottom-24 md:bottom-8 right-5 z-40 group inline-flex items-center gap-2 pl-4 pr-5 py-3 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-bold shadow-[0_0_30px_rgba(47,212,167,0.5)] hover:scale-105 active:scale-95 transition disabled:opacity-40"
         aria-label="Start live recitation"
       >
         <span className="relative flex size-8 items-center justify-center rounded-full bg-white/15">

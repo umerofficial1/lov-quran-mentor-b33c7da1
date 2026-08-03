@@ -23,8 +23,8 @@ function NotFoundComponent() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-16">
       <div className="max-w-md text-center animate-fade-in">
-        <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#C9A24C]/30 to-[#1FB6B0]/20 grid place-items-center border border-white/10">
-          <span className="text-4xl font-display text-[#C9A24C]">﷽</span>
+        <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#E0B15A]/30 to-[#2FD4A7]/20 grid place-items-center border border-white/10">
+          <span className="text-4xl font-display text-[#E0B15A]">﷽</span>
         </div>
         <h1 className="text-5xl font-display font-bold text-white">404</h1>
         <h2 className="mt-3 text-lg font-semibold text-white/90">This page isn't here</h2>
@@ -34,7 +34,7 @@ function NotFoundComponent() {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link
             to="/"
-            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#C9A24C] px-5 text-sm font-semibold text-[#070C1F] transition-transform hover:scale-[1.02]"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#E0B15A] px-5 text-sm font-semibold text-[#04100D] transition-transform hover:scale-[1.02]"
           >
             Go home
           </Link>
@@ -75,7 +75,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#1FB6B0] px-5 text-sm font-semibold text-[#070C1F] transition-transform hover:scale-[1.02]"
+            className="min-h-11 inline-flex items-center justify-center rounded-xl bg-[#2FD4A7] px-5 text-sm font-semibold text-[#04100D] transition-transform hover:scale-[1.02]"
           >
             Try again
           </button>
@@ -98,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Verse Wise Mentor — AI-guided Quran learning" },
       { name: "description", content: "A cinematic, scholarly Quran learning platform with AI tajweed feedback, tafsir, hifz tracking and trilingual translations." },
-      { name: "theme-color", content: "#070C1F" },
+      { name: "theme-color", content: "#04100D" },
       { property: "og:title", content: "Verse Wise Mentor" },
       { property: "og:description", content: "AI-guided Quran learning — recitation, tafsir, hifz and Islamic tools in Arabic, English and Urdu." },
       { property: "og:type", content: "website" },

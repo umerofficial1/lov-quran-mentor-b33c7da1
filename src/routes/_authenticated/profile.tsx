@@ -260,11 +260,11 @@ function ProfilePage() {
       <SiteNav />
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-8 space-y-8">
         {/* Header card */}
-        <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#0F1E3D] to-[#070C1F] p-6 md:p-8">
+        <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#0B2420] to-[#04100D] p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="relative">
-              <div className="size-28 rounded-full bg-gradient-to-br from-[#1FB6B0] to-[#C9A24C] p-[3px]">
-                <div className="size-full rounded-full bg-[#070C1F] overflow-hidden flex items-center justify-center">
+              <div className="size-28 rounded-full bg-gradient-to-br from-[#2FD4A7] to-[#E0B15A] p-[3px]">
+                <div className="size-full rounded-full bg-[#04100D] overflow-hidden flex items-center justify-center">
                   {signedAvatar ? (
                     <img src={signedAvatar} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
                   ) : (
@@ -275,7 +275,7 @@ function ProfilePage() {
               <button
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="absolute -bottom-1 -right-1 size-9 rounded-full bg-[#1FB6B0] text-white flex items-center justify-center border-2 border-[#070C1F] hover:scale-105 transition disabled:opacity-50"
+                className="absolute -bottom-1 -right-1 size-9 rounded-full bg-[#2FD4A7] text-white flex items-center justify-center border-2 border-[#04100D] hover:scale-105 transition disabled:opacity-50"
                 aria-label="Change photo"
               >
                 <Camera className="size-4" />
@@ -284,7 +284,7 @@ function ProfilePage() {
             </div>
 
             <div className="flex-1 min-w-0 text-center md:text-left">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-[#C9A24C] font-bold">Assalāmu ‘alaikum</p>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-[#E0B15A] font-bold">Assalāmu ‘alaikum</p>
               <h1 className="text-3xl md:text-4xl font-display text-white mt-1">{draft.display_name || user?.email?.split("@")[0]}</h1>
               {draft.username && <p className="text-sm text-white/60 mt-1">@{draft.username}</p>}
               {draft.bio && <p className="text-sm text-white/70 mt-2 max-w-xl">{draft.bio}</p>}
@@ -303,7 +303,7 @@ function ProfilePage() {
         {/* Stats */}
         <section>
           <h2 className="text-lg font-display text-white mb-3 flex items-center gap-2">
-            <Sparkles className="size-5 text-[#1FB6B0]" /> Reading statistics
+            <Sparkles className="size-5 text-[#2FD4A7]" /> Reading statistics
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <Tile icon={<Flame className="size-4" />} label="Streak" value={`${stats.streak}d`} tone="gold" />
@@ -317,7 +317,7 @@ function ProfilePage() {
         {/* Goals */}
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="text-lg font-display text-white mb-3 flex items-center gap-2">
-            <Target className="size-5 text-[#1FB6B0]" /> Goals
+            <Target className="size-5 text-[#2FD4A7]" /> Goals
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RangeRow
@@ -340,7 +340,7 @@ function ProfilePage() {
         {/* Bookmarks + Favorites */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ListCard
-            icon={<Bookmark className="size-5 text-[#C9A24C]" />}
+            icon={<Bookmark className="size-5 text-[#E0B15A]" />}
             title="Bookmarks"
             empty="No bookmarks yet."
             manageHref="/quran/bookmarks"
@@ -372,7 +372,7 @@ function ProfilePage() {
         {/* Achievements */}
         <section>
           <h2 className="text-lg font-display text-white mb-3 flex items-center gap-2">
-            <Award className="size-5 text-[#C9A24C]" /> Achievements
+            <Award className="size-5 text-[#E0B15A]" /> Achievements
           </h2>
           {(achievementsQ.data ?? []).length === 0 ? (
             <p className="text-white/60 text-sm rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -381,12 +381,12 @@ function ProfilePage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {(achievementsQ.data ?? []).map((a) => (
-                <div key={a.id} className="rounded-2xl border border-[#C9A24C]/30 bg-gradient-to-br from-[#C9A24C]/10 to-transparent p-3 flex items-start gap-2">
+                <div key={a.id} className="rounded-2xl border border-[#E0B15A]/30 bg-gradient-to-br from-[#E0B15A]/10 to-transparent p-3 flex items-start gap-2">
                   <div className="text-2xl leading-none" aria-hidden>{a.achievement?.icon ?? "🏅"}</div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-white truncate">{a.achievement?.title ?? "Achievement"}</p>
                     <p className="text-[11px] text-white/60 line-clamp-2 mt-0.5">{a.achievement?.description}</p>
-                    <p className="text-[10px] text-[#C9A24C]/80 mt-1">{fmtDate(a.unlocked_at)}</p>
+                    <p className="text-[10px] text-[#E0B15A]/80 mt-1">{fmtDate(a.unlocked_at)}</p>
                   </div>
                 </div>
               ))}
@@ -397,7 +397,7 @@ function ProfilePage() {
         {/* Certificates */}
         <section>
           <h2 className="text-lg font-display text-white mb-3 flex items-center gap-2">
-            <GraduationCap className="size-5 text-[#1FB6B0]" /> Certificates
+            <GraduationCap className="size-5 text-[#2FD4A7]" /> Certificates
           </h2>
           {(certificatesQ.data ?? []).length === 0 ? (
             <p className="text-white/60 text-sm rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -406,9 +406,9 @@ function ProfilePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {(certificatesQ.data ?? []).map((c) => (
-                <article key={c.id} className="rounded-2xl border border-[#1FB6B0]/30 bg-gradient-to-br from-[#1FB6B0]/[0.08] to-transparent p-4">
+                <article key={c.id} className="rounded-2xl border border-[#2FD4A7]/30 bg-gradient-to-br from-[#2FD4A7]/[0.08] to-transparent p-4">
                   <div className="flex items-start gap-3">
-                    <GraduationCap className="size-6 text-[#1FB6B0] shrink-0 mt-0.5" />
+                    <GraduationCap className="size-6 text-[#2FD4A7] shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1">
                       <p className="font-bold text-white">{c.title}</p>
                       {c.description && <p className="text-xs text-white/70 mt-1">{c.description}</p>}
@@ -417,7 +417,7 @@ function ProfilePage() {
                           {c.surah_from ? surahName(c.surah_from) : ""}{c.surah_to && c.surah_to !== c.surah_from ? ` – ${surahName(c.surah_to)}` : ""}
                         </p>
                       )}
-                      <p className="text-[11px] text-[#C9A24C] font-bold mt-2">
+                      <p className="text-[11px] text-[#E0B15A] font-bold mt-2">
                         {c.issuer} · {fmtDate(c.issued_at)}
                       </p>
                     </div>
@@ -431,7 +431,7 @@ function ProfilePage() {
         {/* Settings */}
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 space-y-5">
           <h2 className="text-lg font-display text-white flex items-center gap-2">
-            <User className="size-5 text-[#1FB6B0]" /> Profile & settings
+            <User className="size-5 text-[#2FD4A7]" /> Profile & settings
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -439,7 +439,7 @@ function ProfilePage() {
               <input
                 value={draft.display_name}
                 onChange={(e) => setDraft((d) => ({ ...d, display_name: e.target.value }))}
-                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#1FB6B0] outline-none"
+                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#2FD4A7] outline-none"
                 placeholder="Your name"
                 maxLength={80}
               />
@@ -448,7 +448,7 @@ function ProfilePage() {
               <input
                 value={draft.username}
                 onChange={(e) => setDraft((d) => ({ ...d, username: e.target.value.replace(/[^a-zA-Z0-9_.-]/g, "") }))}
-                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#1FB6B0] outline-none"
+                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#2FD4A7] outline-none"
                 placeholder="unique_username"
                 maxLength={30}
               />
@@ -457,7 +457,7 @@ function ProfilePage() {
               <textarea
                 value={draft.bio}
                 onChange={(e) => setDraft((d) => ({ ...d, bio: e.target.value }))}
-                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#1FB6B0] outline-none min-h-[72px]"
+                className="w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-white text-sm focus:border-[#2FD4A7] outline-none min-h-[72px]"
                 placeholder="A short intro (optional)"
                 maxLength={280}
               />
@@ -471,7 +471,7 @@ function ProfilePage() {
                     onClick={() => setDraft((d) => ({ ...d, theme: t }))}
                     className={`flex-1 rounded-xl px-3 py-2 text-sm font-bold border transition ${
                       draft.theme === t
-                        ? "bg-[#1FB6B0]/15 text-[#1FB6B0] border-[#1FB6B0]/40"
+                        ? "bg-[#2FD4A7]/15 text-[#2FD4A7] border-[#2FD4A7]/40"
                         : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10"
                     }`}
                   >
@@ -489,7 +489,7 @@ function ProfilePage() {
                     onClick={() => setDraft((d) => ({ ...d, language: o.v as "en" | "ur" | "ar" }))}
                     className={`flex-1 rounded-xl px-3 py-2 text-sm font-bold border transition ${
                       draft.language === o.v
-                        ? "bg-[#C9A24C]/15 text-[#C9A24C] border-[#C9A24C]/40"
+                        ? "bg-[#E0B15A]/15 text-[#E0B15A] border-[#E0B15A]/40"
                         : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10"
                     }`}
                   >
@@ -527,7 +527,7 @@ function ProfilePage() {
             <button
               onClick={() => saveProfile.mutate()}
               disabled={saveProfile.isPending}
-              className="inline-flex items-center gap-2 rounded-full bg-[#1FB6B0] px-5 py-2 text-sm font-bold text-white hover:scale-[1.02] transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-full bg-[#2FD4A7] px-5 py-2 text-sm font-bold text-white hover:scale-[1.02] transition disabled:opacity-50"
             >
               <Save className="size-4" /> {saveProfile.isPending ? "Saving…" : "Save changes"}
             </button>
@@ -540,7 +540,7 @@ function ProfilePage() {
 }
 
 function Tile({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: "teal" | "gold" | "pearl" }) {
-  const c = tone === "teal" ? "text-[#1FB6B0]" : tone === "gold" ? "text-[#C9A24C]" : "text-white";
+  const c = tone === "teal" ? "text-[#2FD4A7]" : tone === "gold" ? "text-[#E0B15A]" : "text-white";
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
       <div className={`flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50`}>
@@ -565,7 +565,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
     <button
       type="button"
       onClick={() => onChange(!on)}
-      className={`relative w-10 h-6 rounded-full transition ${on ? "bg-[#1FB6B0]" : "bg-white/15"}`}
+      className={`relative w-10 h-6 rounded-full transition ${on ? "bg-[#2FD4A7]" : "bg-white/15"}`}
       aria-pressed={on}
     >
       <span className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform ${on ? "translate-x-4" : ""}`} />
@@ -582,14 +582,14 @@ function RangeRow({ label, value, min, max, suffix, onCommit }: {
     <div>
       <div className="flex justify-between text-sm mb-2">
         <span className="text-white/75">{label}</span>
-        <span className="text-[#1FB6B0] font-bold">{v}{suffix ? ` ${suffix}` : ""}</span>
+        <span className="text-[#2FD4A7] font-bold">{v}{suffix ? ` ${suffix}` : ""}</span>
       </div>
       <input
         type="range" min={min} max={max} step={1} value={v}
         onChange={(e) => setV(Number(e.target.value))}
         onPointerUp={() => v !== value && onCommit(v)}
         onKeyUp={() => v !== value && onCommit(v)}
-        className="w-full accent-[#1FB6B0]"
+        className="w-full accent-[#2FD4A7]"
       />
     </div>
   );
@@ -606,7 +606,7 @@ function ListCard({
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-white font-bold flex items-center gap-2">{icon} {title}</h3>
         {manageHref && (
-          <Link to={manageHref} className="text-xs text-[#C9A24C] font-bold hover:opacity-80">Manage →</Link>
+          <Link to={manageHref} className="text-xs text-[#E0B15A] font-bold hover:opacity-80">Manage →</Link>
         )}
       </div>
       {items.length === 0 ? (

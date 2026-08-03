@@ -253,9 +253,9 @@ export function StudentDashboard({ user }: { user: User }) {
         <section className="lg:col-span-2 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-white font-bold flex items-center gap-2">
-              <TrendingUp className="size-4 text-[#1FB6B0]" /> Accuracy — last 14 days
+              <TrendingUp className="size-4 text-[#2FD4A7]" /> Accuracy — last 14 days
             </h2>
-            <Link to="/reports" className="text-xs text-[#C9A24C] font-bold hover:opacity-80">Reports →</Link>
+            <Link to="/reports" className="text-xs text-[#E0B15A] font-bold hover:opacity-80">Reports →</Link>
           </div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -264,10 +264,10 @@ export function StudentDashboard({ user }: { user: User }) {
                 <XAxis dataKey="label" tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 11 }} tickLine={false} axisLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 11 }} tickLine={false} axisLine={false} />
                 <Tooltip
-                  contentStyle={{ background: "#0F1E3D", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff" }}
+                  contentStyle={{ background: "#0B2420", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff" }}
                   formatter={(v) => (v == null ? "—" : `${v}%`)}
                 />
-                <Line type="monotone" dataKey="accuracy" stroke="#1FB6B0" strokeWidth={2.5} dot={{ r: 3, fill: "#1FB6B0" }} connectNulls />
+                <Line type="monotone" dataKey="accuracy" stroke="#2FD4A7" strokeWidth={2.5} dot={{ r: 3, fill: "#2FD4A7" }} connectNulls />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -276,9 +276,9 @@ export function StudentDashboard({ user }: { user: User }) {
         <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-bold flex items-center gap-2">
-              <Target className="size-4 text-[#1FB6B0]" /> Goals
+              <Target className="size-4 text-[#2FD4A7]" /> Goals
             </h2>
-            <Link to="/reports" className="text-xs text-[#C9A24C] font-bold hover:opacity-80">Edit →</Link>
+            <Link to="/reports" className="text-xs text-[#E0B15A] font-bold hover:opacity-80">Edit →</Link>
           </div>
           <GoalRow
             label="Daily practice"
@@ -303,33 +303,33 @@ export function StudentDashboard({ user }: { user: User }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <h2 className="text-white font-bold mb-4 flex items-center gap-2">
-            <BookOpen className="size-4 text-[#1FB6B0]" /> Continue reading
+            <BookOpen className="size-4 text-[#2FD4A7]" /> Continue reading
           </h2>
           {lastRead ? (
             <Link
               to="/quran/$surahId"
               params={{ surahId: String(lastRead.surah) }}
-              className="flex items-center justify-between rounded-2xl bg-[#1FB6B0]/10 border border-[#1FB6B0]/30 p-4 hover:bg-[#1FB6B0]/15 transition"
+              className="flex items-center justify-between rounded-2xl bg-[#2FD4A7]/10 border border-[#2FD4A7]/30 p-4 hover:bg-[#2FD4A7]/15 transition"
             >
               <div>
-                <p className="text-[#C9A24C] text-[10px] font-bold uppercase tracking-widest">Last read</p>
+                <p className="text-[#E0B15A] text-[10px] font-bold uppercase tracking-widest">Last read</p>
                 <p className="text-white font-bold mt-1 text-lg" dir="rtl">
                   {SURAHS.find((s) => s.n === lastRead.surah)?.nameAr ?? `Surah ${lastRead.surah}`}
                 </p>
                 <p className="text-xs text-white/60 mt-1">Ayah {lastRead.ayah}</p>
               </div>
-              <span className="text-[#1FB6B0] font-bold">Resume →</span>
+              <span className="text-[#2FD4A7] font-bold">Resume →</span>
             </Link>
           ) : (
             <Link to="/quran" className="block rounded-2xl bg-white/5 border border-white/10 p-4 text-white/70 hover:bg-white/10 transition">
-              You haven't started reading yet. <span className="text-[#C9A24C] font-semibold">Open Qur'an →</span>
+              You haven't started reading yet. <span className="text-[#E0B15A] font-semibold">Open Qur'an →</span>
             </Link>
           )}
         </section>
 
         <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <h2 className="text-white font-bold mb-4 flex items-center gap-2">
-            <Mic2 className="size-4 text-[#1FB6B0]" /> Recently recited
+            <Mic2 className="size-4 text-[#2FD4A7]" /> Recently recited
           </h2>
           {recentReads.length === 0 ? (
             <p className="text-white/60 text-sm">No sessions yet — start a Live Recite from any surah.</p>
@@ -346,7 +346,7 @@ export function StudentDashboard({ user }: { user: User }) {
                       <span dir="rtl">{SURAHS.find((x) => x.n === s.surah_id)?.nameAr ?? `Surah ${s.surah_id}`}</span>
                       <span className="text-white/50"> · Ayah {s.start_ayah}{s.end_ayah !== s.start_ayah ? `–${s.end_ayah}` : ""}</span>
                     </span>
-                    <span className={`text-xs font-bold ${s.accuracy >= 80 ? "text-[#1FB6B0]" : s.accuracy >= 50 ? "text-[#C9A24C]" : "text-red-400"}`}>
+                    <span className={`text-xs font-bold ${s.accuracy >= 80 ? "text-[#2FD4A7]" : s.accuracy >= 50 ? "text-[#E0B15A]" : "text-red-400"}`}>
                       {Math.round(s.accuracy)}%
                     </span>
                   </Link>
@@ -361,7 +361,7 @@ export function StudentDashboard({ user }: { user: User }) {
       <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-white font-bold flex items-center gap-2">
-            <Award className="size-4 text-[#C9A24C]" /> Achievements & badges
+            <Award className="size-4 text-[#E0B15A]" /> Achievements & badges
           </h2>
           <span className="text-xs text-white/50">{achievements.length} unlocked</span>
         </div>
@@ -370,7 +370,7 @@ export function StudentDashboard({ user }: { user: User }) {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {achievements.map((a) => (
-              <div key={a.id} className="rounded-2xl border border-[#C9A24C]/30 bg-gradient-to-br from-[#C9A24C]/10 to-transparent p-3 flex items-start gap-2">
+              <div key={a.id} className="rounded-2xl border border-[#E0B15A]/30 bg-gradient-to-br from-[#E0B15A]/10 to-transparent p-3 flex items-start gap-2">
                 <div className="text-2xl leading-none" aria-hidden>{a.achievement?.icon ?? "🏅"}</div>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-white truncate">{a.achievement?.title ?? "Achievement"}</p>
@@ -387,9 +387,9 @@ export function StudentDashboard({ user }: { user: User }) {
         <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-bold flex items-center gap-2">
-              <Bookmark className="size-4 text-[#C9A24C]" /> Bookmarks
+              <Bookmark className="size-4 text-[#E0B15A]" /> Bookmarks
             </h2>
-            <Link to="/quran/bookmarks" className="text-xs text-[#C9A24C] font-bold hover:opacity-80">All →</Link>
+            <Link to="/quran/bookmarks" className="text-xs text-[#E0B15A] font-bold hover:opacity-80">All →</Link>
           </div>
           {bookmarks.length === 0 ? (
             <p className="text-white/60 text-sm">No bookmarks yet.</p>
@@ -406,7 +406,7 @@ export function StudentDashboard({ user }: { user: User }) {
                       <span dir="rtl">{SURAHS.find((s) => s.n === b.surah)?.nameAr ?? `Surah ${b.surah}`}</span>
                       <span className="text-white/50"> · Ayah {b.ayah}</span>
                     </span>
-                    <span className="text-[#C9A24C] text-xs font-bold">Open</span>
+                    <span className="text-[#E0B15A] text-xs font-bold">Open</span>
                   </Link>
                 </li>
               ))}
@@ -417,7 +417,7 @@ export function StudentDashboard({ user }: { user: User }) {
         <section className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-bold">Hifz progress</h2>
-            <Link to="/hifz" className="text-xs text-[#C9A24C] font-bold hover:opacity-80">Manage →</Link>
+            <Link to="/hifz" className="text-xs text-[#E0B15A] font-bold hover:opacity-80">Manage →</Link>
           </div>
           {hifz.length === 0 ? (
             <p className="text-white/60 text-sm">No hifz progress tracked yet.</p>
@@ -429,10 +429,10 @@ export function StudentDashboard({ user }: { user: User }) {
                     <span className="text-white/85 font-semibold" dir="rtl">
                       {SURAHS.find((s) => s.n === h.surah)?.nameAr ?? `Surah ${h.surah}`}
                     </span>
-                    <span className="text-[#C9A24C] font-bold">{h.percent}%</span>
+                    <span className="text-[#E0B15A] font-bold">{h.percent}%</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#1FB6B0] to-[#C9A24C]" style={{ width: `${h.percent}%` }} />
+                    <div className="h-full bg-gradient-to-r from-[#2FD4A7] to-[#E0B15A]" style={{ width: `${h.percent}%` }} />
                   </div>
                 </li>
               ))}
@@ -447,7 +447,7 @@ export function StudentDashboard({ user }: { user: User }) {
 function Tile({
   icon, label, value, tone,
 }: { icon: React.ReactNode; label: string; value: string; tone: "teal" | "gold" | "pearl" }) {
-  const c = tone === "teal" ? "text-[#1FB6B0]" : tone === "gold" ? "text-[#C9A24C]" : "text-white";
+  const c = tone === "teal" ? "text-[#2FD4A7]" : tone === "gold" ? "text-[#E0B15A]" : "text-white";
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
@@ -460,7 +460,7 @@ function Tile({
 }
 
 function GoalRow({ label, value, pct, tone = "teal" }: { label: string; value: string; pct: number; tone?: "teal" | "gold" }) {
-  const bar = tone === "teal" ? "bg-[#1FB6B0]" : "bg-[#C9A24C]";
+  const bar = tone === "teal" ? "bg-[#2FD4A7]" : "bg-[#E0B15A]";
   return (
     <div className="mb-3 last:mb-0">
       <div className="flex justify-between text-xs mb-1">

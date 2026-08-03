@@ -37,7 +37,7 @@ function TafsirModal({ verseKey, onClose }: { verseKey: string; onClose: () => v
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl bg-[#0F1E3D] border border-white/10 overflow-hidden"
+        className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl bg-[#0B2420] border border-white/10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">

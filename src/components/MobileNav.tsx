@@ -21,8 +21,8 @@ function Item({
     <li>
       <Link
         to={to}
-        className="min-h-11 flex flex-col items-center gap-1 py-2.5 text-white/60 hover:text-[#C9A24C] transition-colors"
-        activeProps={{ className: "min-h-11 flex flex-col items-center gap-1 py-2.5 text-[#C9A24C]" }}
+        className="min-h-11 flex flex-col items-center gap-1 py-2.5 text-white/60 hover:text-[#E0B15A] transition-colors"
+        activeProps={{ className: "min-h-11 flex flex-col items-center gap-1 py-2.5 text-[#E0B15A]" }}
         activeOptions={{ exact: !!exact }}
       >
         {icon}

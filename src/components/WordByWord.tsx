@@ -69,7 +69,7 @@ export function WordByWord({ verseKey }: { verseKey: string }) {
               )}
               {ur && (
                 <div
-                  className="text-[11px] text-teal-200/90 leading-tight mt-0.5"
+                  className="text-[11px] text-emerald-200/90 leading-tight mt-0.5"
                   lang="ur"
                   dir="rtl"
                   style={{ fontFamily: '"Noto Nastaliq Urdu", serif' }}
