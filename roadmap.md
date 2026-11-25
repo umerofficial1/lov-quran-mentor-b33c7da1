@@ -1,0 +1,5 @@
+- [x] Confirm existing Quran data, audio, authentication, and navigation patterns.
+- [x] Add the owner-only persistent storage for Quran Revision plans.
+- [ ] Implement balanced sequential scheduling, revision page, history, weak Ayat, and audio controls.
+- [ ] Verify schedule rules, completion locking, persistence, audio, and phone layout.
+- [ ] Apply the required package security update and confirm the preview remains healthy.

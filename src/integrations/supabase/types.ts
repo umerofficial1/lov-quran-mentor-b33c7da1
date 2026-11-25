@@ -305,6 +305,42 @@ export type Database = {
         }
         Relationships: []
       }
+      quran_revision_plans: {
+        Row: {
+          completed_portions: Json
+          created_at: string
+          duration_days: number
+          id: string
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+          weak_ayahs: Json
+        }
+        Insert: {
+          completed_portions?: Json
+          created_at?: string
+          duration_days: number
+          id?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          weak_ayahs?: Json
+        }
+        Update: {
+          completed_portions?: Json
+          created_at?: string
+          duration_days?: number
+          id?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          weak_ayahs?: Json
+        }
+        Relationships: []
+      }
       recitation_sessions: {
         Row: {
           accuracy: number

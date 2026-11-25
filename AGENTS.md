@@ -1,0 +1,1 @@
+- Keep Quran revision scheduling and range calculations in `src/lib/quran-revision.ts` so coverage and pending-task rules remain independently testable.
