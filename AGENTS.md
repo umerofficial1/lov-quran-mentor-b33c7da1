@@ -1,1 +1,2 @@
 - Keep Quran revision scheduling and range calculations in `src/lib/quran-revision.ts` so coverage and pending-task rules remain independently testable.
+- Keep Quran Revision Mode in the signed-in `/revision` route and reuse the existing user-owned plan table, Quran data, and shared audio player so it stays isolated from Hifz and other Quran features.
