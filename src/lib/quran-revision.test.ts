@@ -1,4 +1,5 @@
-import { describe, expect, test } from "bun:test";
+import { strictEqual, ok } from "node:assert/strict";
+import { describe, test } from "node:test";
 import {
   createBalancedPortions,
   currentRevisionPortion,
@@ -23,61 +24,63 @@ const counts: ChapterAyahCount[] = ayahCounts.map((ayahCount, index) => ({
 
 describe("Quran revision scheduling", () => {
   test("covers all 114 Surahs and exactly 6,236 Ayat", () => {
-    expect(counts).toHaveLength(114);
-    expect(totalAyahCount(counts)).toBe(6236);
+    strictEqual(counts.length, 114);
+    strictEqual(totalAyahCount(counts), 6236);
 
     const portions = createBalancedPortions(counts, 30);
-    expect(portions).toHaveLength(30);
-    expect(portions[0]?.startKey).toBe("1:1");
-    expect(portions.at(-1)?.endKey).toBe("114:6");
+    strictEqual(portions.length, 30);
+    strictEqual(portions[0]?.startKey, "1:1");
+    strictEqual(portions.at(-1)?.endKey, "114:6");
 
     let cursor = 0;
     for (const portion of portions) {
-      expect(portion.startIndex).toBe(cursor);
-      expect(portion.endIndexExclusive - portion.startIndex).toBe(portion.ayahCount);
+      strictEqual(portion.startIndex, cursor);
+      strictEqual(portion.endIndexExclusive - portion.startIndex, portion.ayahCount);
       cursor = portion.endIndexExclusive;
     }
-    expect(cursor).toBe(6236);
+    strictEqual(cursor, 6236);
   });
 
   for (const days of [30, 45, 60, 90]) {
     test(`balances the ${days}-day plan by Ayah count`, () => {
       const portions = createBalancedPortions(counts, days);
       const sizes = portions.map((portion) => portion.ayahCount);
-      expect(Math.max(...sizes) - Math.min(...sizes)).toBeLessThanOrEqual(1);
-      expect(portions).toHaveLength(days);
+      ok(Math.max(...sizes) - Math.min(...sizes) <= 1);
+      strictEqual(portions.length, days);
     });
   }
 
   test("keeps the current portion pending until it is marked complete", () => {
     const first = currentRevisionPortion(counts, 30, []);
     const stillPending = currentRevisionPortion(counts, 30, []);
-    expect(first).not.toBeNull();
-    expect(stillPending?.startIndex).toBe(first?.startIndex);
-    expect(stillPending?.endIndexExclusive).toBe(first?.endIndexExclusive);
+    ok(first);
+    strictEqual(stillPending?.startIndex, first.startIndex);
+    strictEqual(stillPending?.endIndexExclusive, first.endIndexExclusive);
 
     const completed: CompletedPortion = {
       ...(first as NonNullable<typeof first>),
       completedAt: "2026-11-25T12:00:00.000Z",
     };
     const next = currentRevisionPortion(counts, 30, [completed]);
-    expect(next?.day).toBe(2);
-    expect(next?.startIndex).toBe(completed.endIndexExclusive);
-    expect(pendingRevisionPortions(counts, 30, [completed])[0]?.startIndex).toBe(
+    strictEqual(next?.day, 2);
+    strictEqual(next?.startIndex, completed.endIndexExclusive);
+    strictEqual(
+      pendingRevisionPortions(counts, 30, [completed])[0]?.startIndex,
       completed.endIndexExclusive,
     );
   });
 
   test("adjusting the duration never moves already completed Ayat", () => {
     const first = createBalancedPortions(counts, 30)[0];
-    expect(first).toBeDefined();
+    ok(first);
     if (!first) return;
 
     const completed: CompletedPortion = { ...first, completedAt: "2026-11-25T12:00:00.000Z" };
     const adjusted = pendingRevisionPortions(counts, 45, [completed]);
-    expect(adjusted[0]?.startIndex).toBe(first.endIndexExclusive);
-    expect(adjusted.at(-1)?.endKey).toBe("114:6");
-    expect(adjusted.reduce((sum, portion) => sum + portion.ayahCount, 0)).toBe(
+    strictEqual(adjusted[0]?.startIndex, first.endIndexExclusive);
+    strictEqual(adjusted.at(-1)?.endKey, "114:6");
+    strictEqual(
+      adjusted.reduce((sum, portion) => sum + portion.ayahCount, 0),
       6236 - first.ayahCount,
     );
   });
