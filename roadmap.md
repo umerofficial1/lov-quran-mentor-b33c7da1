@@ -1,5 +1,6 @@
 - [x] Confirm existing Quran data, audio, authentication, and navigation patterns.
 - [x] Confirm the owner-only Quran Revision plan table and access policies are available.
-- [ ] Repair the missing `/revision` preview page and implement its complete signed-in workflow.
-- [ ] Verify balanced coverage, pending-task locking, audio, saved progress, and phone layout.
+- [ ] Add a Quran Revision link to the existing navigation without changing other links or layout.
+- [ ] Repair the missing signed-in `/revision` page and complete its existing planned Revision Mode workflow.
+- [ ] Verify daily coverage, pending-task locking, audio, saved progress, and phone layout; keep all fixes in Revision Mode.
 - [ ] Apply the required package security update and confirm the preview remains healthy.
