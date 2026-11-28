@@ -1,2 +1,3 @@
 - Keep Quran revision scheduling and range calculations in `src/lib/quran-revision.ts` so coverage and pending-task rules remain independently testable.
 - Keep Quran Revision Mode in the signed-in `/revision` route and reuse the existing user-owned plan table, Quran data, and shared audio player so it stays isolated from Hifz and other Quran features.
+- Keep Hifz sequencing and daily-task rules in `src/lib/hifz.ts` with its own owner-scoped plan table, so Para-30-first memorization stays independent from Quran Revision.

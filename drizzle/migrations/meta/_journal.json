@@ -8,6 +8,20 @@
       "when": 1795617625776,
       "tag": "0000_create_quran_revision_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795829237851,
+      "tag": "0001_create_hifz_plans",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795829266376,
+      "tag": "0002_add_hifz_starting_juz",
+      "breakpoints": true
     }
   ]
 }

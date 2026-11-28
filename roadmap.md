@@ -1,6 +1,8 @@
 - [x] Confirm existing Quran data, audio, authentication, and navigation patterns.
 - [x] Confirm the owner-only Quran Revision plan table and access policies are available.
-- [ ] Add a Quran Revision link to the existing navigation without changing other links or layout.
-- [ ] Repair the missing signed-in `/revision` page and complete its existing planned Revision Mode workflow.
-- [ ] Verify daily coverage, pending-task locking, audio, saved progress, and phone layout; keep all fixes in Revision Mode.
+- [ ] Add separate Quran Revision and Hifz links to the existing navigation without changing its layout.
+- [ ] Complete the signed-in `/revision` page, saving revision plans, portions, history, and weak Ayat.
+- [ ] Complete the signed-in `/hifz` workflow with Para-30-first sequencing, Sabaq/Sabqi/Manzil, saved progress, and weak Ayat.
+- [ ] Add owner-only Hifz plan storage while reusing the existing Hifz progress table and Quran/audio sources.
+- [ ] Test Quran coverage, sequence order, task locking, carry-forward, audio, persistence, and phone layouts for both modules.
 - [ ] Apply the required package security update and confirm the preview remains healthy.

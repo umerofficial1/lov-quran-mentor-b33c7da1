@@ -191,6 +191,54 @@ export type Database = {
         }
         Relationships: []
       }
+      hifz_plans: {
+        Row: {
+          completed_ayahs: Json
+          completed_juz: Json
+          completed_surahs: Json
+          created_at: string
+          current_task: Json
+          daily_target: number
+          history: Json
+          id: string
+          starting_juz: number
+          status: string
+          updated_at: string
+          user_id: string
+          weak_ayahs: Json
+        }
+        Insert: {
+          completed_ayahs?: Json
+          completed_juz?: Json
+          completed_surahs?: Json
+          created_at?: string
+          current_task?: Json
+          daily_target?: number
+          history?: Json
+          id?: string
+          starting_juz?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+          weak_ayahs?: Json
+        }
+        Update: {
+          completed_ayahs?: Json
+          completed_juz?: Json
+          completed_surahs?: Json
+          created_at?: string
+          current_task?: Json
+          daily_target?: number
+          history?: Json
+          id?: string
+          starting_juz?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+          weak_ayahs?: Json
+        }
+        Relationships: []
+      }
       hifz_progress: {
         Row: {
           id: string
